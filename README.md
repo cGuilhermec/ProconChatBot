@@ -20,8 +20,8 @@ Facilitar o acesso à informação e otimizar o atendimento inicial ao consumido
 
 ## 📦 Como Executar o Projeto
 ```bash
-git clone https://github.com/cGuilhermec/ProconChatBoot.git
-cd ProconChatBoot
+git clone https://github.com/cGuilhermec/ProconChatBot.git
+cd ProconChatBot
 npm install
 npm run dev
 ```
