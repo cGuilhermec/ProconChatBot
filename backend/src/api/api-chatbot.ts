@@ -142,22 +142,53 @@ app.get("/api/stats", (req, res) => {
 // ============================================
 
 function verificarSaudacao(mensagem: string): string | null {
-  const saudacoes = {
-    olá: "Olá! 👋 Como posso ajudar você hoje?",
-    oi: "Oi! 😊 Em que posso ser útil?",
-    "bom dia": "Bom dia! ☀️ Como posso auxiliar?",
-    "boa tarde": "Boa tarde! 🌤️ O que você precisa?",
-    "boa noite": "Boa noite! 🌙 Estou aqui para ajudar!",
-    "tudo bem": "Tudo bem sim! E com você? Como posso ajudar?",
-    "e aí": "E aí! 👋 Pronto para tirar suas dúvidas!",
-  };
+  const msgLower = mensagem.toLowerCase().trim();
 
-  const msgLower = mensagem.toLowerCase();
+  // Lista expandida de saudações (igual ao teste)
+  const saudacoes = [
+    { chave: "ola", resposta: "Olá! 👋 Como posso ajudar você hoje?" },
+    { chave: "olá", resposta: "Olá! 👋 Como posso ajudar você hoje?" },
+    { chave: "oi", resposta: "Oi! 😊 Em que posso ser útil?" },
+    { chave: "oie", resposta: "Oi! 😊 Em que posso ser útil?" },
+    { chave: "bom dia", resposta: "Bom dia! ☀️ Como posso auxiliar?" },
+    { chave: "boa tarde", resposta: "Boa tarde! 🌤️ O que você precisa?" },
+    { chave: "boa noite", resposta: "Boa noite! 🌙 Estou aqui para ajudar!" },
+    { chave: "e ai", resposta: "E aí! 👋 Pronto para tirar suas dúvidas!" },
+    { chave: "e aí", resposta: "E aí! 👋 Pronto para tirar suas dúvidas!" },
+    { chave: "ae", resposta: "E aí! 👋 Como posso ajudar?" },
+    { chave: "opa", resposta: "Opa! 👋 Tudo bem?" },
+    {
+      chave: "tudo bem",
+      resposta: "Tudo bem sim! E com você? Como posso ajudar?",
+    },
+    { chave: "tudo bom", resposta: "Tudo bom! Como posso ajudar?" },
+    { chave: "beleza", resposta: "Beleza! 😎 Como posso ajudar?" },
+    { chave: "tranquilo", resposta: "Tranquilo! Como posso ajudar?" },
+    {
+      chave: "ajuda",
+      resposta: "Claro! Estou aqui para ajudar. Sobre o que você precisa?",
+    },
+    { chave: "me ajuda", resposta: "Claro! Me diga qual é a sua dúvida." },
+    {
+      chave: "socorro",
+      resposta: "Calma! Vou ajudar. Me conte o que aconteceu.",
+    },
+    {
+      chave: "começar",
+      resposta: "Vamos começar! Sobre o que você quer saber?",
+    },
+    { chave: "iniciar", resposta: "Iniciando atendimento! Como posso ajudar?" },
+  ];
 
-  for (const [chave, resposta] of Object.entries(saudacoes)) {
+  for (const { chave, resposta } of saudacoes) {
     if (msgLower.includes(chave)) {
       return resposta;
     }
+  }
+
+  // Mensagens muito curtas (provavelmente saudações)
+  if (msgLower.length <= 3 && isNaN(Number(msgLower))) {
+    return "Olá! 👋 Como posso ajudar?";
   }
 
   return null;
