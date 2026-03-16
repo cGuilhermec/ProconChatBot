@@ -28,11 +28,12 @@ export class BuscadorProcon {
         { name: "tema", weight: 0.3 },
         { name: "resposta", weight: 0.2 },
       ],
-      threshold: 0.4,
+      threshold: 0.3,
       includeScore: true,
       ignoreLocation: true,
-      minMatchCharLength: 3,
+      minMatchCharLength: 2,
       useExtendedSearch: true,
+      ignoreFieldNorm: true,
     });
 
     this.keywordIndex = this.buildKeywordIndex();
@@ -48,7 +49,7 @@ export class BuscadorProcon {
 
     // Estratégia 1: Busca por palavras-chave
     const keywordMatch = this.buscarPorPalavrasChave(perguntaLower);
-    if (keywordMatch && keywordMatch.score > 0.5) {
+    if (keywordMatch && keywordMatch.score > 0.2) {
       return this.formatarResposta(pergunta, keywordMatch);
     }
 
@@ -68,11 +69,16 @@ export class BuscadorProcon {
   }
 
   /**
-   * Busca por palavras-chave com stemming
+   * Busca por palavras-chave com stemming (VERSÃO CORRIGIDA)
    */
   private buscarPorPalavrasChave(pergunta: string): ResultadoBusca | null {
     // Extrair palavras importantes
     const palavrasImportantes = this.extrairPalavrasImportantes(pergunta);
+
+    // Se não tem palavras importantes, retorna null (vai para busca difusa)
+    if (palavrasImportantes.length === 0) {
+      return null;
+    }
 
     // Stemming nas palavras
     const palavrasStemmed = palavrasImportantes.map((p) =>
@@ -87,32 +93,54 @@ export class BuscadorProcon {
         const textoCompleto = `${textoTema} ${textoPergunta}`;
 
         let score = 0;
+        let maxScorePossivel = 0;
+
         for (const palavra of palavrasStemmed) {
+          maxScorePossivel += 3; // Máximo possível: 1 (match) + 2 (keyword)
+
+          // Match simples no texto
           if (textoCompleto.includes(palavra)) {
             score += 1;
           }
 
-          // Verificar no índice de palavras-chave
+          // Verificar no índice de palavras-chave (match exato ou parcial)
           for (const [key, ids] of Object.entries(this.keywordIndex)) {
-            if (palavra.includes(key) && ids.includes(item.id)) {
+            // Verifica se a palavra está contida na chave OU a chave está contida na palavra
+            if (
+              (palavra.includes(key) || key.includes(palavra)) &&
+              ids.includes(item.id)
+            ) {
               score += 2; // Peso maior para palavras-chave
             }
           }
         }
 
-        return { item, score: score / palavrasStemmed.length };
+        // Normalizar score entre 0 e 1
+        const scoreNormalizado =
+          maxScorePossivel > 0 ? score / maxScorePossivel : 0;
+
+        return { item, score: scoreNormalizado };
       },
     );
 
-    // Ordenar por score
+    // Ordenar por score (maior para menor)
     pontuacoes.sort((a, b) => b.score - a.score);
 
-    if (pontuacoes[0].score > 0.3) {
+    // Log para debug (remova em produção)
+    if (pontuacoes[0].score > 0) {
+      console.log(
+        `🔍 Melhor match: ID ${pontuacoes[0].item.id} - Score: ${pontuacoes[0].score}`,
+      );
+    }
+
+    // Retorna se tiver score mínimo
+    if (pontuacoes[0].score > 0.15) {
+      // Threshold mais baixo
       return {
         item: pontuacoes[0].item,
         score: pontuacoes[0].score,
         metodo: "palavras_chave",
-        confianca: pontuacoes[0].score > 0.7 ? "Alta" : "Média",
+        confianca: pontuacoes[0].score > 0.5 ? "Alta" : "Média",
       };
     }
 
@@ -203,8 +231,10 @@ export class BuscadorProcon {
     ]);
 
     return palavras.filter(
-      (p) =>
-        !stopwords.has(p.toLowerCase()) && p.length > 2 && isNaN(Number(p)), // Remove números
+      (p: any) =>
+        !stopwords.has(p.toLowerCase()) && // Remove palavras que estão na lista de stopwords (palavras comuns que não ajudam na busca)
+        p.length > 2 && // Mantém apenas palavras com mais de 2 caracteres (remove artigos, preposições curtas)
+        isNaN(Number(p)), // Remove números (ex: "123", "10") - isNaN retorna true se NÃO for número
     );
   }
 
@@ -216,9 +246,31 @@ export class BuscadorProcon {
       cobranca: [1, 2, 3, 6],
       cobrando: [1, 2, 3, 6],
       cobram: [1, 2, 3, 6],
+      cobraram: [1, 2, 3, 6],
+      cobra: [1, 2, 3, 6],
+
+      // SEGURO - VERSÃO SUPER REFORÇADA
       seguro: [1],
+      segura: [1],
+      segur: [1], // radical
+      segro: [1], // erro comum
+      seg: [1], // parte ainda menor
+      se: [1], // (cuidado, pode dar falso positivo)
+
+      // Adicionar variações fonéticas
+      segu: [1],
+      segurou: [1],
+      seguros: [1],
+
+      // CARTAO
       cartao: [1],
+      cartão: [1],
+      carta: [1],
+      cart: [1],
+
       credito: [1],
+      crédito: [1],
+
       emprestimo: [2, 3],
       quitado: [2],
       desconto: [2, 3, 6],

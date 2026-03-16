@@ -1,5 +1,5 @@
 // src/api.ts
-import express from "express";
+import express, { Request, Response } from "express";
 import { BuscadorProcon } from "../services/buscador.service";
 
 
@@ -10,13 +10,13 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 
 // Middleware de logging
-app.use((req, res, next) => {
+app.use((req: Request, _res: Response, next) => {
   console.log(`[${new Date().toISOString()}] ${req.method} ${req.path}`);
   next();
 });
 
 // Rota principal - health check
-app.get("/", (req, res) => {
+app.get("/", (_req: Request, res: Response) => {
   res.json({
     nome: "API Procon RAG",
     versao: "1.0.0",
@@ -26,7 +26,7 @@ app.get("/", (req, res) => {
 });
 
 // Rota para fazer perguntas
-app.post("/api/perguntar", (req, res) => {
+app.post("/api/perguntar", (req: Request, res: Response) => {
   try {
     const { pergunta } = req.body;
 
@@ -59,7 +59,7 @@ app.post("/api/perguntar", (req, res) => {
 });
 
 // Rota para listar todos os temas
-app.get("/api/temas", (req, res) => {
+app.get("/api/temas", (_req: Request, res: Response) => {
   try {
     const temas = buscador.listarTemas();
     res.json({
@@ -76,7 +76,7 @@ app.get("/api/temas", (req, res) => {
 });
 
 // Rota para buscar por ID
-app.get("/api/tema/:id", (req, res) => {
+app.get("/api/tema/:id", (req: Request, res: Response) => {
   try {
     const id = parseInt(req.params.id);
     const tema = buscador.buscarPorId(id);
@@ -101,7 +101,7 @@ app.get("/api/tema/:id", (req, res) => {
 });
 
 // Rota de estatísticas
-app.get("/api/stats", (req, res) => {
+app.get("/api/stats", (_req: Request, res: Response) => {
   try {
     const temas = buscador.listarTemas();
     res.json({
@@ -121,7 +121,7 @@ app.get("/api/stats", (req, res) => {
 });
 
 // Tratamento de rotas não encontradas
-app.use("*", (req, res) => {
+app.use("*", (_req: Request, res: Response) => {
   res.status(404).json({
     sucesso: false,
     erro: "Rota não encontrada",
