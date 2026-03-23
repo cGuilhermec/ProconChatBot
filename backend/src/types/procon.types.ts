@@ -30,3 +30,8 @@ export interface RespostaProcon {
 export interface KeywordIndex {
   [key: string]: number[];
 }
+
+export interface RespostaProconComLlama extends RespostaProcon {
+  enriquecido?: boolean;
+  llm_error?: boolean;
+}

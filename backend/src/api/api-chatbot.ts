@@ -1,15 +1,14 @@
 // backend/src/api-chatbot.ts
 import express from "express";
 import cors from "cors";
-import { BuscadorProcon } from "../services/buscador.service";
-
+import axios from "axios"; // <-- ADICIONAR
 
 const app = express();
-const buscador = new BuscadorProcon();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3001; // <-- MUDAR PORTA (3001)
+const API_TECNICA = process.env.API_TECNICA || "http://localhost:3000"; // URL da api.ts
 
 // Middlewares
-app.use(cors()); // Libera para o frontend acessar
+app.use(cors());
 app.use(express.json());
 
 // Logger
@@ -64,11 +63,14 @@ app.post("/api/chat", async (req, res) => {
       mensagem.toLowerCase().includes("temas") ||
       mensagem.toLowerCase().includes("assuntos")
     ) {
-      const temas = buscador.listarTemas();
+      // Chamar API técnica para listar temas
+      const response = await axios.get(`${API_TECNICA}/api/temas`);
+      const temas = response.data.dados;
+
       return res.json({
         tipo: "lista_temas",
         mensagem: "Aqui estão os principais assuntos que posso ajudar:",
-        temas: temas.map((t) => ({
+        temas: temas.map((t: any) => ({
           id: t.id,
           titulo: t.tema.replace(/_/g, " "),
           exemplo: t.pergunta.substring(0, 80) + "...",
@@ -76,27 +78,47 @@ app.post("/api/chat", async (req, res) => {
       });
     }
 
-    // 4. Quarto: PASSA PARA O RAG (qualquer outra coisa)
-    const resposta = buscador.buscar(mensagem);
+    // 4. Quarto: PASSA PARA API TÉCNICA (RAG + LLAMA)
+    console.log(`🤖 Enviando para API técnica: "${mensagem}"`);
+
+    const response = await axios.post(`${API_TECNICA}/api/perguntar`, {
+      pergunta: mensagem,
+      usarLlama: true, // SEMPRE usar Llama para enriquecer
+    });
+
+    const dados = response.data.dados;
 
     // Formata a resposta para o chatbot
+    let respostaFormatada = dados.resposta;
+
+    // Se for resposta do Llama, adiciona observação
+    if (dados.enriquecido) {
+      respostaFormatada += "\n\n✨ *Resposta aprimorada com IA*";
+    }
+
+    // Se teve erro no Llama, usa original
+    if (dados.llm_error) {
+      respostaFormatada = dados.resposta;
+    }
+
     return res.json({
       tipo: "resposta_rag",
       pergunta: mensagem,
-      resposta: resposta.resposta,
-      base_legal: resposta.base_legal,
-      documentos: resposta.documentos,
-      observacao: resposta.observacao,
-      confianca: resposta.confianca,
-      score: resposta.score,
-      // Dicas de acompanhamento
-      sugestoes: gerarSugestoes(resposta.metodo),
+      resposta: respostaFormatada,
+      base_legal: dados.base_legal,
+      documentos: dados.documentos,
+      observacao: dados.observacao,
+      confianca: dados.confianca,
+      score: dados.score,
+      sugestoes: gerarSugestoes(dados.metodo),
     });
   } catch (error) {
     console.error("Erro:", error);
-    res.status(500).json({
+
+    // Fallback se API técnica estiver fora do ar
+    return res.status(500).json({
       tipo: "erro",
-      mensagem: "Desculpe, tive um problema. Pode repetir?",
+      mensagem: "Desculpe, tive um problema. Pode repetir? 😊",
     });
   }
 });
@@ -104,47 +126,49 @@ app.post("/api/chat", async (req, res) => {
 /**
  * Endpoint para buscar um tema específico
  */
-app.get("/api/tema/:id", (req, res) => {
-  const id = parseInt(req.params.id);
-  const tema = buscador.buscarPorId(id);
+app.get("/api/tema/:id", async (req, res) => {
+  try {
+    const id = parseInt(req.params.id);
+    const response = await axios.get(`${API_TECNICA}/api/tema/${id}`);
+    const tema = response.data.dados;
 
-  if (!tema) {
-    return res.status(404).json({
+    res.json({
+      tipo: "tema_detalhado",
+      tema: tema.tema.replace(/_/g, " "),
+      pergunta: tema.pergunta,
+      resposta: tema.resposta,
+      base_legal: tema.base_legal,
+      documentos: tema.documentos,
+    });
+  } catch (error) {
+    res.status(404).json({
       tipo: "erro",
       mensagem: "Tema não encontrado",
     });
   }
-
-  res.json({
-    tipo: "tema_detalhado",
-    tema: tema.tema.replace(/_/g, " "),
-    pergunta: tema.pergunta,
-    resposta: tema.resposta,
-    base_legal: tema.base_legal,
-    documentos: tema.documentos,
-  });
 });
 
 /**
  * Endpoint para estatísticas
  */
-app.get("/api/stats", (req, res) => {
-  const temas = buscador.listarTemas();
-  res.json({
-    total_temas: temas.length,
-    versao: "1.0.0",
-    status: "online",
-  });
+app.get("/api/stats", async (req, res) => {
+  try {
+    const response = await axios.get(`${API_TECNICA}/api/stats`);
+    res.json(response.data);
+  } catch (error) {
+    res.status(500).json({
+      erro: "Erro ao buscar estatísticas",
+    });
+  }
 });
 
 // ============================================
-// FUNÇÕES AUXILIARES
+// FUNÇÕES AUXILIARES (MANTIDAS)
 // ============================================
 
 function verificarSaudacao(mensagem: string): string | null {
   const msgLower = mensagem.toLowerCase().trim();
 
-  // Lista expandida de saudações (igual ao teste)
   const saudacoes = [
     { chave: "ola", resposta: "Olá! 👋 Como posso ajudar você hoje?" },
     { chave: "olá", resposta: "Olá! 👋 Como posso ajudar você hoje?" },
@@ -186,7 +210,6 @@ function verificarSaudacao(mensagem: string): string | null {
     }
   }
 
-  // Mensagens muito curtas (provavelmente saudações)
   if (msgLower.length <= 3 && isNaN(Number(msgLower))) {
     return "Olá! 👋 Como posso ajudar?";
   }
@@ -231,7 +254,8 @@ function gerarSugestoes(metodo: string): string[] {
 
 // Inicia o servidor
 app.listen(PORT, () => {
-  console.log(`🚀 API do Chatbot rodando em http://localhost:${PORT}`);
+  console.log(`🚀 Chatbot WhatsApp rodando em http://localhost:${PORT}`);
+  console.log(`📡 Conectado à API técnica: ${API_TECNICA}`);
   console.log(`📝 Endpoints:`);
   console.log(`   POST /api/chat - Para o chatbot`);
   console.log(`   GET  /api/tema/:id - Detalhe de um tema`);

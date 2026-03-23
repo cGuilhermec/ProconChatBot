@@ -1,7 +1,7 @@
 {
   "name": "procon-rag-ts",
   "version": "1.0.0",
-  "description": "RAG para Procon em TypeScript (sem IA)",
+  "description": "RAG para Procon em TypeScript",
   "main": "dist/index.js",
   "types": "dist/types/procon.types.d.ts",
   "scripts": {
@@ -12,8 +12,11 @@
     "api-dev": "nodemon src/api/api.ts",
     "clean": "rm -rf dist",
     "type-check": "tsc --noEmit",
+    
     "test": "node --test --import tsx src/__tests__/buscador.test.ts",
-    "test:all": "node --test --import tsx src/__tests__/buscador.test.ts",
+    "test:rag": "node --test --import tsx src/__tests__/buscador.test.ts",
+    "test:llama": "node --test --import tsx src/__tests__/llama.test.ts",
+    "test:all": "node --test --import tsx src/__tests__/buscador.test.ts src/__tests__/llama.test.ts",
     "test:watch": "node --test --watch --import tsx src/__tests__/buscador.test.ts"
   },
   "keywords": [
@@ -25,6 +28,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "axios": "^1.13.6",
     "cors": "^2.8.6",
     "express": "^4.18.2",
     "fuse.js": "^7.0.0",
