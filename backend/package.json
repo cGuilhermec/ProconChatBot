@@ -8,11 +8,10 @@
     "build": "tsc",
     "start": "node dist/index.js",
     "dev": "nodemon src/index.ts",
-    "api": "node dist/api.js",
-    "api-dev": "nodemon src/api/api.ts",
+    "server": "node dist/server.js",
+    "server-dev": "nodemon src/server.ts",
     "clean": "rm -rf dist",
     "type-check": "tsc --noEmit",
-    
     "test": "node --test --import tsx src/__tests__/buscador.test.ts",
     "test:rag": "node --test --import tsx src/__tests__/buscador.test.ts",
     "test:llama": "node --test --import tsx src/__tests__/llama.test.ts",
