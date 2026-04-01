@@ -1,13 +1,7 @@
 // Importa o módulo de assert do Node.js para fazer validações nos testes
 import assert from "node:assert";
-
-// Importa as funções test, describe e beforeEach do módulo de teste nativo do Node
 import { test, describe, beforeEach } from "node:test";
-
-// Importa a classe BuscadorProcon que contém a lógica do RAG
 import { BuscadorProcon } from "../services/buscador.service";
-
-// Importa os dados de teste (conversas e perguntas) do arquivo test-data
 import { conversasWhatsApp, perguntasReais } from "./helpers/test-data";
 
 // Describe cria um bloco de testes agrupados - aqui testamos cenários de WhatsApp
