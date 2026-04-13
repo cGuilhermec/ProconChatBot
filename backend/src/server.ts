@@ -4,6 +4,7 @@ import cors from "cors";
 import { loggerMiddleware } from "./middlewares/logger.middleware";
 import ragRoutes from "./routes/rag.routes";
 import chatbotRoutes from "./routes/chatbot.routes";
+import "./whatsapp/bot";
 
 // ============================================
 // API TÉCNICA (Porta 3000)
