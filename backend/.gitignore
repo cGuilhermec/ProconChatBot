@@ -1,15 +1,12 @@
 # Dependências
-
 node_modules/
 
 # Build / compilação
-
 dist/
 build/
 out/
 
 # Arquivos de ambiente
-
 .env
 .env.local
 .env.development
@@ -17,7 +14,6 @@ out/
 .env.production
 
 # Logs
-
 logs
 *.log
 npm-debug.log*
@@ -26,39 +22,61 @@ yarn-error.log*
 pnpm-debug.log*
 
 # Arquivos do sistema
-
 .DS_Store
 Thumbs.db
 
 # Cache
-
 .cache
 .tmp
 .temp
 
 # Cobertura de testes
-
 coverage/
 
 # Arquivos do TypeScript
-
 *.tsbuildinfo
 
 # IDE / Editor
-
 .vscode/
 .idea/
 
 # Arquivos temporários
-
 *.swp
 *.swo
 
 # Banco de dados local
-
 *.sqlite
 *.sqlite3
 
 # Uploads (caso tenha)
-
 uploads/
+
+# ============================================
+# WhatsApp Web JS (whatsapp-web.js)
+# ============================================
+.wwebjs_auth/
+.wwebjs_cache/
+session-data/
+*.session.json
+
+# Puppeteer / Chrome
+**/Default/Cache/
+**/Default/Service Worker/
+**/Default/Local Storage/
+**/Default/Session Storage/
+**/Default/IndexedDB/
+**/Default/Code Cache/
+**/GPUCache/
+**/CertificateRevocation/
+**/Crashpad/
+**/DawnGraphiteCache/
+**/DawnWebGPUCache/
+
+# Chromium profile files
+*.pma
+*.wal
+*.journal
+*.ldb
+*.sqlite
+*.sqlite3-journal
+*.old
