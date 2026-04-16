@@ -1,6 +1,6 @@
 // src/index.ts
 import * as readline from "readline";
-import { BuscadorProcon } from "./services/buscador.service";
+import { BuscadorProcon } from "../services/buscador.service";
 
 // Inicializa o buscador
 const buscador = new BuscadorProcon();
