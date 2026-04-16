@@ -16,6 +16,7 @@
 <a href="#tecnologias">Tecnologias</a> | 
 <a href="#equipe">Nossa Equipe</a> | 
 <a href="#uso">Como Usar</a>
+<a href="./backend/README.md">📦 Backend</a>
 </p>
 
 <br>
@@ -143,3 +144,8 @@ npm run test:all
 
 # 5. Inicie o servidor em modo desenvolvimento
 npm run dev
+...
+```
+
+> 📦 Para detalhes completos sobre a API, RAG, comandos e troubleshooting, consulte a
+> [**Documentação do Backend**](./backend/README.md).
