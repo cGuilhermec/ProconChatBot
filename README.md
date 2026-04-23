@@ -15,8 +15,9 @@
 <a href="#sprints">Entregas de Sprints</a> | 
 <a href="#tecnologias">Tecnologias</a> | 
 <a href="#equipe">Nossa Equipe</a> | 
-<a href="#uso">Como Usar</a>
-<a href="./backend/README.md">📦 Backend</a>
+<a href="#uso">Como Usar</a> | 
+<a href="./backend/README.md">📦 Backend</a> | 
+<a href="#arquitetura">Arquitetura & DB</a> |
 </p>
 
 <br>
@@ -149,3 +150,26 @@ npm run dev
 
 > 📦 Para detalhes completos sobre a API, RAG, comandos e troubleshooting, consulte a
 > [**Documentação do Backend**](./backend/README.md).
+
+---
+
+## 🏗️ <a id="arquitetura"></a>Arquitetura & Banco de Dados
+
+O projeto segue o padrão **MVC com Camada de Model Ativa**, garantindo separação clara entre regras de negócio e infraestrutura.
+
+### 🗄️ Estrutura de Dados (PostgreSQL 18)
+Optamos pelo **PostgreSQL** com a extensão **pgvector** para suportar nativamente as operações de IA:
+* **Busca Vetorial:** Armazenamento de *embeddings* diretamente no banco para o sistema RAG.
+* **Alta Performance:** Otimizado para consultas complexas e grandes volumes de dados jurídicos.
+* **Escalabilidade:** Pronto para crescimento horizontal sem custos de licenciamento.
+
+### 🛠️ Backend & ORM
+* **ORM Prisma:** Utilizamos o Prisma (v7) como fonte da verdade, garantindo *Type Safety* nativo e migrações automatizadas.
+* **Camadas do Sistema:**
+    * **Controllers:** Orquestração de entrada e saída (HTTP).
+    * **Services:** Onde reside toda a lógica de negócio e integração com LLMs.
+    * **Models:** Abstração de dados e consultas via Prisma.
+
+> 📄 **Confira o detalhamento técnico:** [Documentação de Banco de Dados e Decisões Técnicas](./backend/DB.md)
+
+🔝 [Voltar ao topo](#top)
