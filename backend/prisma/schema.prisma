@@ -1,0 +1,162 @@
+// prisma/schema.prisma
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  //url      = env("DATABASE_URL")
+}
+
+
+// ============================================
+// ENUMS
+// ============================================
+
+enum Role {
+  FUNCIONARIO
+  COORDENADOR
+  DIRETOR
+  DEV
+}
+
+enum StatusAgendamento {
+  PENDENTE
+  CONFIRMADO
+  CANCELADO
+  COMPARECEU
+  FALTOU
+}
+
+// ============================================
+// TABELAS
+// ============================================
+
+model Procon {
+  id                          Int      @id @default(autoincrement())
+  nome                        String
+  cidade                      String
+  estado                      String
+  endereco                    String
+  telefone                    String
+  email                       String
+  horario_abertura            DateTime
+  horario_fechamento          DateTime
+  duracao_atendimento_minutos Int      @default(30)
+  vagas_por_horario           Int      @default(2)
+  created_at                  DateTime @default(now())
+  updated_at                  DateTime @updatedAt
+
+  feriados     Feriado[]
+  agendamentos Agendamento[]
+  usuarios     Usuario[]
+  perguntas    Pergunta[]
+
+  @@index([cidade])
+  @@index([estado])
+}
+
+model Feriado {
+  id         Int      @id @default(autoincrement())
+  procon_id  Int
+  data       DateTime
+  nome       String
+  recorrente Boolean  @default(false)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  procon Procon @relation(fields: [procon_id], references: [id], onDelete: Cascade)
+
+  @@unique([procon_id, data])
+  @@index([procon_id, data])
+}
+
+model Usuario {
+  id         Int      @id @default(autoincrement())
+  nome       String
+  email      String   @unique
+  senha      String
+  role       Role     @default(FUNCIONARIO)
+  procon_id  Int?
+  ativo      Boolean  @default(true)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  procon               Procon?    @relation(fields: [procon_id], references: [id], onDelete: SetNull)
+  perguntasCriadas     Pergunta[] @relation("criadoPor")
+  perguntasAtualizadas Pergunta[] @relation("atualizadoPor")
+  auditLogs            AuditLog[]
+
+  @@index([email])
+  @@index([role])
+  @@index([procon_id])
+}
+
+model Pergunta {
+  id             Int                    @id @default(autoincrement())
+  procon_id      Int
+  criado_por     Int
+  atualizado_por Int
+  tema           String
+  pergunta       String
+  resposta       String
+  base_legal     Json?
+  documentos     Json?
+  observacao     String?
+  embedding      Unsupported("vector")?
+  ativo          Boolean                @default(true)
+  versao         Int                    @default(1)
+  created_at     DateTime               @default(now())
+  updated_at     DateTime               @updatedAt
+
+  procon      Procon     @relation(fields: [procon_id], references: [id], onDelete: Cascade)
+  criador     Usuario    @relation("criadoPor", fields: [criado_por], references: [id])
+  atualizador Usuario    @relation("atualizadoPor", fields: [atualizado_por], references: [id])
+  auditLogs   AuditLog[]
+
+  @@index([procon_id, ativo])
+  @@index([criado_por])
+  @@index([atualizado_por])
+  @@index([tema])
+}
+
+model Agendamento {
+  id                  Int               @id @default(autoincrement())
+  procon_id           Int
+  nome_usuario        String
+  cpf                 String
+  telefone            String
+  data_agendamento    DateTime
+  horario_agendamento DateTime
+  status              StatusAgendamento @default(PENDENTE)
+  observacao          String?
+  created_at          DateTime          @default(now())
+  updated_at          DateTime          @updatedAt
+
+  procon Procon @relation(fields: [procon_id], references: [id], onDelete: Cascade)
+
+  @@index([procon_id, data_agendamento, horario_agendamento, status])
+  @@index([procon_id, cpf, data_agendamento])
+  @@index([status])
+  @@index([data_agendamento])
+}
+
+model AuditLog {
+  id               BigInt   @id @default(autoincrement())
+  usuario_id       Int
+  pergunta_id      Int?
+  acao             String
+  dados_anteriores Json?
+  dados_novos      Json?
+  ip_address       String?
+  user_agent       String?
+  created_at       DateTime @default(now())
+
+  usuario  Usuario   @relation(fields: [usuario_id], references: [id])
+  pergunta Pergunta? @relation(fields: [pergunta_id], references: [id], onDelete: SetNull)
+
+  @@index([usuario_id, created_at])
+  @@index([pergunta_id, created_at])
+  @@index([acao])
+  @@index([created_at])
+}

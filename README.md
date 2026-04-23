@@ -172,4 +172,6 @@ Optamos pelo **PostgreSQL** com a extensão **pgvector** para suportar nativamen
 
 > 📄 **Confira o detalhamento técnico:** [Documentação de Banco de Dados e Decisões Técnicas](./backend/DB.md)
 
+> 🗄️ **Confira a Modelagem:** [Modelagem do Banco de Dados (Dicionário)](./docs/database/SCHEMA.md)
+
 🔝 [Voltar ao topo](#top)
