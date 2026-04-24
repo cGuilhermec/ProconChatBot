@@ -4,6 +4,8 @@ import cors from "cors";
 import { loggerMiddleware } from "./middlewares/logger.middleware";
 import ragRoutes from "./routes/rag.routes";
 import chatbotRoutes from "./routes/chatbot.routes";
+import Routes from "./routes/index.routes";
+
 import "./whatsapp/bot";
 
 // ============================================
@@ -37,4 +39,24 @@ chatbotApp.listen(CHATBOT_PORT, () => {
   console.log(`🚀 Chatbot API rodando em http://localhost:${CHATBOT_PORT}`);
   console.log(`📡 Rotas Chatbot: /api/chat, /api/tema/:id, /api/stats`);
   console.log(`🔗 Conectado à API técnica: http://localhost:${RAG_PORT}`);
+});
+
+// ============================================
+// API ADMINISTRATIVA (Porta 3002)
+// ============================================
+const adminApp = express();
+adminApp.use(cors());
+adminApp.use(express.json());
+adminApp.use(loggerMiddleware);
+adminApp.use("/", Routes);
+
+const ADMIN_PORT = 3002;
+adminApp.listen(ADMIN_PORT, () => {
+  console.log(`🚀 API Administrativa rodando em http://localhost:${ADMIN_PORT}`);
+  console.log(`📡 Rotas Admin:`);
+  console.log(`   - /procon (CRUD Procon)`);
+  console.log(`   - /usuarios (CRUD Usuários)`);
+  console.log(`   - /perguntas (CRUD Perguntas RAG)`);
+  console.log(`   - /agendamentos (CRUD Agendamentos)`);
+  console.log(`   - /login (Autenticação)`);
 });
