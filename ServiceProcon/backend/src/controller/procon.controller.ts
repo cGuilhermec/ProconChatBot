@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
-import { ProconService } from "../services/procon.service";
+import { ProconService } from "../service/procon.service";
+
 
 export class ProconController {
   private proconService: ProconService;

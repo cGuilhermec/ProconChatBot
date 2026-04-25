@@ -1,0 +1,36 @@
+// tsconfig.json
+{
+    "compilerOptions": {
+        "target": "ES2020",
+        "module": "commonjs",
+        "lib": [
+            "ES2020"
+        ],
+        "outDir": "./dist",
+        "rootDir": "./src",
+        "strict": true,
+        "esModuleInterop": true,
+        "skipLibCheck": true,
+        "forceConsistentCasingInFileNames": true,
+        "resolveJsonModule": true,
+        "declaration": true,
+        "declarationMap": true,
+        "sourceMap": true,
+        "types": [
+            "node"
+        ]
+    },
+    "include": [
+        "src/**/*"
+, "../ServiceProcon/backend/src/controller/procon.controller.ts", "../ServiceProcon/backend/src/model", "../ServiceProcon/backend/src/routes/procon.route.ts", "../ServiceProcon/backend/src/routes/index.routes.ts", "../ServiceProcon/backend/src/routes/dev.routes.ts", "src/services", "../ServiceProcon/backend/src/service/procon.service.ts", "../ServiceProcon/backend/src/service/usuario.service.ts", "../ServiceProcon/backend/src/types/usuraio.types.ts"    ],
+    "exclude": [
+        "node_modules",
+        "dist"
+    ],
+    "scripts": {
+        "test": "vitest",
+        "test:ui": "vitest --ui",
+        "test:run": "vitest run",
+        "test:coverage": "vitest run --coverage"
+    }
+}

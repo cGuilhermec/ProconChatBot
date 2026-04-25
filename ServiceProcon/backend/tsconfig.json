@@ -1,4 +1,3 @@
-// tsconfig.json
 {
     "compilerOptions": {
         "target": "ES2020",
@@ -13,9 +12,6 @@
         "skipLibCheck": true,
         "forceConsistentCasingInFileNames": true,
         "resolveJsonModule": true,
-        "declaration": true,
-        "declarationMap": true,
-        "sourceMap": true,
         "types": [
             "node"
         ]
@@ -26,11 +22,5 @@
     "exclude": [
         "node_modules",
         "dist"
-    ],
-    "scripts": {
-        "test": "vitest",
-        "test:ui": "vitest --ui",
-        "test:run": "vitest run",
-        "test:coverage": "vitest run --coverage"
-    }
+    ]
 }

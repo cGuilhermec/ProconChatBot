@@ -1,6 +1,6 @@
 // src/routes/dev.routes.ts
 import { Router } from "express";
-import { ProconController } from "../controllers/procon.controller";
+import { ProconController } from "../controller/procon.controller";
 
 const router = Router();
 const proconController = new ProconController();
