@@ -8,7 +8,8 @@
 <a href="#burndown">Burndown</a> | 
 <a href="#arquitetura">Arquitetura de Sistemas</a> | 
 <a href="#kanban">Kanban</a> | 
-<a href="#review">Sprint Review</a>
+<a href="#review">Sprint Review</a> | 
+<a href="#testes">Configuração e Estratégia de Testes</a>
 </p>
 
 <br>
@@ -56,8 +57,8 @@ Nesta sprint, o foco foi na fundação técnica, totalizando a queima de **52 St
 ## 🏗️ <a id="arquitetura"></a>Arquitetura de Sistemas
 
 Diferente da Sprint 1 (focada no motor RAG), a Sprint 2 consolidou a arquitetura global do sistema:
-* **Backend:** Implementação de uma estrutura modular em Node.js com TypeScript, visando separação de interesses e escalabilidade.
-* **Frontend:** Configuração do ambiente React para a interface do usuário, focando em componentização e integração fluida com as APIs.
+* **Backend:** Implementação de uma estrutura modular em Node.js com TypeScript.
+* **Frontend:** Configuração do ambiente React para a interface do usuário.
 * **Persistência:** Definição do banco de dados e modelagem das entidades (usuários, logs de triagem e histórico de conversas).
 
 ---
@@ -70,12 +71,39 @@ Diferente da Sprint 1 (focada no motor RAG), a Sprint 2 consolidou a arquitetura
 ## 🎬 <a id="review"></a>Sprint Review
 
 #### O que funcionou bem?
-* **Padronização Técnica:** A definição precoce de padrões de código e arquitetura reduziu a fricção entre o desenvolvimento do front e back.
-* **Decisões de Stack:** A escolha das bibliotecas de UI e banco de dados foi baseada em critérios técnicos claros, facilitando a reestruturação do projeto.
-* **Ambiente de Testes:** A configuração inicial das suites de teste já permite validar as novas rotas de integração.
+* **Padronização Técnica:** A definição precoce de padrões reduziu a fricção entre front e back.
+* **Ambiente de Testes:** A configuração inicial das suites já permite validar as novas rotas.
 
 #### Pontos a melhorar!
-* **Esforço de Reestruturação:** A tarefa 4.1 (Reestruturar Projeto) levou mais tempo que o previsto devido à necessidade de migrar componentes experimentais da Sprint 1.
-* **Complexidade da Autenticação:** A definição da estratégia de segurança demandou estudos adicionais para garantir a proteção dos dados dos usuários do PROCON.
+* **Esforço de Reestruturação:** A migração de componentes da Sprint 1 levou mais tempo que o previsto.
 
 ---
+
+## 🔬 <a id="testes"></a>Configuração e Estratégia de Testes
+
+### 📌 Visão Geral
+A estratégia de testes foi desenvolvida para garantir a confiabilidade do ProconChatBot, utilizando o **test runner nativo do Node.js** (`node:test`) e `supertest` para integração.
+
+### 🛠️ Tecnologias Utilizadas
+| Ferramenta | Finalidade |
+|:---|:---|
+| `node:test` | Test runner nativo do Node.js |
+| `node:assert` | Asserções para validação |
+| `supertest` | Simulação de requisições HTTP |
+| `tsx` | Execução de TypeScript nos testes |
+
+### 🧪 Suítes de Testes Implementadas
+| Arquivo | Cobertura | Cenários Validados |
+|:---|:---|:---|
+| auth.test.ts | Autenticação | Login com sucesso, credenciais inválidas |
+| crud.test.ts | CRUD Usuário | Criação, listagem, perfil próprio |
+| senha.test.ts | Senha | Primeiro acesso, troca e reset |
+| status.test.ts | Ativação | Ativar/desativar usuário |
+
+### 🚀 Como Executar
+```bash
+# Executar todos os testes
+npm run test:all
+
+# Executar com watch mode
+npm run test:watch

@@ -8,7 +8,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
 // ============================================
 // ENUMS
 // ============================================
@@ -33,7 +32,7 @@ enum StatusAgendamento {
 // ============================================
 
 model Procon {
-  id                          Int      @id @default(autoincrement())
+  PROCON_ID                   Int      @id @default(autoincrement())
   nome                        String
   cidade                      String
   estado                      String
@@ -57,7 +56,7 @@ model Procon {
 }
 
 model Feriado {
-  id         Int      @id @default(autoincrement())
+  FERIADO_ID Int      @id @default(autoincrement())
   procon_id  Int
   data       DateTime
   nome       String
@@ -65,24 +64,26 @@ model Feriado {
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 
-  procon Procon @relation(fields: [procon_id], references: [id], onDelete: Cascade)
+  procon Procon @relation(fields: [procon_id], references: [PROCON_ID], onDelete: Cascade)
 
   @@unique([procon_id, data])
   @@index([procon_id, data])
 }
 
 model Usuario {
-  id         Int      @id @default(autoincrement())
-  nome       String
-  email      String   @unique
-  senha      String
-  role       Role     @default(FUNCIONARIO)
-  procon_id  Int?
-  ativo      Boolean  @default(true)
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  USUARIO_ID      Int       @id @default(autoincrement())
+  nome            String
+  email           String    @unique
+  senha           String
+  role            Role      @default(FUNCIONARIO)
+  procon_id       Int?
+  ativo           Boolean   @default(true)
+  created_at      DateTime  @default(now())
+  updated_at      DateTime  @updatedAt
+  primeiro_acesso Boolean   @default(true)
+  ultimo_login    DateTime?
 
-  procon               Procon?    @relation(fields: [procon_id], references: [id], onDelete: SetNull)
+  procon               Procon?    @relation(fields: [procon_id], references: [PROCON_ID], onDelete: SetNull)
   perguntasCriadas     Pergunta[] @relation("criadoPor")
   perguntasAtualizadas Pergunta[] @relation("atualizadoPor")
   auditLogs            AuditLog[]
@@ -93,7 +94,7 @@ model Usuario {
 }
 
 model Pergunta {
-  id             Int                    @id @default(autoincrement())
+  Pergunta_ID    Int                    @id @default(autoincrement())
   procon_id      Int
   criado_por     Int
   atualizado_por Int
@@ -109,9 +110,9 @@ model Pergunta {
   created_at     DateTime               @default(now())
   updated_at     DateTime               @updatedAt
 
-  procon      Procon     @relation(fields: [procon_id], references: [id], onDelete: Cascade)
-  criador     Usuario    @relation("criadoPor", fields: [criado_por], references: [id])
-  atualizador Usuario    @relation("atualizadoPor", fields: [atualizado_por], references: [id])
+  procon      Procon     @relation(fields: [procon_id], references: [PROCON_ID], onDelete: Cascade)
+  criador     Usuario    @relation("criadoPor", fields: [criado_por], references: [USUARIO_ID])
+  atualizador Usuario    @relation("atualizadoPor", fields: [atualizado_por], references: [USUARIO_ID])
   auditLogs   AuditLog[]
 
   @@index([procon_id, ativo])
@@ -121,7 +122,7 @@ model Pergunta {
 }
 
 model Agendamento {
-  id                  Int               @id @default(autoincrement())
+  AGENDAMENTO_ID      Int               @id @default(autoincrement())
   procon_id           Int
   nome_usuario        String
   cpf                 String
@@ -133,7 +134,7 @@ model Agendamento {
   created_at          DateTime          @default(now())
   updated_at          DateTime          @updatedAt
 
-  procon Procon @relation(fields: [procon_id], references: [id], onDelete: Cascade)
+  procon Procon @relation(fields: [procon_id], references: [PROCON_ID], onDelete: Cascade)
 
   @@index([procon_id, data_agendamento, horario_agendamento, status])
   @@index([procon_id, cpf, data_agendamento])
@@ -152,8 +153,8 @@ model AuditLog {
   user_agent       String?
   created_at       DateTime @default(now())
 
-  usuario  Usuario   @relation(fields: [usuario_id], references: [id])
-  pergunta Pergunta? @relation(fields: [pergunta_id], references: [id], onDelete: SetNull)
+  usuario  Usuario   @relation(fields: [usuario_id], references: [USUARIO_ID])
+  pergunta Pergunta? @relation(fields: [pergunta_id], references: [Pergunta_ID], onDelete: SetNull)
 
   @@index([usuario_id, created_at])
   @@index([pergunta_id, created_at])

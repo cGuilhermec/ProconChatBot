@@ -6,7 +6,7 @@ CREATE TYPE "StatusAgendamento" AS ENUM ('PENDENTE', 'CONFIRMADO', 'CANCELADO', 
 
 -- CreateTable
 CREATE TABLE "Procon" (
-    "id" SERIAL NOT NULL,
+    "PROCON_ID" SERIAL NOT NULL,
     "nome" TEXT NOT NULL,
     "cidade" TEXT NOT NULL,
     "estado" TEXT NOT NULL,
@@ -20,12 +20,12 @@ CREATE TABLE "Procon" (
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "Procon_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "Procon_pkey" PRIMARY KEY ("PROCON_ID")
 );
 
 -- CreateTable
 CREATE TABLE "Feriado" (
-    "id" SERIAL NOT NULL,
+    "FERIADO_ID" SERIAL NOT NULL,
     "procon_id" INTEGER NOT NULL,
     "data" TIMESTAMP(3) NOT NULL,
     "nome" TEXT NOT NULL,
@@ -33,12 +33,12 @@ CREATE TABLE "Feriado" (
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "Feriado_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "Feriado_pkey" PRIMARY KEY ("FERIADO_ID")
 );
 
 -- CreateTable
 CREATE TABLE "Usuario" (
-    "id" SERIAL NOT NULL,
+    "USUARIO_ID" SERIAL NOT NULL,
     "nome" TEXT NOT NULL,
     "email" TEXT NOT NULL,
     "senha" TEXT NOT NULL,
@@ -48,12 +48,12 @@ CREATE TABLE "Usuario" (
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "Usuario_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "Usuario_pkey" PRIMARY KEY ("USUARIO_ID")
 );
 
 -- CreateTable
 CREATE TABLE "Pergunta" (
-    "id" SERIAL NOT NULL,
+    "Pergunta_ID" SERIAL NOT NULL,
     "procon_id" INTEGER NOT NULL,
     "criado_por" INTEGER NOT NULL,
     "atualizado_por" INTEGER NOT NULL,
@@ -69,12 +69,12 @@ CREATE TABLE "Pergunta" (
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "Pergunta_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "Pergunta_pkey" PRIMARY KEY ("Pergunta_ID")
 );
 
 -- CreateTable
 CREATE TABLE "Agendamento" (
-    "id" SERIAL NOT NULL,
+    "AGENDAMENTO_ID" SERIAL NOT NULL,
     "procon_id" INTEGER NOT NULL,
     "nome_usuario" TEXT NOT NULL,
     "cpf" TEXT NOT NULL,
@@ -86,7 +86,7 @@ CREATE TABLE "Agendamento" (
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "Agendamento_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "Agendamento_pkey" PRIMARY KEY ("AGENDAMENTO_ID")
 );
 
 -- CreateTable
@@ -165,25 +165,25 @@ CREATE INDEX "AuditLog_acao_idx" ON "AuditLog"("acao");
 CREATE INDEX "AuditLog_created_at_idx" ON "AuditLog"("created_at");
 
 -- AddForeignKey
-ALTER TABLE "Feriado" ADD CONSTRAINT "Feriado_procon_id_fkey" FOREIGN KEY ("procon_id") REFERENCES "Procon"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "Feriado" ADD CONSTRAINT "Feriado_procon_id_fkey" FOREIGN KEY ("procon_id") REFERENCES "Procon"("PROCON_ID") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Usuario" ADD CONSTRAINT "Usuario_procon_id_fkey" FOREIGN KEY ("procon_id") REFERENCES "Procon"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "Usuario" ADD CONSTRAINT "Usuario_procon_id_fkey" FOREIGN KEY ("procon_id") REFERENCES "Procon"("PROCON_ID") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Pergunta" ADD CONSTRAINT "Pergunta_procon_id_fkey" FOREIGN KEY ("procon_id") REFERENCES "Procon"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "Pergunta" ADD CONSTRAINT "Pergunta_procon_id_fkey" FOREIGN KEY ("procon_id") REFERENCES "Procon"("PROCON_ID") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Pergunta" ADD CONSTRAINT "Pergunta_criado_por_fkey" FOREIGN KEY ("criado_por") REFERENCES "Usuario"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Pergunta" ADD CONSTRAINT "Pergunta_criado_por_fkey" FOREIGN KEY ("criado_por") REFERENCES "Usuario"("USUARIO_ID") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Pergunta" ADD CONSTRAINT "Pergunta_atualizado_por_fkey" FOREIGN KEY ("atualizado_por") REFERENCES "Usuario"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Pergunta" ADD CONSTRAINT "Pergunta_atualizado_por_fkey" FOREIGN KEY ("atualizado_por") REFERENCES "Usuario"("USUARIO_ID") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Agendamento" ADD CONSTRAINT "Agendamento_procon_id_fkey" FOREIGN KEY ("procon_id") REFERENCES "Procon"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "Agendamento" ADD CONSTRAINT "Agendamento_procon_id_fkey" FOREIGN KEY ("procon_id") REFERENCES "Procon"("PROCON_ID") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "AuditLog" ADD CONSTRAINT "AuditLog_usuario_id_fkey" FOREIGN KEY ("usuario_id") REFERENCES "Usuario"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "AuditLog" ADD CONSTRAINT "AuditLog_usuario_id_fkey" FOREIGN KEY ("usuario_id") REFERENCES "Usuario"("USUARIO_ID") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "AuditLog" ADD CONSTRAINT "AuditLog_pergunta_id_fkey" FOREIGN KEY ("pergunta_id") REFERENCES "Pergunta"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "AuditLog" ADD CONSTRAINT "AuditLog_pergunta_id_fkey" FOREIGN KEY ("pergunta_id") REFERENCES "Pergunta"("Pergunta_ID") ON DELETE SET NULL ON UPDATE CASCADE;
