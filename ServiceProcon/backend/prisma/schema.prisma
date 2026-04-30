@@ -43,6 +43,7 @@ model Procon {
   horario_fechamento          DateTime
   duracao_atendimento_minutos Int      @default(30)
   vagas_por_horario           Int      @default(2)
+  ativo                       Boolean  @default(true)
   created_at                  DateTime @default(now())
   updated_at                  DateTime @updatedAt
 
@@ -53,6 +54,7 @@ model Procon {
 
   @@index([cidade])
   @@index([estado])
+  @@index([ativo]) 
 }
 
 model Feriado {

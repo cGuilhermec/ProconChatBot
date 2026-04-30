@@ -2,6 +2,7 @@
 import { Router } from "express";
 import devRoutes from "./dev.routes";
 import usuarioRoutes from "./usuario.routes";
+import proconRoutes from "./procon.routes";
 import { LoginController } from "../controller/login.controller";
 
 
@@ -12,6 +13,7 @@ const router = Router();
 router.use("/dev", devRoutes);
 
 // Rotas Autenticadas Usuários
+router.use("/", proconRoutes);
 router.use('/', usuarioRoutes);
 
 //Login

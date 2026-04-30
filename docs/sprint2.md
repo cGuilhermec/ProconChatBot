@@ -41,8 +41,8 @@ O foco principal desta sprint foi a **Estruturação e Padronização de Softwar
 | 3.2 | Modelagem de dados | ✅ | [#36](https://github.com/cGuilhermec/ProconChatBot/issues/36) |
 | 4.1 | Restruturar Projeto | ✅ | [#42](https://github.com/cGuilhermec/ProconChatBot/issues/42) |
 | 5.1 | Configurar projeto frontend | ✅ | [#43](https://github.com/cGuilhermec/ProconChatBot/issues/43) |
-| 6.1 | Configurar testes backend | ✅ | [#44](https://github.com/cGuilhermec/ProconChatBot/issues/44) |
-| 6.2 | Configurar testes frontend | ✅ | [#45](https://github.com/cGuilhermec/ProconChatBot/issues/45) |
+| 6.1 | Configurar testes backend - Usuario | ✅ | [#44](https://github.com/cGuilhermec/ProconChatBot/issues/44) |
+| 6.2 | Configurar testes backend - Procon( Perguntas ) | ✅ | [#45](https://github.com/cGuilhermec/ProconChatBot/issues/45) |
 
 ---
 
@@ -92,13 +92,22 @@ A estratégia de testes foi desenvolvida para garantir a confiabilidade do Proco
 | `supertest` | Simulação de requisições HTTP |
 | `tsx` | Execução de TypeScript nos testes |
 
-### 🧪 Suítes de Testes Implementadas
-| Arquivo | Cobertura | Cenários Validados |
-|:---|:---|:---|
-| auth.test.ts | Autenticação | Login com sucesso, credenciais inválidas |
-| crud.test.ts | CRUD Usuário | Criação, listagem, perfil próprio |
-| senha.test.ts | Senha | Primeiro acesso, troca e reset |
-| status.test.ts | Ativação | Ativar/desativar usuário |
+### 📁 Estrutura dos Testes
+```text
+src/__tests__/
+├── helpers/
+│   ├── db.helper.ts           # Helpers para banco de dados
+│   └── http.helper.ts         # Helpers para requisições HTTP
+├── usuario/
+│   ├── auth.test.ts           # Testes de autenticação
+│   ├── crud.test.ts           # Testes CRUD do usuário
+│   ├── senha.test.ts          # Testes de gerenciamento de senha
+│   └── status.test.ts         # Testes de ativação/desativação
+├── procon/
+│   ├── crud.test.ts           # Testes CRUD do Procon
+│   └── status.test.ts         # Testes de ativação/desativação
+└── setup.test.ts              # Configuração global
+```
 
 ### 🚀 Como Executar
 ```bash
@@ -107,3 +116,9 @@ npm run test:all
 
 # Executar com watch mode
 npm run test:watch
+
+# Executar testes do usuário
+npm run test:usuario
+
+# Executar testes do Procon
+npm run test:procon

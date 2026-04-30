@@ -16,6 +16,7 @@ export class DbHelper {
   static async cleanAllTestData() {
     console.log("🧹 Limpando TODOS os dados de teste do banco...");
 
+    // Limpar usuários com emails de teste (@teste.com)
     const deletedUsers = await prisma.usuario.deleteMany({
       where: {
         OR: [
@@ -26,12 +27,20 @@ export class DbHelper {
       },
     });
 
+    // Limpar Procons com emails de teste (@teste.com) OU que tenham [TESTE] no nome
     const deletedProcons = await prisma.procon.deleteMany({
       where: {
         OR: [
           { email: { contains: "@teste.com" } },
           { nome: { contains: "[TESTE]" } },
-          { cidade: { contains: "[TESTE]" } },
+          { email: { contains: "teste" } },
+          { nome: { contains: "Procon Teste" } },
+          { nome: { contains: "Procon Duplicado" } },
+          { nome: { contains: "Procon Desativar" } },
+          { nome: { contains: "Procon Ativar" } },
+          { nome: { contains: "Procon Busca" } },
+          { nome: { contains: "Procon Update" } },
+          { nome: { contains: "Procon Atualizado" } },
         ],
       },
     });
@@ -117,8 +126,6 @@ export class DbHelper {
   }
 
   static async getToken(userEmail: string) {
-    console.log(`🔑 getToken: Buscando usuário com email: ${userEmail}`);
-
     const user = await prisma.usuario.findUnique({
       where: { email: userEmail },
       select: {
@@ -133,17 +140,10 @@ export class DbHelper {
     });
 
     if (!user) {
-      console.log(
-        `❌ getToken: Usuário NÃO encontrado para email: ${userEmail}`,
-      );
       throw new Error(`User not found: ${userEmail}`);
     }
 
-    console.log(
-      `✅ getToken: Usuário encontrado ID: ${user.USUARIO_ID}, email: ${user.email}`,
-    );
-
-    const token = jwt.sign(
+    return jwt.sign(
       {
         id: user.USUARIO_ID,
         email: user.email,
@@ -156,8 +156,5 @@ export class DbHelper {
       JWT_SECRET,
       { expiresIn: "2h" },
     );
-
-    console.log(`✅ getToken: Token gerado para ID ${user.USUARIO_ID}`);
-    return token;
   }
 }

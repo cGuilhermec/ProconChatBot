@@ -10,14 +10,20 @@ export async function apiRequest(
     method?: string;
     body?: any;
     token?: string;
+    query?: Record<string, string>;
   } = {},
 ): Promise<{ status: number; body: any }> {
-  const { method = "GET", body, token } = options;
+  const { method = "GET", body, token, query } = options;
 
   let req =
     request(app)[
       method.toLowerCase() as "get" | "post" | "put" | "delete" | "patch"
     ](path);
+
+  // Adicionar query parameters
+  if (query) {
+    req = req.query(query);
+  }
 
   if (token) {
     req = req.set("Authorization", `Bearer ${token}`);
