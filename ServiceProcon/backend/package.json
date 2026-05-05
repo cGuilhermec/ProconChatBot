@@ -8,7 +8,8 @@
     "test:usuario": "node --test --import tsx --test-reporter spec src/__tests__/setup.test.ts src/__tests__/usuario/**/*.test.ts",
     "test:procon": "node --test --import tsx --test-reporter spec src/__tests__/setup.test.ts src/__tests__/procon/**/*.test.ts",
     "test:login": "node --test --import tsx --test-reporter spec src/__tests__/setup.test.ts src/__tests__/usuario/auth.test.ts",
-    "test:all": "node --test --import tsx --test-reporter spec src/__tests__/setup.test.ts src/__tests__/**/*.test.ts"
+    "test:all": "node --test --import tsx --test-reporter spec src/__tests__/setup.test.ts src/__tests__/**/*.test.ts",
+    "test:feriado": "node --test --import tsx --test-reporter spec src/__tests__/setup.test.ts src/__tests__/feriado/**/*.test.ts"
   },
   "keywords": [],
   "author": "",

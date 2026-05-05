@@ -9,6 +9,7 @@ const JWT_SECRET = process.env.JWT_SECRET || "test_secret_key_for_jwt";
 const createdIds = {
   procons: [] as number[],
   usuarios: [] as number[],
+  feriados: [] as number[], // ⬅️ ADICIONAR
 };
 
 export class DbHelper {
@@ -16,7 +17,23 @@ export class DbHelper {
   static async cleanAllTestData() {
     console.log("🧹 Limpando TODOS os dados de teste do banco...");
 
-    // Limpar usuários com emails de teste (@teste.com)
+    // ⬅️ 1. Limpar Feriados primeiro (por causa das chaves estrangeiras)
+    const deletedFeriados = await prisma.feriado.deleteMany({
+      where: {
+        OR: [
+          { nome: { contains: "Natal" } },
+          { nome: { contains: "Ano Novo" } },
+          { nome: { contains: "Tiradentes" } },
+          { nome: { contains: "Padroeira" } },
+          { nome: { contains: "Proclamação" } },
+          { nome: { contains: "Trabalhador" } },
+          { nome: { contains: "Feriado" } },
+          { nome: { contains: "[TESTE]" } },
+        ],
+      },
+    });
+
+    // 2. Limpar usuários com emails de teste (@teste.com)
     const deletedUsers = await prisma.usuario.deleteMany({
       where: {
         OR: [
@@ -27,7 +44,7 @@ export class DbHelper {
       },
     });
 
-    // Limpar Procons com emails de teste (@teste.com) OU que tenham [TESTE] no nome
+    // 3. Limpar Procons com emails de teste (@teste.com) OU que tenham [TESTE] no nome
     const deletedProcons = await prisma.procon.deleteMany({
       where: {
         OR: [
@@ -45,18 +62,20 @@ export class DbHelper {
       },
     });
 
+    console.log(`🗑️ Deletados ${deletedFeriados.count} feriados de teste`);
     console.log(`🗑️ Deletados ${deletedUsers.count} usuários de teste`);
     console.log(`🗑️ Deletados ${deletedProcons.count} procons de teste`);
 
     // Limpar os arrays locais
     createdIds.procons = [];
     createdIds.usuarios = [];
+    createdIds.feriados = []; // ⬅️ ADICIONAR
   }
 
   // Limpar APENAS os dados criados nesta execução
   static async cleanTestData() {
     console.log(
-      `🧹 Limpando dados de teste desta execução: ${createdIds.usuarios.length} usuários, ${createdIds.procons.length} procons`,
+      `🧹 Limpando dados de teste desta execução: ${createdIds.usuarios.length} usuários, ${createdIds.procons.length} procons, ${createdIds.feriados.length} feriados`,
     );
 
     if (createdIds.usuarios.length > 0) {
@@ -72,6 +91,37 @@ export class DbHelper {
       });
       createdIds.procons = [];
     }
+
+    // ⬅️ ADICIONAR LIMPEZA DE FERIADOS
+    if (createdIds.feriados.length > 0) {
+      await prisma.feriado.deleteMany({
+        where: { FERIADO_ID: { in: createdIds.feriados } },
+      });
+      createdIds.feriados = [];
+    }
+  }
+
+  // ⬅️ ADICIONAR MÉTODO PARA CRIAR FERIADO DE TESTE
+  static async createTestFeriado(
+    proconId: number,
+    nome: string,
+    data: Date,
+    recorrente: boolean = false,
+  ) {
+    const feriado = await prisma.feriado.create({
+      data: {
+        procon_id: proconId,
+        data: data,
+        nome: nome,
+        recorrente: recorrente,
+      },
+    });
+
+    createdIds.feriados.push(feriado.FERIADO_ID);
+    console.log(
+      `📅 Feriado de teste criado: ${feriado.nome} (ID ${feriado.FERIADO_ID})`,
+    );
+    return feriado;
   }
 
   static async createTestProcon() {
