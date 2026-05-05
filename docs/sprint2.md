@@ -44,6 +44,7 @@ O foco principal desta sprint foi a **Estruturação e Padronização de Softwar
 | 6.1 | Configurar e criar o CRUD e testes backend - Usuario | ✅ | [#44](https://github.com/cGuilhermec/ProconChatBot/issues/44) |
 | 6.2 | Configurar e criar o CRUD e testes backend - Procon( Perguntas ) | ✅ | [#45](https://github.com/cGuilhermec/ProconChatBot/issues/45) |
 | 6.3 | Configurar e criar o CRUD e testes backend - Feriado | ✅ | [#48](https://github.com/cGuilhermec/ProconChatBot/issues/48) |
+| 6.4 | Configurar e criar o CRUD e testes no backend - Agendamento | ✅ | [#50](https://github.com/cGuilhermec/ProconChatBot/issues/50) |
 
 ---
 
@@ -110,6 +111,10 @@ src/__tests__/
 ├── feriado/
 │   ├── crud.test.ts           # Testes CRUD do Feriado
 │   └── isFeriado.test.ts      # Testes de verificação de feriado
+├── agendamento/
+│   ├── public.test.ts         # Testes de rotas públicas (WhatsApp)
+│   ├── validation.test.ts     # Testes de validação (CPF, data, horário)
+│   └── admin.test.ts          # Testes de rotas administrativas
 └── setup.test.ts              # Configuração global
 ```
 
@@ -129,3 +134,6 @@ npm run test:procon
 
 # Executar testes do Feriado
 npm run test:feriado
+
+# Executar testes do Agendamento
+npm run test:agendamento

@@ -9,13 +9,26 @@ const JWT_SECRET = process.env.JWT_SECRET || "test_secret_key_for_jwt";
 const createdIds = {
   procons: [] as number[],
   usuarios: [] as number[],
-  feriados: [] as number[], // ⬅️ ADICIONAR
+  feriados: [] as number[],
+  agendamentos: [] as number[],
 };
 
 export class DbHelper {
   // Limpar TODOS os dados de teste do banco (independente de quando foram criados)
   static async cleanAllTestData() {
     console.log("🧹 Limpando TODOS os dados de teste do banco...");
+
+    const deletedAgendamentos = await prisma.agendamento.deleteMany({
+      where: {
+        OR: [
+          { cpf: { contains: "44470962856" } },
+          { nome_usuario: { contains: "Teste" } },
+          { nome_usuario: { contains: "Busca" } },
+          { nome_usuario: { contains: "Cancelar" } },
+          { cpf: { contains: "12345678900" } },
+        ],
+      },
+    });
 
     // ⬅️ 1. Limpar Feriados primeiro (por causa das chaves estrangeiras)
     const deletedFeriados = await prisma.feriado.deleteMany({
@@ -62,6 +75,9 @@ export class DbHelper {
       },
     });
 
+    console.log(
+      `🗑️ Deletados ${deletedAgendamentos.count} agendamentos de teste`,
+    );
     console.log(`🗑️ Deletados ${deletedFeriados.count} feriados de teste`);
     console.log(`🗑️ Deletados ${deletedUsers.count} usuários de teste`);
     console.log(`🗑️ Deletados ${deletedProcons.count} procons de teste`);
@@ -69,7 +85,8 @@ export class DbHelper {
     // Limpar os arrays locais
     createdIds.procons = [];
     createdIds.usuarios = [];
-    createdIds.feriados = []; // ⬅️ ADICIONAR
+    createdIds.feriados = [];
+    createdIds.agendamentos = [];
   }
 
   // Limpar APENAS os dados criados nesta execução
@@ -77,6 +94,13 @@ export class DbHelper {
     console.log(
       `🧹 Limpando dados de teste desta execução: ${createdIds.usuarios.length} usuários, ${createdIds.procons.length} procons, ${createdIds.feriados.length} feriados`,
     );
+
+    if (createdIds.agendamentos.length > 0) {
+      await prisma.agendamento.deleteMany({
+        where: { AGENDAMENTO_ID: { in: createdIds.agendamentos } },
+      });
+      createdIds.agendamentos = [];
+    }
 
     if (createdIds.usuarios.length > 0) {
       await prisma.usuario.deleteMany({
@@ -101,7 +125,31 @@ export class DbHelper {
     }
   }
 
-  // ⬅️ ADICIONAR MÉTODO PARA CRIAR FERIADO DE TESTE
+  static async createTestAgendamento(proconId: number, cpf: string) {
+    const dataFutura = new Date();
+    dataFutura.setDate(dataFutura.getDate() + 30);
+
+    const agendamento = await prisma.agendamento.create({
+      data: {
+        procon: {
+          connect: { PROCON_ID: proconId },
+        },
+        nome_usuario: "Teste Agendamento",
+        cpf: cpf,
+        telefone: "(11) 99999-9999",
+        data_agendamento: dataFutura,
+        horario_agendamento: new Date(dataFutura.setHours(9, 0, 0, 0)),
+        status: "PENDENTE",
+      },
+    });
+
+    createdIds.agendamentos.push(agendamento.AGENDAMENTO_ID);
+    console.log(
+      `📅 Agendamento de teste criado: ID ${agendamento.AGENDAMENTO_ID}`,
+    );
+    return agendamento;
+  }
+
   static async createTestFeriado(
     proconId: number,
     nome: string,

@@ -9,7 +9,8 @@
     "test:procon": "node --test --import tsx --test-reporter spec src/__tests__/setup.test.ts src/__tests__/procon/**/*.test.ts",
     "test:login": "node --test --import tsx --test-reporter spec src/__tests__/setup.test.ts src/__tests__/usuario/auth.test.ts",
     "test:all": "node --test --import tsx --test-reporter spec src/__tests__/setup.test.ts src/__tests__/**/*.test.ts",
-    "test:feriado": "node --test --import tsx --test-reporter spec src/__tests__/setup.test.ts src/__tests__/feriado/**/*.test.ts"
+    "test:feriado": "node --test --import tsx --test-reporter spec src/__tests__/setup.test.ts src/__tests__/feriado/**/*.test.ts",
+    "test:agendamento": "node --test --import tsx --test-reporter spec src/__tests__/setup.test.ts src/__tests__/agendamento/**/*.test.ts"
   },
   "keywords": [],
   "author": "",
@@ -22,7 +23,8 @@
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
-    "jsonwebtoken": "^9.0.3"
+    "jsonwebtoken": "^9.0.3",
+    "node-cron": "^4.2.1"
   },
   "devDependencies": {
     "@types/bcrypt": "^6.0.0",
@@ -30,6 +32,7 @@
     "@types/express": "^4.17.21",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^20.10.0",
+    "@types/node-cron": "^3.0.11",
     "@types/supertest": "^7.2.0",
     "nodemon": "^3.1.14",
     "prisma": "^6.19.3",
