@@ -11,12 +11,42 @@ const createdIds = {
   usuarios: [] as number[],
   feriados: [] as number[],
   agendamentos: [] as number[],
+  perguntas: [] as number[],
 };
 
 export class DbHelper {
   // Limpar TODOS os dados de teste do banco (independente de quando foram criados)
   static async cleanAllTestData() {
     console.log("🧹 Limpando TODOS os dados de teste do banco...");
+
+    const deletedNotificacoes = await prisma.notificacao.deleteMany({
+      where: {
+        OR: [
+          { mensagem: { contains: "revisão" } },
+          { mensagem: { contains: "aprovada" } },
+          { mensagem: { contains: "reprovada" } },
+        ],
+      },
+    });
+
+    // ⬅️ 1. Limpar Perguntas
+    const deletedPerguntas = await prisma.pergunta.deleteMany({
+      where: {
+        OR: [
+          { tema: { contains: "teste" } },
+          { tema: { contains: "cobranca" } },
+          { tema: { contains: "cancelamento" } },
+          { tema: { contains: "emprestimo" } },
+          { tema: { contains: "homofobia" } },
+          { tema: { contains: "racismo" } },
+          { tema: { contains: "ofensivo" } },
+          { tema: { contains: "pergunta_para" } },
+          { tema: { contains: "visibilidade" } },
+          { pergunta: { contains: "viado" } },
+          { pergunta: { contains: "macaco" } },
+        ],
+      },
+    });
 
     const deletedAgendamentos = await prisma.agendamento.deleteMany({
       where: {
@@ -75,18 +105,47 @@ export class DbHelper {
       },
     });
 
-    console.log(
-      `🗑️ Deletados ${deletedAgendamentos.count} agendamentos de teste`,
-    );
+    console.log(`🗑️ Deletados ${deletedAgendamentos.count} agendamentos de teste`);
     console.log(`🗑️ Deletados ${deletedFeriados.count} feriados de teste`);
     console.log(`🗑️ Deletados ${deletedUsers.count} usuários de teste`);
     console.log(`🗑️ Deletados ${deletedProcons.count} procons de teste`);
+    console.log(`🗑️ Deletados ${deletedNotificacoes.count} notificações de teste`);
+    console.log(`🗑️ Deletados ${deletedPerguntas.count} perguntas de teste`);
 
     // Limpar os arrays locais
     createdIds.procons = [];
     createdIds.usuarios = [];
     createdIds.feriados = [];
     createdIds.agendamentos = [];
+    createdIds.perguntas = [];
+  }
+
+  static async createTestPergunta(
+    proconId: number,
+    tema: string,
+    pergunta: string,
+    resposta: string,
+    criadoPor: number,
+  ) {
+    const perguntaCriada = await prisma.pergunta.create({
+      data: {
+        procon_id: proconId,
+        criado_por: criadoPor,
+        atualizado_por: criadoPor,
+        tema: tema,
+        pergunta: pergunta,
+        resposta: resposta,
+        ativo: true,
+        versao: 1,
+        status_moderacao: "APROVADO",
+      },
+    });
+
+    createdIds.perguntas.push(perguntaCriada.Pergunta_ID);
+    console.log(
+      `❓ Pergunta de teste criada: ${perguntaCriada.tema} (ID ${perguntaCriada.Pergunta_ID})`,
+    );
+    return perguntaCriada;
   }
 
   // Limpar APENAS os dados criados nesta execução
@@ -94,6 +153,13 @@ export class DbHelper {
     console.log(
       `🧹 Limpando dados de teste desta execução: ${createdIds.usuarios.length} usuários, ${createdIds.procons.length} procons, ${createdIds.feriados.length} feriados`,
     );
+
+    if (createdIds.perguntas.length > 0) {
+      await prisma.pergunta.deleteMany({
+        where: { Pergunta_ID: { in: createdIds.perguntas } },
+      });
+      createdIds.perguntas = [];
+    }
 
     if (createdIds.agendamentos.length > 0) {
       await prisma.agendamento.deleteMany({

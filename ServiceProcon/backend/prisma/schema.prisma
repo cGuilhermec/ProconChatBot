@@ -27,6 +27,21 @@ enum StatusAgendamento {
   FALTOU
 }
 
+enum StatusModeracao {
+  APROVADO // Disponível imediatamente
+  PENDENTE_REVISAO // Aguardando análise do coordenador
+  REPROVADO // Reprovado, não entra na base
+  BLOQUEADO // Bloqueado por violação grave (ex: racismo explícito)
+}
+
+enum TipoNotificacao {
+  PENDENTE_REVISAO // Nova pergunta aguardando revisão
+  PERGUNTA_APROVADA // Pergunta foi aprovada
+  PERGUNTA_REPROVADA // Pergunta foi reprovada
+  PERGUNTA_BLOQUEADA // Pergunta foi bloqueada
+  REVISAO_URGENTE // Palavras de alta gravidade detectadas
+}
+
 // ============================================
 // TABELAS
 // ============================================
@@ -54,7 +69,7 @@ model Procon {
 
   @@index([cidade])
   @@index([estado])
-  @@index([ativo]) 
+  @@index([ativo])
 }
 
 model Feriado {
@@ -85,14 +100,17 @@ model Usuario {
   primeiro_acesso Boolean   @default(true)
   ultimo_login    DateTime?
 
-  procon               Procon?    @relation(fields: [procon_id], references: [PROCON_ID], onDelete: SetNull)
-  perguntasCriadas     Pergunta[] @relation("criadoPor")
-  perguntasAtualizadas Pergunta[] @relation("atualizadoPor")
+  procon               Procon?       @relation(fields: [procon_id], references: [PROCON_ID], onDelete: SetNull)
+  perguntasCriadas     Pergunta[]    @relation("criadoPor")
+  perguntasAtualizadas Pergunta[]    @relation("atualizadoPor")
+  perguntasRevisadas   Pergunta[]    @relation("revisadoPor")
   auditLogs            AuditLog[]
+  notificacoes         Notificacao[] 
 
   @@index([email])
   @@index([role])
   @@index([procon_id])
+  @@map("usuario")
 }
 
 model Pergunta {
@@ -109,18 +127,30 @@ model Pergunta {
   embedding      Unsupported("vector")?
   ativo          Boolean                @default(true)
   versao         Int                    @default(1)
-  created_at     DateTime               @default(now())
-  updated_at     DateTime               @updatedAt
 
-  procon      Procon     @relation(fields: [procon_id], references: [PROCON_ID], onDelete: Cascade)
-  criador     Usuario    @relation("criadoPor", fields: [criado_por], references: [USUARIO_ID])
-  atualizador Usuario    @relation("atualizadoPor", fields: [atualizado_por], references: [USUARIO_ID])
-  auditLogs   AuditLog[]
+  status_moderacao    StatusModeracao @default(APROVADO)
+  palavras_detectadas String[] // Array das palavras ofensivas encontradas
+  revisado_por        Int? // ID do coordenador que revisou
+  revisado_em         DateTime? // Quando foi revisado
+  motivo_reprovacao   String? // Motivo da reprovação/bloqueio
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  // Relacionamentos
+  procon       Procon        @relation(fields: [procon_id], references: [PROCON_ID], onDelete: Cascade)
+  criador      Usuario       @relation("criadoPor", fields: [criado_por], references: [USUARIO_ID])
+  atualizador  Usuario       @relation("atualizadoPor", fields: [atualizado_por], references: [USUARIO_ID])
+  revisador    Usuario?      @relation("revisadoPor", fields: [revisado_por], references: [USUARIO_ID])
+  auditLogs    AuditLog[]
+  notificacoes Notificacao[] // ⬅️ RELACIONAMENTO COM NOTIFICACOES
 
   @@index([procon_id, ativo])
   @@index([criado_por])
   @@index([atualizado_por])
   @@index([tema])
+  @@index([status_moderacao]) // ⬅️ ÍNDICE PARA BUSCA POR STATUS
+  @@map("pergunta")
 }
 
 model Agendamento {
@@ -162,4 +192,27 @@ model AuditLog {
   @@index([pergunta_id, created_at])
   @@index([acao])
   @@index([created_at])
+}
+
+model Notificacao {
+  id                   Int             @id @default(autoincrement())
+  usuario_id           Int // ID do coordenador/diretor que recebe
+  pergunta_id          Int // ID da pergunta relacionada
+  tipo                 TipoNotificacao @default(PENDENTE_REVISAO)
+  mensagem             String // "Nova pergunta aguardando revisão"
+  palavras_encontradas String[] // Palavras ofensivas detectadas
+  gravidade            Int             @default(1) // 1-5 (5 = urgente)
+  lida                 Boolean         @default(false)
+  lida_em              DateTime? // Quando foi lida
+  created_at           DateTime        @default(now())
+
+  // Relacionamentos
+  usuario  Usuario  @relation(fields: [usuario_id], references: [USUARIO_ID])
+  pergunta Pergunta @relation(fields: [pergunta_id], references: [Pergunta_ID], onDelete: Cascade)
+
+  @@index([usuario_id, lida, created_at])
+  @@index([pergunta_id])
+  @@index([tipo])
+  @@index([gravidade])
+  @@map("notificacao")
 }

@@ -45,6 +45,8 @@ O foco principal desta sprint foi a **Estruturação e Padronização de Softwar
 | 6.2 | Configurar e criar o CRUD e testes backend - Procon( Perguntas ) | ✅ | [#45](https://github.com/cGuilhermec/ProconChatBot/issues/45) |
 | 6.3 | Configurar e criar o CRUD e testes backend - Feriado | ✅ | [#48](https://github.com/cGuilhermec/ProconChatBot/issues/48) |
 | 6.4 | Configurar e criar o CRUD e testes no backend - Agendamento | ✅ | [#50](https://github.com/cGuilhermec/ProconChatBot/issues/50) |
+| 6.5 | Integrar Chat (WhatsApp) com o Crud Agendamento | ✅ | [#53](https://github.com/cGuilhermec/ProconChatBot/issues/53) |
+| 6.6 | Configurar e criar o CRUD e testes no backend - Pergunta | ✅ | [#54](https://github.com/cGuilhermec/ProconChatBot/issues/54) |
 
 ---
 
@@ -115,6 +117,10 @@ src/__tests__/
 │   ├── public.test.ts         # Testes de rotas públicas (WhatsApp)
 │   ├── validation.test.ts     # Testes de validação (CPF, data, horário)
 │   └── admin.test.ts          # Testes de rotas administrativas
+├── pergunta/
+│   ├── public.test.ts         # Testes de rotas públicas (RAG)
+│   ├── admin.test.ts          # Testes de rotas administrativas
+│   └── moderation.test.ts     # Testes de moderação (palavras ofensivas)
 └── setup.test.ts              # Configuração global
 ```
 
@@ -137,3 +143,6 @@ npm run test:feriado
 
 # Executar testes do Agendamento
 npm run test:agendamento
+
+# Executar testes da Pergunta
+npm run test:pergunta
