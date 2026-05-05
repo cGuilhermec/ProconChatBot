@@ -5,6 +5,7 @@ import usuarioRoutes from "./usuario.routes";
 import proconRoutes from "./procon.routes";
 import { LoginController } from "../controller/login.controller";
 import feriadoRoutes from "./feriado.routes";
+import agendamentoRoutes from "./agendamento.routes";
 
 
 const loginController = new LoginController();
@@ -17,6 +18,7 @@ router.use("/dev", devRoutes);
 router.use("/", proconRoutes);
 router.use('/', usuarioRoutes);
 router.use("/", feriadoRoutes);
+router.use("/", agendamentoRoutes);
 
 //Login
 router.post("/login", loginController.userLogin);
