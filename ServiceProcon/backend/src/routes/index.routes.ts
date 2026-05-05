@@ -7,6 +7,7 @@ import { LoginController } from "../controller/login.controller";
 import feriadoRoutes from "./feriado.routes";
 import agendamentoRoutes from "./agendamento.routes";
 import perguntaRoutes from "./pergunta.routes";
+import auditLogRoutes from "./auditLog.routes";
 
 
 const loginController = new LoginController();
@@ -21,6 +22,7 @@ router.use('/', usuarioRoutes);
 router.use("/", feriadoRoutes);
 router.use("/", agendamentoRoutes);
 router.use("/", perguntaRoutes);
+router.use("/", auditLogRoutes);
 
 //Login
 router.post("/login", loginController.userLogin);

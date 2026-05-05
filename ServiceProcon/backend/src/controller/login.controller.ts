@@ -26,7 +26,8 @@ export class LoginController {
       }
 
       const user: LoginInterface = { email, password: senha };
-      const result = await this.loginService.authentication(user);
+      // ⬅️ PASSAR O req PARA O SERVICE
+      const result = await this.loginService.authentication(user, req);
 
       // Verificar se é um erro (tem mensagem)
       if ("mensagem" in result) {

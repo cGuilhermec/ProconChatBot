@@ -47,6 +47,7 @@ O foco principal desta sprint foi a **Estruturação e Padronização de Softwar
 | 6.4 | Configurar e criar o CRUD e testes no backend - Agendamento | ✅ | [#50](https://github.com/cGuilhermec/ProconChatBot/issues/50) |
 | 6.5 | Integrar Chat (WhatsApp) com o Crud Agendamento | ✅ | [#53](https://github.com/cGuilhermec/ProconChatBot/issues/53) |
 | 6.6 | Configurar e criar o CRUD e testes no backend - Pergunta | ✅ | [#54](https://github.com/cGuilhermec/ProconChatBot/issues/54) |
+| 6.7 | Configurar e criar o CRUD e testes backend - AUDIT_LOG | ✅ | [#55](https://github.com/cGuilhermec/ProconChatBot/issues/55) |
 
 ---
 
@@ -121,6 +122,8 @@ src/__tests__/
 │   ├── public.test.ts         # Testes de rotas públicas (RAG)
 │   ├── admin.test.ts          # Testes de rotas administrativas
 │   └── moderation.test.ts     # Testes de moderação (palavras ofensivas)
+├── auditLog/
+│   └── auditLog.test.ts       # Testes do sistema de auditoria
 └── setup.test.ts              # Configuração global
 ```
 
@@ -146,3 +149,6 @@ npm run test:agendamento
 
 # Executar testes da Pergunta
 npm run test:pergunta
+
+# Executar testes do AuditLog
+npm run test:auditlog

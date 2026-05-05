@@ -11,7 +11,8 @@
     "test:all": "node --test --import tsx --test-reporter spec src/__tests__/setup.test.ts src/__tests__/**/*.test.ts",
     "test:feriado": "node --test --import tsx --test-reporter spec src/__tests__/setup.test.ts src/__tests__/feriado/**/*.test.ts",
     "test:agendamento": "node --test --import tsx --test-reporter spec src/__tests__/setup.test.ts src/__tests__/agendamento/**/*.test.ts",
-    "test:pergunta": "node --test --import tsx --test-reporter spec src/__tests__/setup.test.ts src/__tests__/pergunta/**/*.test.ts"
+    "test:pergunta": "node --test --import tsx --test-reporter spec src/__tests__/setup.test.ts src/__tests__/pergunta/**/*.test.ts",
+    "test:auditlog": "node --test --import tsx --test-reporter spec src/__tests__/setup.test.ts src/__tests__/auditLog/**/*.test.ts"
   },
   "keywords": [],
   "author": "",

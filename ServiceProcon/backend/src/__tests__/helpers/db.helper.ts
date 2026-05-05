@@ -12,12 +12,28 @@ const createdIds = {
   feriados: [] as number[],
   agendamentos: [] as number[],
   perguntas: [] as number[],
+  auditLogs: [] as number[],
 };
 
 export class DbHelper {
   // Limpar TODOS os dados de teste do banco (independente de quando foram criados)
   static async cleanAllTestData() {
     console.log("🧹 Limpando TODOS os dados de teste do banco...");
+
+    const deletedAuditLogs = await prisma.auditLog.deleteMany({
+      where: {
+        OR: [
+          { acao: { contains: "LOGIN" } },
+          { acao: { contains: "CREATE_" } },
+          { acao: { contains: "UPDATE_" } },
+          { acao: { contains: "DELETE_" } },
+          { acao: { contains: "ATIVAR_" } },
+          { acao: { contains: "DESATIVAR_" } },
+          { ip_address: { contains: "::1" } },
+          { user_agent: { contains: "node" } },
+        ],
+      },
+    });
 
     const deletedNotificacoes = await prisma.notificacao.deleteMany({
       where: {
@@ -105,12 +121,19 @@ export class DbHelper {
       },
     });
 
-    console.log(`🗑️ Deletados ${deletedAgendamentos.count} agendamentos de teste`);
+    console.log(
+      `🗑️ Deletados ${deletedAgendamentos.count} agendamentos de teste`,
+    );
     console.log(`🗑️ Deletados ${deletedFeriados.count} feriados de teste`);
     console.log(`🗑️ Deletados ${deletedUsers.count} usuários de teste`);
     console.log(`🗑️ Deletados ${deletedProcons.count} procons de teste`);
-    console.log(`🗑️ Deletados ${deletedNotificacoes.count} notificações de teste`);
+    console.log(
+      `🗑️ Deletados ${deletedNotificacoes.count} notificações de teste`,
+    );
     console.log(`🗑️ Deletados ${deletedPerguntas.count} perguntas de teste`);
+    console.log(
+      `🗑️ Deletados ${deletedAuditLogs.count} registros de audit_log`,
+    );
 
     // Limpar os arrays locais
     createdIds.procons = [];
@@ -118,6 +141,7 @@ export class DbHelper {
     createdIds.feriados = [];
     createdIds.agendamentos = [];
     createdIds.perguntas = [];
+    createdIds.auditLogs = [];
   }
 
   static async createTestPergunta(
@@ -153,6 +177,13 @@ export class DbHelper {
     console.log(
       `🧹 Limpando dados de teste desta execução: ${createdIds.usuarios.length} usuários, ${createdIds.procons.length} procons, ${createdIds.feriados.length} feriados`,
     );
+
+    if (createdIds.auditLogs.length > 0) {
+      await prisma.auditLog.deleteMany({
+        where: { id: { in: createdIds.auditLogs } },
+      });
+      createdIds.auditLogs = [];
+    }
 
     if (createdIds.perguntas.length > 0) {
       await prisma.pergunta.deleteMany({
@@ -320,5 +351,23 @@ export class DbHelper {
       JWT_SECRET,
       { expiresIn: "2h" },
     );
+  }
+  static async createTestAuditLog(usuarioId: number, acao: string) {
+    const auditLog = await prisma.auditLog.create({
+      data: {
+        usuario: {
+          connect: { USUARIO_ID: usuarioId },
+        },
+        acao: acao,
+        ip_address: "127.0.0.1",
+        user_agent: "test-agent",
+      },
+    });
+
+    // Converter BigInt para Number
+    const id = Number(auditLog.id);
+    createdIds.auditLogs.push(id);
+    console.log(`📝 AuditLog de teste criado: ${acao} (ID ${id})`);
+    return auditLog;
   }
 }

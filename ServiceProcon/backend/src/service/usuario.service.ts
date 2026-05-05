@@ -1,15 +1,20 @@
+// src/service/usuario.service.ts
 import { UsuarioModel } from "../model/usuario.model";
 import { Usuario } from "../types/usuraio.types";
 import { compare, hash } from "bcryptjs";
+import { AuditLogService } from "./auditLog.service";
+import { Request } from "express";
 
 export class UsuarioService {
   private usuarioModel: UsuarioModel;
+  private auditLogService: AuditLogService;
 
   constructor() {
     this.usuarioModel = new UsuarioModel();
+    this.auditLogService = new AuditLogService();
   }
 
-  async createUsuarioDev(data: Usuario) {
+  async createUsuarioDev(data: Usuario, req?: Request) {
     const verifyIfUserExists = await this.usuarioModel.getUsuarioByEmail(
       data.email,
     );
@@ -21,10 +26,25 @@ export class UsuarioService {
     const hash_password = await hash(data.senha, 8);
     data.senha = hash_password;
 
-    return this.usuarioModel.createUsuarioDev(data);
+    const novoUsuario = await this.usuarioModel.createUsuarioDev(data);
+
+    // 📝 LOG: Criação de usuário via DEV
+    await this.auditLogService.registrar({
+      usuario_id: 1, // Usuário DEV padrão
+      acao: "CREATE_USUARIO_DEV",
+      dados_novos: {
+        id: novoUsuario.USUARIO_ID,
+        nome: novoUsuario.nome,
+        email: novoUsuario.email,
+        role: novoUsuario.role,
+      },
+      req,
+    });
+
+    return novoUsuario;
   }
 
-  async createUsuario(data: Usuario, usuarioLogado: any) {
+  async createUsuario(data: Usuario, usuarioLogado: any, req?: Request) {
     // 1. Validar permissão do usuário logado
     const rolesPermitidos = ["COORDENADOR", "DIRETOR", "DEV"];
 
@@ -71,6 +91,20 @@ export class UsuarioService {
     // 7. Criar o usuário
     const novoUsuario = await this.usuarioModel.createUsuarioDev(data);
 
+    // 📝 LOG: Criação de usuário
+    await this.auditLogService.registrar({
+      usuario_id: usuarioLogado.id,
+      acao: "CREATE_USUARIO",
+      dados_novos: {
+        id: novoUsuario.USUARIO_ID,
+        nome: novoUsuario.nome,
+        email: novoUsuario.email,
+        role: novoUsuario.role,
+        procon_id: novoUsuario.procon_id,
+      },
+      req,
+    });
+
     // 8. Retornar apenas os dados necessários (sem senha)
     return {
       id: novoUsuario.USUARIO_ID,
@@ -87,6 +121,7 @@ export class UsuarioService {
     usuarioId: number,
     novaSenha: string,
     confirmarSenha: string,
+    req?: Request,
   ) {
     // Validar se as senhas coincidem
     if (novaSenha !== confirmarSenha) {
@@ -118,6 +153,15 @@ export class UsuarioService {
         novaSenhaHash,
       );
 
+    // 📝 LOG: Primeiro acesso (troca de senha obrigatória)
+    await this.auditLogService.registrar({
+      usuario_id: usuarioId,
+      acao: "PRIMEIRO_ACESSO",
+      dados_anteriores: { primeiro_acesso: true },
+      dados_novos: { primeiro_acesso: false },
+      req,
+    });
+
     return {
       primeiro_acesso: usuarioAtualizado.primeiro_acesso,
     };
@@ -128,6 +172,7 @@ export class UsuarioService {
     senhaAtual: string,
     novaSenha: string,
     confirmarSenha: string,
+    req?: Request,
   ) {
     // Validar confirmação
     if (novaSenha !== confirmarSenha) {
@@ -161,6 +206,13 @@ export class UsuarioService {
       novaSenhaHash,
     );
 
+    // 📝 LOG: Troca de senha voluntária
+    await this.auditLogService.registrar({
+      usuario_id: usuarioId,
+      acao: "MUDAR_SENHA",
+      req,
+    });
+
     return {
       primeiro_acesso: usuarioAtualizado.primeiro_acesso,
     };
@@ -170,6 +222,7 @@ export class UsuarioService {
     usuarioId: number,
     novaSenha: string,
     usuarioLogado: any,
+    req?: Request,
   ) {
     // 1. Validar se usuário logado existe
     if (!usuarioLogado) {
@@ -195,17 +248,34 @@ export class UsuarioService {
       throw new Error("Usuário não encontrado");
     }
 
-    // 5. Hash da nova senha
+    // 5. Guardar dados anteriores
+    const dadosAnteriores = {
+      senha_hash: usuario.senha,
+      primeiro_acesso: usuario.primeiro_acesso,
+    };
+
+    // 6. Hash da nova senha
     const senhaHash = await hash(novaSenha, 8);
 
-    // 6. Atualizar senha e marcar como primeiro acesso
+    // 7. Atualizar senha e marcar como primeiro acesso
     const usuarioAtualizado =
       await this.usuarioModel.atualizarSenhaPrimeiroAcesso(
         usuarioId,
         senhaHash,
       );
 
-    // 7. Retornar dados (sem a senha)
+    // 📝 LOG: Reset de senha por coordenador
+    await this.auditLogService.registrar({
+      usuario_id: usuarioLogado.id,
+      acao: "RESETAR_SENHA_USUARIO",
+      dados_anteriores: dadosAnteriores,
+      dados_novos: {
+        primeiro_acesso: usuarioAtualizado.primeiro_acesso,
+      },
+      req,
+    });
+
+    // 8. Retornar dados (sem a senha)
     return {
       id: usuarioAtualizado.USUARIO_ID,
       nome: usuarioAtualizado.nome,
@@ -213,7 +283,7 @@ export class UsuarioService {
     };
   }
 
-  async desativarUsuario(usuarioId: number, usuarioLogado: any) {
+  async desativarUsuario(usuarioId: number, usuarioLogado: any, req?: Request) {
     // 1. Validar se usuário logado existe
     if (!usuarioLogado) {
       throw new Error("Usuário não autenticado");
@@ -262,9 +332,23 @@ export class UsuarioService {
       throw new Error(`Usuário ${usuario.nome} já está desativado.`);
     }
 
-    // 7. Desativar usuário
+    // 7. Dados anteriores
+    const dadosAnteriores = {
+      ativo: usuario.ativo,
+    };
+
+    // 8. Desativar usuário
     const usuarioDesativado =
       await this.usuarioModel.desativarUsuario(usuarioId);
+
+    // 📝 LOG: Desativação de usuário
+    await this.auditLogService.registrar({
+      usuario_id: usuarioLogado.id,
+      acao: "DESATIVAR_USUARIO",
+      dados_anteriores: dadosAnteriores,
+      dados_novos: { ativo: false },
+      req,
+    });
 
     return {
       id: usuarioDesativado.USUARIO_ID,
@@ -277,7 +361,7 @@ export class UsuarioService {
     };
   }
 
-  async ativarUsuario(usuarioId: number, usuarioLogado: any) {
+  async ativarUsuario(usuarioId: number, usuarioLogado: any, req?: Request) {
     // Mesmas validações de permissão da desativação
     if (!usuarioLogado) {
       throw new Error("Usuário não autenticado");
@@ -300,7 +384,21 @@ export class UsuarioService {
       throw new Error(`Usuário ${usuario.nome} já está ativo.`);
     }
 
+    // Dados anteriores
+    const dadosAnteriores = {
+      ativo: usuario.ativo,
+    };
+
     const usuarioAtivado = await this.usuarioModel.ativarUsuario(usuarioId);
+
+    // 📝 LOG: Ativação de usuário
+    await this.auditLogService.registrar({
+      usuario_id: usuarioLogado.id,
+      acao: "ATIVAR_USUARIO",
+      dados_anteriores: dadosAnteriores,
+      dados_novos: { ativo: true },
+      req,
+    });
 
     return {
       id: usuarioAtivado.USUARIO_ID,
@@ -317,7 +415,6 @@ export class UsuarioService {
     const usuario = await this.usuarioModel.getUsuarioById(usuarioId);
 
     if (!usuario) {
-      console.log(`❌ Service getMe: Usuário NÃO encontrado ID ${usuarioId}`);
       return null;
     }
 
@@ -354,6 +451,7 @@ export class UsuarioService {
     usuarioId: number,
     data: { nome?: string; email?: string },
     usuarioLogado: any,
+    req?: Request,
   ) {
     // Verificar permissão
     if (usuarioLogado.id !== usuarioId) {
@@ -376,6 +474,29 @@ export class UsuarioService {
       }
     }
 
-    return this.usuarioModel.atualizarUsuario(usuarioId, data);
+    // Dados anteriores
+    const dadosAnteriores = {
+      nome: usuario.nome,
+      email: usuario.email,
+    };
+
+    const usuarioAtualizado = await this.usuarioModel.atualizarUsuario(
+      usuarioId,
+      data,
+    );
+
+    // 📝 LOG: Atualização de usuário
+    await this.auditLogService.registrar({
+      usuario_id: usuarioLogado.id,
+      acao: "ATUALIZAR_USUARIO",
+      dados_anteriores: dadosAnteriores,
+      dados_novos: {
+        nome: usuarioAtualizado.nome,
+        email: usuarioAtualizado.email,
+      },
+      req,
+    });
+
+    return usuarioAtualizado;
   }
 }

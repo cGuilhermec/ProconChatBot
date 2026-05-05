@@ -4,6 +4,8 @@ import bcryptjs from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { LoginInterface } from "../types/login.types";
 import { UsuarioModel } from "../model/usuario.model";
+import { AuditLogService } from "./auditLog.service";
+import { Request } from "express";
 
 dotenv.config();
 
@@ -23,21 +25,37 @@ export interface AuthResult {
 
 export class LoginService {
   private usuarioModel: UsuarioModel;
+  private auditLogService: AuditLogService;
 
   constructor() {
     this.usuarioModel = new UsuarioModel();
+    this.auditLogService = new AuditLogService();
   }
 
   async authentication(
     user: LoginInterface,
+    req?: Request,
   ): Promise<AuthResult | { mensagem: string }> {
     const userLoginAuth = await this.usuarioModel.getUsuarioByEmail(user.email);
 
+    // 📝 Tentativa de login com email inexistente
     if (!userLoginAuth) {
+      await this.auditLogService.registrar({
+        usuario_id: 0, // ID 0 para usuário desconhecido
+        acao: "LOGIN_FALHA_USUARIO_NAO_ENCONTRADO",
+        dados_novos: { email: user.email },
+        req,
+      });
       return { mensagem: "Usuário não encontrado" };
     }
 
+    // 📝 Tentativa de login com usuário inativo
     if (!userLoginAuth.ativo) {
+      await this.auditLogService.registrar({
+        usuario_id: userLoginAuth.USUARIO_ID,
+        acao: "LOGIN_FALHA_USUARIO_INATIVO",
+        req,
+      });
       return { mensagem: "Usuário inativo. Contate o administrador." };
     }
 
@@ -46,7 +64,13 @@ export class LoginService {
       userLoginAuth.senha,
     );
 
+    // 📝 Tentativa de login com senha incorreta
     if (!isValidPassword) {
+      await this.auditLogService.registrar({
+        usuario_id: userLoginAuth.USUARIO_ID,
+        acao: "LOGIN_FALHA_SENHA_INCORRETA",
+        req,
+      });
       return { mensagem: "Senha inválida" };
     }
 
@@ -66,11 +90,18 @@ export class LoginService {
         nome: userLoginAuth.nome,
         role: userLoginAuth.role,
         procon_id: userLoginAuth.procon_id,
-        primeiro_acesso: primeiroAcesso, // ⬅️ INCLUIR NO TOKEN
+        primeiro_acesso: primeiroAcesso,
       },
       JWT_SECRET,
-      { expiresIn: "8h" }, // ⬅️ 8 horas é melhor
+      { expiresIn: "8h" },
     );
+
+    // 📝 LOGIN BEM-SUCEDIDO
+    await this.auditLogService.registrar({
+      usuario_id: userLoginAuth.USUARIO_ID,
+      acao: "LOGIN_SUCESSO",
+      req,
+    });
 
     return {
       token,

@@ -1,10 +1,11 @@
 // src/service/pergunta.service.ts
 import { NotificacaoModel } from "../model/notificacao.model";
 import { PerguntaModel } from "../model/pergunta.model";
-
+import { AuditLogService } from "./auditLog.service";
 import { Prisma, StatusModeracao, TipoNotificacao } from "@prisma/client";
+import { Request } from "express";
 
-// Lista de palavras sensíveis
+// Lista de palavras sensíveis (mantém igual)
 const PALAVRAS_SENSIVEIS: Record<
   string,
   { gravidade: number; categoria: string }
@@ -19,7 +20,7 @@ const PALAVRAS_SENSIVEIS: Record<
   sapatona: { gravidade: 5, categoria: "homofobia" },
   boiola: { gravidade: 5, categoria: "homofobia" },
   boiolinha: { gravidade: 5, categoria: "homofobia" },
-  gay: { gravidade: 3, categoria: "homofobia" }, // depende do contexto
+  gay: { gravidade: 3, categoria: "homofobia" },
 
   // Xenofobia
   brazuca: { gravidade: 4, categoria: "xenofobia" },
@@ -39,13 +40,15 @@ const PALAVRAS_SENSIVEIS: Record<
 export class PerguntaService {
   private perguntaModel: PerguntaModel;
   private notificacaoModel: NotificacaoModel;
+  private auditLogService: AuditLogService;
 
   constructor() {
     this.perguntaModel = new PerguntaModel();
     this.notificacaoModel = new NotificacaoModel();
+    this.auditLogService = new AuditLogService();
   }
 
-  // ============ MÉTODO PRIVADO PARA DETECTAR PALAVRAS SENSÍVEIS ============
+  // ============ MÉTODO PRIVADO ============
 
   private detectarPalavrasSensiveis(texto: string): {
     palavras: string[];
@@ -67,7 +70,7 @@ export class PerguntaService {
     return { palavras: palavrasEncontradas, gravidadeMaxima };
   }
 
-  // ============ ROTAS PÚBLICAS (RAG - WhatsApp) ============
+  // ============ ROTAS PÚBLICAS (RAG - WhatsApp) - SEM LOG ============
 
   async buscarPerguntasRag(proconId: number, pergunta: string) {
     const termos = pergunta.toLowerCase().split(" ");
@@ -83,7 +86,6 @@ export class PerguntaService {
       }
     }
 
-    // Remover duplicados
     const resultadosUnicos = Array.from(
       new Map(resultados.map((item) => [item.Pergunta_ID, item])).values(),
     );
@@ -107,7 +109,7 @@ export class PerguntaService {
     return pergunta;
   }
 
-  // ============ ROTAS ADMINISTRATIVAS ============
+  // ============ ROTAS ADMINISTRATIVAS - COM LOG ============
 
   async criarPergunta(
     data: {
@@ -120,12 +122,12 @@ export class PerguntaService {
       observacao?: string;
     },
     usuarioLogado: any,
+    req?: Request,
   ) {
     if (!usuarioLogado) {
       throw new Error("Usuário não autenticado");
     }
 
-    // Verificar se já existe pergunta com mesmo tema
     const perguntaExistente = await this.perguntaModel.findByTema(
       data.tema,
       data.procon_id,
@@ -134,7 +136,6 @@ export class PerguntaService {
       throw new Error(`Já existe uma pergunta com o tema: ${data.tema}`);
     }
 
-    // Detectar palavras sensíveis
     const textoCompleto = `${data.pergunta} ${data.resposta} ${data.observacao || ""}`;
     const { palavras, gravidadeMaxima } =
       this.detectarPalavrasSensiveis(textoCompleto);
@@ -159,11 +160,22 @@ export class PerguntaService {
       palavras_detectadas: palavras,
     });
 
-    // Se detectou palavras sensíveis, criar notificação para coordenadores
-    if (palavras.length > 0) {
-      // Buscar coordenadores do Procon
-      const coordenadores = await this.buscarCoordenadores(data.procon_id);
+    // 📝 LOG: Criação de pergunta
+    await this.auditLogService.registrar({
+      usuario_id: usuarioLogado.id,
+      acao: "CREATE_PERGUNTA",
+      dados_novos: {
+        id: pergunta.Pergunta_ID,
+        tema: pergunta.tema,
+        pergunta: pergunta.pergunta,
+        status_moderacao: pergunta.status_moderacao,
+        palavras_detectadas: palavras,
+      },
+      req,
+    });
 
+    if (palavras.length > 0) {
+      const coordenadores = await this.buscarCoordenadores(data.procon_id);
       for (const coord of coordenadores) {
         await this.notificacaoModel.create({
           usuario: {
@@ -209,6 +221,7 @@ export class PerguntaService {
       proconId = usuarioLogado.procon_id || undefined;
     }
 
+    // Listagem não precisa de log
     return this.perguntaModel.findAll(
       proconId,
       filtros?.status as StatusModeracao,
@@ -216,7 +229,12 @@ export class PerguntaService {
     );
   }
 
-  async atualizarPergunta(id: number, data: any, usuarioLogado: any) {
+  async atualizarPergunta(
+    id: number,
+    data: any,
+    usuarioLogado: any,
+    req?: Request,
+  ) {
     if (!usuarioLogado) {
       throw new Error("Usuário não autenticado");
     }
@@ -231,10 +249,15 @@ export class PerguntaService {
       throw new Error("Pergunta não encontrada");
     }
 
-    // Detectar palavras sensíveis no novo conteúdo
+    const dadosAnteriores = {
+      tema: perguntaExistente.tema,
+      pergunta: perguntaExistente.pergunta,
+      resposta: perguntaExistente.resposta,
+      status_moderacao: perguntaExistente.status_moderacao,
+    };
+
     const textoCompleto = `${data.pergunta || ""} ${data.resposta || ""} ${data.observacao || ""}`;
-    const { palavras, gravidadeMaxima } =
-      this.detectarPalavrasSensiveis(textoCompleto);
+    const { palavras } = this.detectarPalavrasSensiveis(textoCompleto);
 
     const updateData: any = {
       ...data,
@@ -254,10 +277,24 @@ export class PerguntaService {
 
     const pergunta = await this.perguntaModel.update(id, updateData);
 
+    // 📝 LOG: Atualização de pergunta
+    await this.auditLogService.registrar({
+      usuario_id: usuarioLogado.id,
+      acao: "UPDATE_PERGUNTA",
+      dados_anteriores: dadosAnteriores,
+      dados_novos: {
+        tema: pergunta.tema,
+        pergunta: pergunta.pergunta,
+        resposta: pergunta.resposta,
+      },
+      pergunta_id: id,
+      req,
+    });
+
     return pergunta;
   }
 
-  async desativarPergunta(id: number, usuarioLogado: any) {
+  async desativarPergunta(id: number, usuarioLogado: any, req?: Request) {
     if (!usuarioLogado) {
       throw new Error("Usuário não autenticado");
     }
@@ -272,10 +309,24 @@ export class PerguntaService {
       throw new Error("Pergunta não encontrada");
     }
 
-    return this.perguntaModel.desativar(id);
+    const dadosAnteriores = { ativo: pergunta.ativo };
+
+    const result = await this.perguntaModel.desativar(id);
+
+    // 📝 LOG: Desativação de pergunta
+    await this.auditLogService.registrar({
+      usuario_id: usuarioLogado.id,
+      acao: "DESATIVAR_PERGUNTA",
+      dados_anteriores: dadosAnteriores,
+      dados_novos: { ativo: false },
+      pergunta_id: id,
+      req,
+    });
+
+    return result;
   }
 
-  async ativarPergunta(id: number, usuarioLogado: any) {
+  async ativarPergunta(id: number, usuarioLogado: any, req?: Request) {
     if (!usuarioLogado) {
       throw new Error("Usuário não autenticado");
     }
@@ -290,7 +341,21 @@ export class PerguntaService {
       throw new Error("Pergunta não encontrada");
     }
 
-    return this.perguntaModel.ativar(id);
+    const dadosAnteriores = { ativo: pergunta.ativo };
+
+    const result = await this.perguntaModel.ativar(id);
+
+    // 📝 LOG: Ativação de pergunta
+    await this.auditLogService.registrar({
+      usuario_id: usuarioLogado.id,
+      acao: "ATIVAR_PERGUNTA",
+      dados_anteriores: dadosAnteriores,
+      dados_novos: { ativo: true },
+      pergunta_id: id,
+      req,
+    });
+
+    return result;
   }
 
   async revisarPergunta(
@@ -298,6 +363,7 @@ export class PerguntaService {
     status: StatusModeracao,
     usuarioLogado: any,
     motivo?: string,
+    req?: Request,
   ) {
     if (!usuarioLogado) {
       throw new Error("Usuário não autenticado");
@@ -313,6 +379,11 @@ export class PerguntaService {
       throw new Error("Pergunta não encontrada");
     }
 
+    const dadosAnteriores = {
+      status_moderacao: pergunta.status_moderacao,
+      ativo: pergunta.ativo,
+    };
+
     const perguntaRevisada = await this.perguntaModel.revisar(
       id,
       status,
@@ -320,7 +391,25 @@ export class PerguntaService {
       motivo,
     );
 
-    // Notificar o criador sobre a decisão
+    // 📝 LOG: Revisão de pergunta
+    let acao = "REVISAR_PERGUNTA";
+    if (status === "APROVADO") acao = "APROVAR_PERGUNTA";
+    if (status === "REPROVADO") acao = "REPROVAR_PERGUNTA";
+    if (status === "BLOQUEADO") acao = "BLOQUEAR_PERGUNTA";
+
+    await this.auditLogService.registrar({
+      usuario_id: usuarioLogado.id,
+      acao,
+      dados_anteriores: dadosAnteriores,
+      dados_novos: {
+        status_moderacao: status,
+        ativo: status === "APROVADO",
+        motivo: motivo || null,
+      },
+      pergunta_id: id,
+      req,
+    });
+
     let tipoNotificacao: TipoNotificacao = "PERGUNTA_APROVADA";
     if (status === "REPROVADO") tipoNotificacao = "PERGUNTA_REPROVADA";
     if (status === "BLOQUEADO") tipoNotificacao = "PERGUNTA_BLOQUEADA";
@@ -341,7 +430,7 @@ export class PerguntaService {
     return perguntaRevisada;
   }
 
-  async excluirPergunta(id: number, usuarioLogado: any) {
+  async excluirPergunta(id: number, usuarioLogado: any, req?: Request) {
     if (!usuarioLogado) {
       throw new Error("Usuário não autenticado");
     }
@@ -357,7 +446,32 @@ export class PerguntaService {
       throw new Error("Pergunta não encontrada");
     }
 
-    return this.perguntaModel.delete(id);
+    const dadosPergunta = {
+      id: pergunta.Pergunta_ID,
+      tema: pergunta.tema,
+      pergunta: pergunta.pergunta,
+    };
+
+    const result = await this.perguntaModel.delete(id);
+
+    // 📝 LOG: Exclusão de pergunta
+    await this.auditLogService.registrar({
+      usuario_id: usuarioLogado.id,
+      acao: "DELETE_PERGUNTA",
+      dados_anteriores: dadosPergunta,
+      pergunta_id: id,
+      req,
+    });
+
+    return result;
+  }
+
+  async listarPerguntasPendentes(proconId?: number) {
+    return this.perguntaModel.findAll(
+      proconId,
+      "PENDENTE_REVISAO" as StatusModeracao,
+      undefined,
+    );
   }
 
   private async buscarCoordenadores(proconId: number) {
@@ -370,13 +484,5 @@ export class PerguntaService {
       },
       select: { USUARIO_ID: true, nome: true, email: true },
     });
-  }
-
-  async listarPerguntasPendentes(proconId?: number) {
-    return this.perguntaModel.findAll(
-      proconId,
-      "PENDENTE_REVISAO" as StatusModeracao,
-      undefined,
-    );
   }
 }

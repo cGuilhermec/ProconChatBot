@@ -1,16 +1,20 @@
 // src/service/procon.service.ts
 import { ProconModel } from "../model/procon.model";
 import { Prisma } from "@prisma/client";
+import { AuditLogService } from "./auditLog.service";
+import { Request } from "express";
 
 export class ProconService {
   private proconModel: ProconModel;
+  private auditLogService: AuditLogService;
 
   constructor() {
     this.proconModel = new ProconModel();
+    this.auditLogService = new AuditLogService();
   }
 
   // 🔓 ROTA DEV (sem autenticação) - criar Procon
-  async createProconDev(proconData: Prisma.ProconCreateInput) {
+  async createProconDev(proconData: Prisma.ProconCreateInput, req?: Request) {
     const verifyIfProconExists =
       await this.proconModel.getProconByNomeAndCidade(
         proconData.nome,
@@ -27,6 +31,20 @@ export class ProconService {
 
     try {
       const procon = await this.proconModel.create(proconData);
+
+      // 📝 LOG: Criação via DEV
+      await this.auditLogService.registrar({
+        usuario_id: 1, // Usuário DEV padrão
+        acao: "CREATE_PROCON_DEV",
+        dados_novos: {
+          id: procon.PROCON_ID,
+          nome: procon.nome,
+          cidade: procon.cidade,
+          estado: procon.estado,
+        },
+        req,
+      });
+
       return {
         sucesso: true,
         dados: procon,
@@ -42,7 +60,11 @@ export class ProconService {
   }
 
   // 🔒 ROTA AUTENTICADA - criar Procon (apenas COORDENADOR, DIRETOR, DEV)
-  async createProcon(proconData: Prisma.ProconCreateInput, usuarioLogado: any) {
+  async createProcon(
+    proconData: Prisma.ProconCreateInput,
+    usuarioLogado: any,
+    req?: Request,
+  ) {
     // 1. Validar autenticação
     if (!usuarioLogado) {
       throw new Error("Usuário não autenticado");
@@ -72,6 +94,22 @@ export class ProconService {
     // 4. Criar Procon
     const procon = await this.proconModel.create(proconData);
 
+    // 📝 LOG: Criação de Procon
+    await this.auditLogService.registrar({
+      usuario_id: usuarioLogado.id,
+      acao: "CREATE_PROCON",
+      dados_novos: {
+        id: procon.PROCON_ID,
+        nome: procon.nome,
+        cidade: procon.cidade,
+        estado: procon.estado,
+        endereco: procon.endereco,
+        telefone: procon.telefone,
+        email: procon.email,
+      },
+      req,
+    });
+
     return {
       id: procon.PROCON_ID,
       nome: procon.nome,
@@ -84,6 +122,7 @@ export class ProconService {
       horario_fechamento: procon.horario_fechamento,
       duracao_atendimento_minutos: procon.duracao_atendimento_minutos,
       vagas_por_horario: procon.vagas_por_horario,
+      ativo: procon.ativo,
       criado_por: usuarioLogado.id,
       criado_por_nome: usuarioLogado.nome,
     };
@@ -131,6 +170,7 @@ export class ProconService {
     id: number,
     data: Prisma.ProconUpdateInput,
     usuarioLogado: any,
+    req?: Request,
   ) {
     if (!usuarioLogado) {
       throw new Error("Usuário não autenticado");
@@ -145,8 +185,22 @@ export class ProconService {
 
     const proconExistente = await this.proconModel.findById(id);
     if (!proconExistente) {
-      throw new Error("Procon não encontrado"); // ⬅️ Este erro será capturado no controller
+      throw new Error("Procon não encontrado");
     }
+
+    // Guardar dados anteriores
+    const dadosAnteriores = {
+      nome: proconExistente.nome,
+      cidade: proconExistente.cidade,
+      estado: proconExistente.estado,
+      endereco: proconExistente.endereco,
+      telefone: proconExistente.telefone,
+      email: proconExistente.email,
+      horario_abertura: proconExistente.horario_abertura,
+      horario_fechamento: proconExistente.horario_fechamento,
+      duracao_atendimento_minutos: proconExistente.duracao_atendimento_minutos,
+      vagas_por_horario: proconExistente.vagas_por_horario,
+    };
 
     // Se estiver mudando nome/cidade, verificar duplicidade
     if (data.nome || data.cidade) {
@@ -166,6 +220,22 @@ export class ProconService {
 
     const proconAtualizado = await this.proconModel.update(id, data);
 
+    // 📝 LOG: Atualização de Procon
+    await this.auditLogService.registrar({
+      usuario_id: usuarioLogado.id,
+      acao: "UPDATE_PROCON",
+      dados_anteriores: dadosAnteriores,
+      dados_novos: {
+        nome: proconAtualizado.nome,
+        cidade: proconAtualizado.cidade,
+        estado: proconAtualizado.estado,
+        endereco: proconAtualizado.endereco,
+        telefone: proconAtualizado.telefone,
+        email: proconAtualizado.email,
+      },
+      req,
+    });
+
     return {
       id: proconAtualizado.PROCON_ID,
       nome: proconAtualizado.nome,
@@ -184,12 +254,11 @@ export class ProconService {
   }
 
   // 🔒 DELETAR Procon (apenas DIRETOR, DEV)
-  async deletarProcon(id: number, usuarioLogado: any) {
+  async deletarProcon(id: number, usuarioLogado: any, req?: Request) {
     if (!usuarioLogado) {
       throw new Error("Usuário não autenticado");
     }
 
-    // Apenas DIRETOR e DEV podem deletar
     const rolesPermitidos = ["DIRETOR", "DEV"];
     if (!rolesPermitidos.includes(usuarioLogado.role)) {
       throw new Error(
@@ -202,7 +271,23 @@ export class ProconService {
       throw new Error("Procon não encontrado");
     }
 
+    // Guardar dados antes da exclusão
+    const dadosProcon = {
+      id: proconExistente.PROCON_ID,
+      nome: proconExistente.nome,
+      cidade: proconExistente.cidade,
+      estado: proconExistente.estado,
+    };
+
     await this.proconModel.delete(id);
+
+    // 📝 LOG: Exclusão de Procon
+    await this.auditLogService.registrar({
+      usuario_id: usuarioLogado.id,
+      acao: "DELETE_PROCON",
+      dados_anteriores: dadosProcon,
+      req,
+    });
 
     return {
       id: proconExistente.PROCON_ID,
@@ -213,7 +298,7 @@ export class ProconService {
     };
   }
 
-  async desativarProcon(id: number, usuarioLogado: any) {
+  async desativarProcon(id: number, usuarioLogado: any, req?: Request) {
     if (!usuarioLogado) {
       throw new Error("Usuário não autenticado");
     }
@@ -234,7 +319,20 @@ export class ProconService {
       throw new Error(`Procon ${proconExistente.nome} já está desativado.`);
     }
 
+    const dadosAnteriores = {
+      ativo: proconExistente.ativo,
+    };
+
     const proconDesativado = await this.proconModel.desativar(id);
+
+    // 📝 LOG: Desativação de Procon
+    await this.auditLogService.registrar({
+      usuario_id: usuarioLogado.id,
+      acao: "DESATIVAR_PROCON",
+      dados_anteriores: dadosAnteriores,
+      dados_novos: { ativo: false },
+      req,
+    });
 
     return {
       id: proconDesativado.PROCON_ID,
@@ -246,7 +344,7 @@ export class ProconService {
     };
   }
 
-  async ativarProcon(id: number, usuarioLogado: any) {
+  async ativarProcon(id: number, usuarioLogado: any, req?: Request) {
     if (!usuarioLogado) {
       throw new Error("Usuário não autenticado");
     }
@@ -267,7 +365,20 @@ export class ProconService {
       throw new Error(`Procon ${proconExistente.nome} já está ativo.`);
     }
 
+    const dadosAnteriores = {
+      ativo: proconExistente.ativo,
+    };
+
     const proconAtivado = await this.proconModel.ativar(id);
+
+    // 📝 LOG: Ativação de Procon
+    await this.auditLogService.registrar({
+      usuario_id: usuarioLogado.id,
+      acao: "ATIVAR_PROCON",
+      dados_anteriores: dadosAnteriores,
+      dados_novos: { ativo: true },
+      req,
+    });
 
     return {
       id: proconAtivado.PROCON_ID,
@@ -279,6 +390,7 @@ export class ProconService {
     };
   }
 
+  // 🟢 ROTA PÚBLICA - sem log (WhatsApp)
   async listarProconsAtivos() {
     return this.proconModel.findAllAtivos();
   }
