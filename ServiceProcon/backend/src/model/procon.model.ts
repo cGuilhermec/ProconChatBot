@@ -91,4 +91,16 @@ export class ProconModel {
       orderBy: { nome: "asc" },
     });
   }
+
+  async findByWhatsApp(whatsappNumber: string): Promise<any | null> {
+    return prisma.procon.findFirst({
+      where: {
+        whatsapp_number: {
+          equals: whatsappNumber,
+          mode: "insensitive",
+        },
+        ativo: true,
+      },
+    });
+  }
 }

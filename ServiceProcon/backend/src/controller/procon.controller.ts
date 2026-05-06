@@ -366,4 +366,47 @@ export class ProconController {
       });
     }
   };
+
+  buscarPorWhatsApp = async (req: Request, res: Response) => {
+    const { whatsapp_number } = req.params;
+
+    console.log(`📱 Buscando Procon por WhatsApp: ${whatsapp_number}`);
+
+    try {
+      const procon =
+        await this.proconService.buscarPorWhatsApp(whatsapp_number);
+
+      if (!procon) {
+        return res.status(404).json({
+          sucesso: false,
+          mensagem: "Nenhum Procon encontrado para este número de WhatsApp",
+        });
+      }
+
+      return res.status(200).json({
+        sucesso: true,
+        dados: {
+          id: procon.PROCON_ID,
+          nome: procon.nome,
+          cidade: procon.cidade,
+          estado: procon.estado,
+          endereco: procon.endereco,
+          telefone: procon.telefone,
+          email: procon.email,
+          horario_abertura: procon.horario_abertura,
+          horario_fechamento: procon.horario_fechamento,
+          horario_funcionamento: `${procon.horario_abertura.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })} às ${procon.horario_fechamento.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}`,
+          whatsapp_number: procon.whatsapp_number,
+          ativo: procon.ativo,
+        },
+      });
+    } catch (error: any) {
+      console.error("❌ Erro ao buscar Procon por WhatsApp:", error);
+      return res.status(500).json({
+        sucesso: false,
+        erro: error.message,
+        mensagem: "Erro interno ao buscar Procon",
+      });
+    }
+  };
 }

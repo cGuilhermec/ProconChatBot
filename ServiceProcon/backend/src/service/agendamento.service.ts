@@ -28,20 +28,35 @@ export class AgendamentoService {
     }
 
     const diasComVagas = [];
-    let dataAtual = new Date(dataReferencia);
-    dataAtual.setHours(0, 0, 0, 0);
+
+    // ✅ CORREÇÃO: Criar data de referência em UTC
+    let dataAtual = new Date(
+      Date.UTC(
+        dataReferencia.getUTCFullYear(),
+        dataReferencia.getUTCMonth(),
+        dataReferencia.getUTCDate(),
+      ),
+    );
 
     const hoje = new Date();
-    hoje.setHours(0, 0, 0, 0);
-    if (dataAtual <= hoje) {
-      dataAtual = new Date(hoje);
-      dataAtual.setDate(dataAtual.getDate() + 1);
+    const hojeUTC = new Date(
+      Date.UTC(hoje.getUTCFullYear(), hoje.getUTCMonth(), hoje.getUTCDate()),
+    );
+
+    // Se a data de referência for hoje ou anterior, começar de amanhã
+    if (dataAtual <= hojeUTC) {
+      dataAtual = new Date(hojeUTC);
+      dataAtual.setUTCDate(dataAtual.getUTCDate() + 1);
     }
 
     while (diasComVagas.length < limit) {
       const isFeriado = await this.feriadoModel.isFeriado(proconId, dataAtual);
-      const diaSemana = dataAtual.getDay();
+      const diaSemana = dataAtual.getUTCDay();
       const isDiaUtil = diaSemana !== 0 && diaSemana !== 6;
+
+      console.log(
+        `Verificando data: ${dataAtual.toISOString()}, Dia: ${diaSemana} (${this.getNomeDiaSemana(dataAtual)}), Util: ${isDiaUtil}`,
+      );
 
       if (!isFeriado && isDiaUtil) {
         const horariosDisponiveis = await this.buscarHorariosDisponiveis(
@@ -59,7 +74,8 @@ export class AgendamentoService {
         }
       }
 
-      dataAtual.setDate(dataAtual.getDate() + 1);
+      // Avançar para o próximo dia em UTC
+      dataAtual.setUTCDate(dataAtual.getUTCDate() + 1);
     }
 
     return diasComVagas;
@@ -71,13 +87,18 @@ export class AgendamentoService {
       throw new Error("Procon não encontrado");
     }
 
+    // ✅ Garantir que a data está em UTC
+    const dataUTC = new Date(
+      Date.UTC(data.getUTCFullYear(), data.getUTCMonth(), data.getUTCDate()),
+    );
+
     const horarios = this.gerarHorarios(procon);
     const horariosDisponiveis = [];
 
     for (const horario of horarios) {
       const ocupadas = await this.agendamentoModel.countVagasOcupadas(
         proconId,
-        data,
+        dataUTC,
         horario,
       );
 
@@ -111,7 +132,7 @@ export class AgendamentoService {
     }
 
     const hoje = new Date();
-    hoje.setHours(0, 0, 0, 0);
+    hoje.setUTCHours(0, 0, 0, 0);
     const dataAgendamento = new Date(data.data_agendamento);
     dataAgendamento.setHours(0, 0, 0, 0);
 
@@ -127,7 +148,7 @@ export class AgendamentoService {
       throw new Error("Não é possível agendar em feriados");
     }
 
-    const diaSemana = dataAgendamento.getDay();
+    const diaSemana = dataAgendamento.getUTCDay();
     if (diaSemana === 0 || diaSemana === 6) {
       throw new Error("Não é possível agendar aos finais de semana");
     }
@@ -282,21 +303,20 @@ export class AgendamentoService {
 
   private gerarHorarios(procon: any): string[] {
     const horarios = [];
-    const [aberturaHora, aberturaMinuto] = procon.horario_abertura
-      .toTimeString()
-      .split(":");
-    const [fechamentoHora, fechamentoMinuto] = procon.horario_fechamento
-      .toTimeString()
-      .split(":");
 
-    let horaAtual = parseInt(aberturaHora);
-    let minutoAtual = parseInt(aberturaMinuto);
+    // ✅ Extrair hora e minuto diretamente (já estão salvos no banco como TIME)
+    // O banco guarda "08:00:00" e "17:00:00" no horário local
+    const aberturaHora = procon.horario_abertura.getUTCHours();
+    const aberturaMinuto = procon.horario_abertura.getUTCMinutes();
+    const fechamentoHora = procon.horario_fechamento.getUTCHours();
+    const fechamentoMinuto = procon.horario_fechamento.getUTCMinutes();
 
-    const fechamentoHoraInt = parseInt(fechamentoHora);
+    let horaAtual = aberturaHora;
+    let minutoAtual = aberturaMinuto;
 
     while (
-      horaAtual < fechamentoHoraInt ||
-      (horaAtual === fechamentoHoraInt && minutoAtual === 0)
+      horaAtual < fechamentoHora ||
+      (horaAtual === fechamentoHora && minutoAtual < fechamentoMinuto)
     ) {
       const horarioStr = `${horaAtual.toString().padStart(2, "0")}:${minutoAtual.toString().padStart(2, "0")}`;
       horarios.push(horarioStr);
@@ -371,7 +391,10 @@ export class AgendamentoService {
   }
 
   private formatarData(data: Date): string {
-    return data.toLocaleDateString("pt-BR");
+    const dia = data.getUTCDate().toString().padStart(2, "0");
+    const mes = (data.getUTCMonth() + 1).toString().padStart(2, "0");
+    const ano = data.getUTCFullYear();
+    return `${dia}/${mes}/${ano}`;
   }
 
   private getNomeDiaSemana(data: Date): string {
@@ -384,6 +407,6 @@ export class AgendamentoService {
       "Sexta",
       "Sábado",
     ];
-    return dias[data.getDay()];
+    return dias[data.getUTCDay()];
   }
 }

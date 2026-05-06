@@ -394,4 +394,21 @@ export class ProconService {
   async listarProconsAtivos() {
     return this.proconModel.findAllAtivos();
   }
+
+  async buscarPorWhatsApp(whatsappNumber: string) {
+    // Remover caracteres não numéricos para comparação
+    const numeroLimpo = whatsappNumber.replace(/\D/g, "");
+
+    console.log(`🔍 Buscando Procon com WhatsApp: ${numeroLimpo}`);
+
+    const procon = await this.proconModel.findByWhatsApp(numeroLimpo);
+
+    if (!procon) {
+      console.log(`❌ Nenhum Procon encontrado para o número ${numeroLimpo}`);
+      return null;
+    }
+
+    console.log(`✅ Procon encontrado: ${procon.nome} - ${procon.cidade}`);
+    return procon;
+  }
 }

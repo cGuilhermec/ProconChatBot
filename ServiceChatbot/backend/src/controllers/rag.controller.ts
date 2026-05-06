@@ -18,24 +18,34 @@ export class RagController {
       versao: "1.0.0",
       status: "online",
       descricao: "API de busca semântica para perguntas do Procon",
-      recursos: {
-        rag: "Busca direta no banco de dados",
-        llm: "Opcional - integração com Llama para respostas mais naturais",
-      },
     });
   };
 
   perguntar = async (req: Request, res: Response) => {
     try {
-      const { pergunta, usarLlama = false } = req.body;
+      const { pergunta, procon_id, usarLlama = false } = req.body;
 
       console.log(`\n📝 Pergunta: "${pergunta}"`);
+      console.log(`📌 Procon ID: ${procon_id}`);
       console.log(`🔧 usarLlama: ${usarLlama}`);
 
       if (!pergunta) {
         return res.status(400).json({
           erro: "Pergunta não fornecida",
-          exemplo: { pergunta: "Estão cobrando um seguro no meu cartão" },
+          exemplo: {
+            pergunta: "Estão cobrando um seguro no meu cartão",
+            procon_id: 1,
+          },
+        });
+      }
+
+      if (!procon_id) {
+        return res.status(400).json({
+          erro: "procon_id não fornecido",
+          exemplo: {
+            pergunta: "Estão cobrando um seguro no meu cartão",
+            procon_id: 1,
+          },
         });
       }
 
@@ -45,7 +55,18 @@ export class RagController {
         });
       }
 
-      const resultadoRAG = this.buscador.buscar(pergunta);
+      // Buscar informações do Procon
+      const proconInfo = await this.buscarProconInfo(procon_id);
+
+      if (!proconInfo) {
+        return res.status(404).json({
+          sucesso: false,
+          erro: "Procon não encontrado",
+        });
+      }
+
+      // Buscar resposta RAG
+      const resultadoRAG = await this.buscador.buscar(pergunta, procon_id);
 
       console.log(
         `📊 Resultado RAG - Método: ${resultadoRAG.metodo}, Confiança: ${resultadoRAG.confianca}, Score: ${resultadoRAG.score}`,
@@ -56,9 +77,11 @@ export class RagController {
       if (usarLlama) {
         console.log("🚀 Chamando Llama para enriquecer resposta...");
         try {
+          // ✅ CORREÇÃO: Passar os 3 argumentos
           const respostaEnriquecida = await this.llama.enriquecerResposta(
             pergunta,
             resultadoRAG,
+            proconInfo, // ✅ Adicionar proconInfo como terceiro argumento
           );
 
           respostaFinal = {
@@ -74,8 +97,6 @@ export class RagController {
             llm_error: true,
           };
         }
-      } else {
-        console.log("⚠️ Pulou Llama (usarLlama=false)");
       }
 
       res.json({
@@ -91,13 +112,43 @@ export class RagController {
     }
   };
 
-  listarTemas = (_req: Request, res: Response) => {
+  // Método auxiliar para buscar informações do Procon
+  private async buscarProconInfo(proconId: number): Promise<any> {
     try {
-      const temas = this.buscador.listarTemas();
+      const axios = require("axios");
+      const response = await axios.get(
+        `http://localhost:3002/procon/${proconId}`,
+      );
+
+      if (response.data.sucesso && response.data.dados) {
+        const procon = response.data.dados;
+        return {
+          id: procon.PROCON_ID,
+          nome: procon.nome,
+          cidade: procon.cidade,
+          estado: procon.estado,
+          endereco: procon.endereco,
+          telefone: procon.telefone,
+          email: procon.email,
+          horario_funcionamento: `${procon.horario_abertura.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })} às ${procon.horario_fechamento.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}`,
+          whatsapp_number:
+            procon.whatsapp_number || procon.telefone.replace(/\D/g, ""),
+        };
+      }
+      return null;
+    } catch (error) {
+      console.error("Erro ao buscar Procon:", error);
+      return null;
+    }
+  }
+
+  listarTemas = async (_req: Request, res: Response) => {
+    try {
       res.json({
         sucesso: true,
-        total: temas.length,
-        dados: temas,
+        total: 0,
+        dados: [],
+        mensagem: "Use a rota /perguntas/buscar com procon_id",
       });
     } catch (error) {
       console.error("Erro ao listar temas:", error);
@@ -108,21 +159,14 @@ export class RagController {
     }
   };
 
-  buscarPorId = (req: Request, res: Response) => {
+  buscarPorId = async (req: Request, res: Response) => {
     try {
       const id = parseInt(req.params.id);
-      const tema = this.buscador.buscarPorId(id);
-
-      if (!tema) {
-        return res.status(404).json({
-          sucesso: false,
-          erro: "Tema não encontrado",
-        });
-      }
 
       res.json({
         sucesso: true,
-        dados: tema,
+        dados: null,
+        mensagem: "Use a rota /perguntas/buscar com procon_id",
       });
     } catch (error) {
       console.error("Erro ao buscar tema:", error);
@@ -133,13 +177,12 @@ export class RagController {
     }
   };
 
-  estatisticas = (_req: Request, res: Response) => {
+  estatisticas = async (_req: Request, res: Response) => {
     try {
-      const temas = this.buscador.listarTemas();
       res.json({
         sucesso: true,
         estatisticas: {
-          total_temas: temas.length,
+          total_temas: 0,
           timestamp: new Date().toISOString(),
           versao: "1.0.0",
         },
@@ -159,10 +202,7 @@ export class RagController {
       erro: "Rota não encontrada",
       rotas_disponiveis: [
         "GET /",
-        "POST /api/perguntar (use { pergunta, usarLlama?: boolean })",
-        "GET /api/temas",
-        "GET /api/tema/:id",
-        "GET /api/stats",
+        "POST /api/perguntar (use { pergunta, procon_id, usarLlama?: boolean })",
       ],
     });
   };

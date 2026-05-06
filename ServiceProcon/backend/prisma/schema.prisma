@@ -61,6 +61,9 @@ model Procon {
   ativo                       Boolean  @default(true)
   created_at                  DateTime @default(now())
   updated_at                  DateTime @updatedAt
+  
+  whatsapp_number             String?  @unique
+  whatsapp_active             Boolean  @default(true)
 
   feriados     Feriado[]
   agendamentos Agendamento[]

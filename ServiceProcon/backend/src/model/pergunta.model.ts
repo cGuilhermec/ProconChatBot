@@ -26,30 +26,90 @@ export class PerguntaModel {
   }
 
   async buscarPorSimilaridade(proconId: number, termo: string) {
-    // Busca simples por palavras-chave (RAG)
-    // Depois podemos melhorar com busca vetorial
-    return prisma.pergunta.findMany({
+    const termoLower = termo.toLowerCase();
+
+    // Buscar todas as perguntas ativas
+    const todasPerguntas = await prisma.pergunta.findMany({
       where: {
         procon_id: proconId,
         ativo: true,
         status_moderacao: "APROVADO",
-        OR: [
-          { pergunta: { contains: termo, mode: "insensitive" } },
-          { resposta: { contains: termo, mode: "insensitive" } },
-          { tema: { contains: termo, mode: "insensitive" } },
-        ],
-      },
-      take: 5,
-      select: {
-        Pergunta_ID: true,
-        tema: true,
-        pergunta: true,
-        resposta: true,
-        base_legal: true,
-        documentos: true,
-        observacao: true,
       },
     });
+
+    // Calcular score de similaridade para cada pergunta
+    const resultados = todasPerguntas.map((pergunta) => {
+      let score = 0;
+      const perguntaLower = pergunta.pergunta.toLowerCase();
+      const temaLower = pergunta.tema.toLowerCase();
+
+      // Palavras-chave específicas para horário
+      if (
+        termoLower.includes("horário") ||
+        termoLower.includes("horario") ||
+        termoLower.includes("abre") ||
+        termoLower.includes("funcionamento")
+      ) {
+        if (
+          perguntaLower.includes("horário") ||
+          perguntaLower.includes("horario") ||
+          perguntaLower.includes("abre") ||
+          perguntaLower.includes("funcionamento")
+        ) {
+          score += 100; // Prioridade máxima para perguntas sobre horário
+        }
+        if (temaLower.includes("horário") || temaLower.includes("horario")) {
+          score += 50;
+        }
+      }
+
+      // Palavras-chave específicas para cartão/seguro
+      if (
+        termoLower.includes("cartao") ||
+        termoLower.includes("cartão") ||
+        termoLower.includes("seguro") ||
+        termoLower.includes("cobrança")
+      ) {
+        if (
+          perguntaLower.includes("cartao") ||
+          perguntaLower.includes("cartão") ||
+          perguntaLower.includes("seguro") ||
+          perguntaLower.includes("cobrança")
+        ) {
+          score += 80;
+        }
+      }
+
+      // Match de palavras individuais
+      const palavrasTermo = termoLower.split(/\s+/);
+      for (const palavra of palavrasTermo) {
+        if (palavra.length > 3) {
+          if (perguntaLower.includes(palavra)) {
+            score += 10;
+          }
+          if (temaLower.includes(palavra)) {
+            score += 5;
+          }
+        }
+      }
+
+      return { ...pergunta, score };
+    });
+
+    // Ordenar por score e pegar o melhor
+    resultados.sort((a, b) => b.score - a.score);
+    const melhores = resultados.filter((r) => r.score > 0).slice(0, 5);
+
+    console.log(
+      "📊 Resultados da busca:",
+      melhores.map((r) => ({
+        id: r.Pergunta_ID,
+        tema: r.tema,
+        score: r.score,
+      })),
+    );
+
+    return melhores;
   }
 
   // ============ CONSULTAS ADMINISTRATIVAS ============

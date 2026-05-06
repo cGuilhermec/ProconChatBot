@@ -23,9 +23,26 @@ export class AgendamentoController {
     }
 
     try {
-      const dataReferencia = data_referencia
-        ? new Date(data_referencia as string)
-        : new Date();
+      // ✅ Criar data de referência em UTC
+      let dataReferencia: Date;
+      if (data_referencia) {
+        const dateStr = data_referencia as string;
+        // Se for string no formato YYYY-MM-DD
+        const [ano, mes, dia] = dateStr.split("-");
+        dataReferencia = new Date(
+          Date.UTC(parseInt(ano), parseInt(mes) - 1, parseInt(dia)),
+        );
+      } else {
+        dataReferencia = new Date();
+        dataReferencia = new Date(
+          Date.UTC(
+            dataReferencia.getUTCFullYear(),
+            dataReferencia.getUTCMonth(),
+            dataReferencia.getUTCDate(),
+          ),
+        );
+      }
+
       const limitNum = limit ? parseInt(limit as string) : 7;
 
       const result = await this.agendamentoService.buscarProximosDiasComVagas(
@@ -90,21 +107,54 @@ export class AgendamentoController {
     } = req.body;
 
     try {
-      const result = await this.agendamentoService.criarAgendamento({
-        procon_id,
-        nome_usuario,
-        cpf,
-        telefone,
-        data_agendamento: new Date(data_agendamento),
-        horario_agendamento,
-        observacao,
-      });
+      // ✅ Criar data no formato UTC
+      const dataParts = (data_agendamento as string).split("/");
+      if (dataParts.length === 3) {
+        // Formato DD/MM/YYYY
+        const dataUTC = new Date(
+          Date.UTC(
+            parseInt(dataParts[2]), // ano
+            parseInt(dataParts[1]) - 1, // mês (0-11)
+            parseInt(dataParts[0]), // dia
+            0,
+            0,
+            0,
+          ),
+        );
 
-      return res.status(201).json({
-        sucesso: true,
-        dados: result,
-        mensagem: "Agendamento realizado com sucesso!",
-      });
+        const result = await this.agendamentoService.criarAgendamento({
+          procon_id,
+          nome_usuario,
+          cpf,
+          telefone,
+          data_agendamento: dataUTC,
+          horario_agendamento,
+          observacao,
+        });
+
+        return res.status(201).json({
+          sucesso: true,
+          dados: result,
+          mensagem: "Agendamento realizado com sucesso!",
+        });
+      } else {
+        // Fallback para o formato original
+        const result = await this.agendamentoService.criarAgendamento({
+          procon_id,
+          nome_usuario,
+          cpf,
+          telefone,
+          data_agendamento: new Date(data_agendamento),
+          horario_agendamento,
+          observacao,
+        });
+
+        return res.status(201).json({
+          sucesso: true,
+          dados: result,
+          mensagem: "Agendamento realizado com sucesso!",
+        });
+      }
     } catch (error: any) {
       return res.status(400).json({
         sucesso: false,

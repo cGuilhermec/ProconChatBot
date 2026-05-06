@@ -6,6 +6,10 @@ import { ProconController } from "../controller/procon.controller";
 const router = Router();
 const proconController = new ProconController();
 
+// ============ ROTAS PÚBLICAS (WhatsApp) ============
+// ✅ ROTA PÚBLICA - Buscar Procon por número do WhatsApp
+router.get("/procons/whatsapp/:whatsapp_number", proconController.buscarPorWhatsApp);
+
 // 🔒 ROTAS AUTENTICADAS (apenas COORDENADOR, DIRETOR, DEV)
 
 // Criar Procon

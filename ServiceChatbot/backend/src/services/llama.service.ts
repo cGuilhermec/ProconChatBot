@@ -1,133 +1,186 @@
 // src/services/llama.service.ts
 import axios from "axios";
-import { proconJacareiInfo } from "../data/procon_jacarei";
+
+export interface ProconInfoIA {
+  id: number;
+  nome: string;
+  cidade: string;
+  estado: string;
+  endereco: string;
+  telefone: string;
+  email: string;
+  horario_funcionamento: string;
+  whatsapp_number: string;
+}
 
 export class LlamaService {
   private ollamaUrl = "http://localhost:11434/api/generate";
-  private modelName = "llama3.2:latest";
+  private modelName = "tinyllama:1.1b-chat";
 
   async enriquecerResposta(
     pergunta: string,
     respostaRAG: any,
+    proconInfo: ProconInfoIA,
   ): Promise<string> {
-    // Se confiança já é alta, usa RAG direto
-    if (respostaRAG.confianca === "Alta" && respostaRAG.score > 0.7) {
-      console.log("⚡ Usando resposta RAG direta (confiança alta)");
-      return respostaRAG.resposta;
-    }
+    console.log(`🤖 IA chamada para Procon: ${proconInfo.nome}`);
 
-    // Determina o tipo de pergunta para dar contexto específico
-    const perguntaLower = pergunta.toLowerCase();
-    let contextoEspecifico = "";
+    const perguntaLower = pergunta.toLowerCase().trim();
 
+    // ✅ 1. PERGUNTAS SOBRE O ROBÔ/ASSISTENTE
     if (
-      perguntaLower.includes("horário") ||
-      perguntaLower.includes("funcionamento")
+      perguntaLower === "qual é o seu nome?" ||
+      perguntaLower === "qual o seu nome?" ||
+      perguntaLower === "quem é você?" ||
+      perguntaLower === "quem é voce?" ||
+      perguntaLower.includes("seu nome")
     ) {
-      contextoEspecifico = `
-      INFORMAÇÕES ESPECÍFICAS DO PROCON JACAREÍ:
-      • Horário de funcionamento: ${proconJacareiInfo.horarioFuncionamento}
-      • Endereço: ${proconJacareiInfo.endereco}
-      • Telefone: ${proconJacareiInfo.telefone}
-      • WhatsApp: ${proconJacareiInfo.whatsapp}
-      • E-mail: ${proconJacareiInfo.email}
-      • Site: ${proconJacareiInfo.site}
-      `;
-    } else if (
-      perguntaLower.includes("endereço") ||
-      perguntaLower.includes("onde fica")
-    ) {
-      contextoEspecifico = `
-      ENDEREÇO DO PROCON JACAREÍ:
-      • ${proconJacareiInfo.endereco}
-      • Atendimento presencial: ${proconJacareiInfo.atendimentoPresencial}
-      `;
-    } else if (
-      perguntaLower.includes("documento") ||
-      perguntaLower.includes("precisa")
-    ) {
-      contextoEspecifico = `
-      DOCUMENTOS NECESSÁRIOS (Procon Jacareí):
-      ${proconJacareiInfo.documentosNecessarios.map((doc) => `• ${doc}`).join("\n")}
-      `;
+      return `Olá! Eu sou o assistente virtual do ${proconInfo.nome}. Fui criado para ajudar os cidadãos de ${proconInfo.cidade} com informações sobre direitos do consumidor, agendamentos e orientações. Como posso ajudá-lo hoje?`;
     }
 
-    const prompt = `
-      Você é um assistente virtual do PROCON JACAREÍ/SP. 
-      Sua função é ajudar os cidadãos de Jacareí com informações sobre direitos do consumidor e serviços do Procon.
-      
-      ${contextoEspecifico}
-      
-      INFORMAÇÃO DA BASE DE DADOS DO PROCON:
-      ${respostaRAG.resposta}
-      
-      Base legal: ${respostaRAG.base_legal?.join(", ") || "Não informada"}
-      Documentos: ${respostaRAG.documentos?.join(", ") || "Não informados"}
-      
-      PERGUNTA DO USUÁRIO: ${pergunta}
-      
-      INSTRUÇÕES IMPORTANTES:
-      1. SEMPRE priorize as informações do PROCON JACAREÍ quando disponíveis
-      2. Para perguntas sobre horário, endereço ou contato, use APENAS os dados oficiais do Procon Jacareí
-      3. Seja acolhedor e mantenha o tom profissional
-      4. Para dúvidas jurídicas, use a base de dados do Procon
-      5. Se não souber algo, informe que pode entrar em contato pelo telefone ${proconJacareiInfo.telefone}
-      6. Seja CONCISO (máximo 2-3 frases)
-      
-      RESPOSTA:
-    `;
-
-    try {
-      console.log(`🤖 Chamando Llama com contexto de Jacareí...`);
-
-      const response = await axios.post(
-        this.ollamaUrl,
-        {
-          model: this.modelName,
-          prompt: prompt,
-          stream: false,
-          options: {
-            temperature: 0.2,
-            top_p: 0.9,
-            num_predict: 200,
-          },
-        },
-        { timeout: 15000 },
+    // ✅ 2. PERGUNTAS SOBRE CAPACIDADES
+    if (
+      perguntaLower.includes("o que você pode fazer") ||
+      perguntaLower.includes("como você pode ajudar") ||
+      perguntaLower.includes("suas funções")
+    ) {
+      return (
+        `Posso ajudar você com:\n\n` +
+        `📌 *Informações sobre direitos do consumidor*\n` +
+        `📌 *Agendamentos presenciais*\n` +
+        `📌 *Consulta de agendamentos*\n` +
+        `📌 *Cancelamento de agendamentos*\n` +
+        `📌 *Horário, endereço e contato do ${proconInfo.nome}*\n\n` +
+        `Para começar, digite o número da opção desejada no menu.`
       );
-
-      console.log("✅ Llama respondeu com informações de Jacareí!");
-      return response.data.response;
-    } catch (error) {
-      console.error("❌ Erro no Llama:", error);
-      // Fallback com informações de Jacareí
-      return this.getJacareiFallback(pergunta);
     }
-  }
 
-  private getJacareiFallback(pergunta: string): string {
-    const perguntaLower = pergunta.toLowerCase();
+    // ✅ 3. AGRADECIMENTOS
+    if (
+      perguntaLower.includes("obrigado") ||
+      perguntaLower.includes("valeu") ||
+      perguntaLower.includes("gratidão") ||
+      perguntaLower.includes("obrigada")
+    ) {
+      return `Por nada! Fico feliz em ajudar. Se precisar de mais alguma informação sobre o ${proconInfo.nome}, é só chamar. Tenha um ótimo dia! 😊`;
+    }
 
+    // ✅ 4. SAUDAÇÕES
+    if (
+      perguntaLower.includes("oi") ||
+      perguntaLower.includes("olá") ||
+      perguntaLower.includes("ola") ||
+      perguntaLower.includes("bom dia") ||
+      perguntaLower.includes("boa tarde") ||
+      perguntaLower.includes("boa noite")
+    ) {
+      return `Olá! Sou o assistente virtual do ${proconInfo.nome}. Como posso ajudá-lo hoje? Digite o número da opção desejada no menu.`;
+    }
+
+    // ✅ 5. PERGUNTAS SOBRE TUDO BEM
+    if (
+      perguntaLower.includes("tudo bem") ||
+      perguntaLower.includes("como vai")
+    ) {
+      return `Tudo bem sim, obrigado! Estou pronto para ajudar com questões sobre o ${proconInfo.nome}. Em que posso ser útil?`;
+    }
+
+    // ✅ 6. CASOS DE VIOLÊNCIA/AGRESSÃO
+    if (
+      perguntaLower.includes("bateram") ||
+      perguntaLower.includes("agressão") ||
+      perguntaLower.includes("agressao") ||
+      perguntaLower.includes("violência") ||
+      perguntaLower.includes("violencia") ||
+      perguntaLower.includes("espancaram") ||
+      perguntaLower.includes("socorro") ||
+      perguntaLower.includes("urgente")
+    ) {
+      return (
+        `⚠️ *ATENDIMENTO DE URGÊNCIA*\n\n` +
+        `Sinto muito pelo que você está passando. Se você está em situação de violência ou risco imediato, ligue para:\n\n` +
+        `🚨 *190* - Polícia Militar (emergência)\n` +
+        `🚨 *180* - Central de Atendimento à Mulher (violência doméstica)\n` +
+        `🚨 *Disque 100* - Direitos Humanos\n\n` +
+        `O ${proconInfo.nome} atende apenas questões relacionadas a direitos do consumidor.`
+      );
+    }
+
+    // ✅ 7. SAÚDE MENTAL
+    if (
+      perguntaLower.includes("depressão") ||
+      perguntaLower.includes("depressao") ||
+      perguntaLower.includes("ansiedade") ||
+      perguntaLower.includes("suicídio") ||
+      perguntaLower.includes("triste") ||
+      perguntaLower.includes("desespero")
+    ) {
+      return (
+        `💙 *Apoio Emocional*\n\n` +
+        `Se você está passando por um momento difícil, saiba que não está sozinho:\n\n` +
+        `📞 *CVV (Centro de Valorização da Vida)*: 188 - 24 horas (ligação gratuita)\n` +
+        `🌐 Site: www.cvv.org.br - chat online\n\n` +
+        `O ${proconInfo.nome} não é especializado em saúde mental, mas podemos ajudar com direitos do consumidor se precisar.`
+      );
+    }
+
+    // ✅ 8. PERGUNTAS SOBRE O PROCON
     if (
       perguntaLower.includes("horário") ||
+      perguntaLower.includes("horario") ||
+      perguntaLower.includes("abre") ||
       perguntaLower.includes("funcionamento")
     ) {
-      return `O Procon Jacareí funciona de ${proconJacareiInfo.horarioFuncionamento}, na ${proconJacareiInfo.endereco}. Para mais informações, ligue ${proconJacareiInfo.telefone}.`;
+      return `O ${proconInfo.nome} funciona de ${proconInfo.horario_funcionamento}. Telefone: ${proconInfo.telefone}`;
     }
 
     if (
       perguntaLower.includes("endereço") ||
-      perguntaLower.includes("onde fica")
+      perguntaLower.includes("endereco") ||
+      perguntaLower.includes("onde fica") ||
+      perguntaLower.includes("localização")
     ) {
-      return `O Procon Jacareí fica na ${proconJacareiInfo.endereco}. Atendimento presencial de ${proconJacareiInfo.horarioFuncionamento}.`;
+      return `O ${proconInfo.nome} fica na ${proconInfo.endereco}. Telefone: ${proconInfo.telefone}`;
     }
 
     if (
       perguntaLower.includes("telefone") ||
-      perguntaLower.includes("contato")
+      perguntaLower.includes("contato") ||
+      perguntaLower.includes("whatsapp") ||
+      perguntaLower.includes("ligar")
     ) {
-      return `Você pode contatar o Procon Jacareí pelo telefone ${proconJacareiInfo.telefone}, WhatsApp ${proconJacareiInfo.whatsapp} ou e-mail ${proconJacareiInfo.email}.`;
+      return `Contato ${proconInfo.nome}: Telefone ${proconInfo.telefone} | WhatsApp ${proconInfo.whatsapp_number}`;
     }
 
-    return `Para mais informações, entre em contato com o Procon Jacareí pelo telefone ${proconJacareiInfo.telefone} ou visite o site ${proconJacareiInfo.site}.`;
+    if (
+      perguntaLower.includes("estacionamento") ||
+      perguntaLower.includes("estacionar")
+    ) {
+      return `Sobre estacionamento no ${proconInfo.nome}: Recomendamos ligar antecipadamente pelo telefone ${proconInfo.telefone} para confirmar a disponibilidade de vagas.`;
+    }
+
+    if (
+      perguntaLower.includes("documento") ||
+      perguntaLower.includes("rg") ||
+      perguntaLower.includes("cpf") ||
+      perguntaLower.includes("levar")
+    ) {
+      return `Para atendimento no ${proconInfo.nome}, leve RG, CPF, comprovante de residência e documentos relacionados à sua reclamação. Telefone: ${proconInfo.telefone}`;
+    }
+
+    // ✅ 9. RESPOSTA PADRÃO (sem tentar chamar a IA)
+    console.log("📞 Pergunta não identificada, usando resposta padrão");
+
+    return (
+      `Desculpe, não entendi completamente sua pergunta.\n\n` +
+      `Você pode escolher uma das opções do menu:\n\n` +
+      `1️⃣ - Tirar dúvidas\n` +
+      `2️⃣ - Agendar atendimento\n` +
+      `3️⃣ - Consultar agendamentos\n` +
+      `4️⃣ - Cancelar agendamento\n` +
+      `0️⃣ - Sair\n\n` +
+      `Ou entre em contato diretamente:\n` +
+      `📞 Telefone: ${proconInfo.telefone}\n` +
+      `💬 WhatsApp: ${proconInfo.whatsapp_number}`
+    );
   }
 }
