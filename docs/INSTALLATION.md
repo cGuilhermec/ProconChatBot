@@ -2,7 +2,7 @@
 
 > Passo a passo para instalar e rodar o **ProconChatBot** localmente em ambiente de desenvolvimento, incluindo banco de dados, LLM local e bot do WhatsApp.
 
-🏠 [Voltar ao README2](../README2.md)
+🏠 [Voltar ao README](../README.md)
 
 
 <br>
@@ -683,7 +683,7 @@ git commit -m "chore: remove arquivos do WhatsApp do tracking"
 
 ## 🔗 Veja também
 
-- [📘 README2 — Documento central](../README2.md)
+- [📘 README — Documento central](../README.md)
 - [📐 Arquitetura detalhada](./ARCHITECTURE.md)
 - [🔌 Referência de API](./API.md)
 - [⚛️ Documentação do frontend](./FRONTEND.md)

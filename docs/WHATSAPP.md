@@ -2,7 +2,7 @@
 
 > Documento técnico que descreve a integração do **ProconChatBot** com o WhatsApp, a máquina de estados de sessão, os fluxos de atendimento e como o bot decide entre RAG, LLM e respostas determinísticas.
 
-🏠 [Voltar ao README2](../README2.md)
+🏠 [Voltar ao README](../README.md)
 
 
 <br>
@@ -527,7 +527,7 @@ Você tem direito à devolução em dobro do valor cobrado indevidamente.
 
 ## 🔗 Veja também
 
-- [📘 README2 — Documento central](../README2.md)
+- [📘 README — Documento central](../README.md)
 - [📐 Arquitetura detalhada](./ARCHITECTURE.md)
 - [⚙️ Guia de instalação](./INSTALLATION.md)
 - [🔌 Referência de API](./API.md)

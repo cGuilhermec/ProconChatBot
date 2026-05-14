@@ -2,7 +2,7 @@
 
 > Documentação completa dos endpoints REST das três APIs do ProconChatBot: **Admin (`:3002`)**, **RAG (`:3000`)** e **Chatbot (`:3001`)**.
 
-🏠 [Voltar ao README2](../README2.md)
+🏠 [Voltar ao README](../README.md)
 
 
 <br>
@@ -498,7 +498,7 @@ curl http://localhost:3002/me \
 
 ## 🔗 Veja também
 
-- [📘 README2 — Documento central](../README2.md)
+- [📘 README — Documento central](../README.md)
 - [📐 Arquitetura detalhada](./ARCHITECTURE.md)
 - [⚙️ Guia de instalação](./INSTALLATION.md)
 - [⚛️ Documentação do frontend](./FRONTEND.md)

@@ -2,7 +2,7 @@
 
 > Painel administrativo do **ProconChatBot** construído em **React 19 + Vite 8 + TypeScript**, com autenticação JWT, controle de acesso baseado em papéis (RBAC) e integração com a API Administrativa do ServiceProcon.
 
-🏠 [Voltar ao README2](../README2.md)
+🏠 [Voltar ao README](../README.md)
 
 
 <br>
@@ -466,7 +466,7 @@ npm run lint
 
 ## 🔗 Veja também
 
-- [📘 README2 — Documento central](../README2.md)
+- [📘 README — Documento central](../README.md)
 - [📐 Arquitetura detalhada](./ARCHITECTURE.md)
 - [⚙️ Guia de instalação](./INSTALLATION.md)
 - [🔌 Referência de API](./API.md)
