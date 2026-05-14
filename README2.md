@@ -32,7 +32,12 @@
   <a href="#-sprints">Sprints</a>
 </p>
 
+
+<br>
+
 ---
+
+<br>
 
 ## 📖 Sobre o Projeto
 
@@ -52,7 +57,13 @@ O **ProconChatBot** é um sistema de atendimento automatizado desenvolvido em pa
 
 🔝 [Voltar ao topo](#top)
 
+
+
+<br>
+
 ---
+
+<br>
 
 ## 🎯 Desafio Acadêmico
 
@@ -107,7 +118,13 @@ O atendimento humano do PROCON Jacareí é frequentemente sobrecarregado por dem
 
 🔝 [Voltar ao topo](#top)
 
+
+
+<br>
+
 ---
+
+<br>
 
 ## 🏗️ Arquitetura
 
@@ -162,7 +179,13 @@ flowchart LR
 
 🔝 [Voltar ao topo](#top)
 
+
+
+<br>
+
 ---
+
+<br>
 
 ## 🛠️ Stack Tecnológica
 
@@ -205,7 +228,13 @@ flowchart LR
 
 🔝 [Voltar ao topo](#top)
 
+
+
+<br>
+
 ---
+
+<br>
 
 ## 📂 Estrutura do Repositório
 
@@ -278,7 +307,13 @@ ProconChatBot/
 
 🔝 [Voltar ao topo](#top)
 
+
+
+<br>
+
 ---
+
+<br>
 
 ## 🚀 Quick Start
 
@@ -361,7 +396,13 @@ Ao iniciar o ServiceChatbot pela primeira vez, escaneie o **QR Code** no termina
 
 🔝 [Voltar ao topo](#top)
 
+
+
+<br>
+
 ---
+
+<br>
 
 ## 📚 Documentação Detalhada
 
@@ -403,7 +444,13 @@ Esta é a documentação central. Para tópicos específicos, navegue pelos docu
 
 🔝 [Voltar ao topo](#top)
 
+
+
+<br>
+
 ---
+
+<br>
 
 ## 📅 Sprints
 
@@ -417,7 +464,13 @@ Esta é a documentação central. Para tópicos específicos, navegue pelos docu
 
 🔝 [Voltar ao topo](#top)
 
+
+
+<br>
+
 ---
+
+<br>
 
 ## 👥 Equipe
 
@@ -444,7 +497,13 @@ Esta é a documentação central. Para tópicos específicos, navegue pelos docu
 
 🔝 [Voltar ao topo](#top)
 
+
+
+<br>
+
 ---
+
+<br>
 
 ## 📜 Convenções
 
@@ -476,7 +535,13 @@ chore:     manutenção (deps, config, build)
 
 🔝 [Voltar ao topo](#top)
 
+
+
+<br>
+
 ---
+
+<br>
 
 ## ⚖️ Avisos Legais
 
