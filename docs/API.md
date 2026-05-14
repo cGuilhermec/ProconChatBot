@@ -4,7 +4,12 @@
 
 🏠 [Voltar ao README2](../README2.md)
 
+
+<br>
+
 ---
+
+<br>
 
 ## 📋 Índice
 
@@ -21,7 +26,12 @@
 - [API Chatbot — `:3001`](#-api-chatbot--3001)
 - [Códigos de erro comuns](#-códigos-de-erro-comuns)
 
+
+<br>
+
 ---
+
+<br>
 
 ## 📐 Convenções
 
@@ -56,7 +66,13 @@ Em caso de erro:
 
 🔝 [Voltar ao topo](#-referência-de-api)
 
+
+
+<br>
+
 ---
+
+<br>
 
 ## 🔐 Autenticação
 
@@ -72,7 +88,13 @@ A **API RAG** e a **API Chatbot** são **públicas** *(uso interno entre serviç
 
 🔝 [Voltar ao topo](#-referência-de-api)
 
+
+
+<br>
+
 ---
+
+<br>
 
 ## 🏢 API Administrativa — `:3002`
 
@@ -128,6 +150,7 @@ Content-Type: application/json
 
 🔝 [Voltar ao topo](#-referência-de-api)
 
+
 ---
 
 ### 🏢 Procon (Unidades)
@@ -145,6 +168,7 @@ Content-Type: application/json
 | `DELETE` | `/procon/:id` | 🔒 | Deletar unidade *(DIRETOR+)*. |
 
 🔝 [Voltar ao topo](#-referência-de-api)
+
 
 ---
 
@@ -178,6 +202,7 @@ GET /feriado/verificar?procon_id=1&data=2026-12-25
 ```
 
 🔝 [Voltar ao topo](#-referência-de-api)
+
 
 ---
 
@@ -232,6 +257,7 @@ PENDENTE → CONFIRMADO → COMPARECEU
 ```
 
 🔝 [Voltar ao topo](#-referência-de-api)
+
 
 ---
 
@@ -293,6 +319,7 @@ Content-Type: application/json
 
 🔝 [Voltar ao topo](#-referência-de-api)
 
+
 ---
 
 ### 📝 Audit Log
@@ -321,7 +348,13 @@ Estrutura de cada log:
 
 🔝 [Voltar ao topo](#-referência-de-api)
 
+
+
+<br>
+
 ---
+
+<br>
 
 ## 🧠 API RAG — `:3000`
 
@@ -361,7 +394,13 @@ curl -X POST http://localhost:3000/api/perguntar \
 
 🔝 [Voltar ao topo](#-referência-de-api)
 
+
+
+<br>
+
 ---
+
+<br>
 
 ## 💬 API Chatbot — `:3001`
 
@@ -395,7 +434,13 @@ curl -X POST http://localhost:3001/api/chat \
 
 🔝 [Voltar ao topo](#-referência-de-api)
 
+
+
+<br>
+
 ---
+
+<br>
 
 ## ⚠️ Códigos de erro comuns
 
@@ -411,7 +456,13 @@ curl -X POST http://localhost:3001/api/chat \
 
 🔝 [Voltar ao topo](#-referência-de-api)
 
+
+
+<br>
+
 ---
+
+<br>
 
 ## 🧪 Testando localmente
 
@@ -437,7 +488,13 @@ curl http://localhost:3002/me \
 
 🔝 [Voltar ao topo](#-referência-de-api)
 
+
+
+<br>
+
 ---
+
+<br>
 
 ## 🔗 Veja também
 
