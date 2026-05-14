@@ -453,41 +453,11 @@ Esta é a documentação central. Para tópicos específicos, navegue pelos docu
 
 ## 📅 Sprints
 
-<table align="center">
-  <tr>
-    <td align="center" width="33%">
-      <h3>🏁 Sprint 01</h3>
-      <p><img src="https://img.shields.io/badge/Status-Finalizada-success?style=flat-square"></p>
-      <p><b>09/03 – 25/03/2026</b></p>
-      <p>Motor RAG + LLM</p>
-      <p><a href="./docs/sprint1.md">📄 Ver relatório</a></p>
-    </td>
-    <td align="center" width="33%">
-      <h3>🏁 Sprint 02</h3>
-      <p><img src="https://img.shields.io/badge/Status-Finalizada-success?style=flat-square"></p>
-      <p><b>13/04 – 29/04/2026</b></p>
-      <p>Estruturação + 7 CRUDs</p>
-      <p><a href="./docs/sprint2.md">📄 Ver relatório</a></p>
-    </td>
-    <td align="center" width="33%">
-      <h3>⏳ Sprint 03</h3>
-      <p><img src="https://img.shields.io/badge/Status-N%C3%A3o%20iniciada-lightgrey?style=flat-square"></p>
-      <p><b>a definir</b></p>
-      <p>Integração final + entrega</p>
-      <p><sub>relatório em breve</sub></p>
-    </td>
-  </tr>
-</table>
-
-### 📋 Resumo em tabela
-
 | Sprint | Período | Status | Foco | Relatório |
 |:---:|:---:|:---:|:---|:---:|
-| **1** | 09/03/2026 – 25/03/2026 | ✅ Finalizada | Motor RAG + LLM | [📄 sprint1.md](./docs/sprint1.md) |
-| **2** | 13/04/2026 – 29/04/2026 | ✅ Finalizada | Estruturação + 7 CRUDs | [📄 sprint2.md](./docs/sprint2.md) |
-| **3** | a definir | ⏳ Não iniciada | Integração final + entrega | — |
-
-**Legenda:** ✅ Finalizada · 🚧 Em progresso · ⏳ Não iniciada
+| **1** | 09/03/2026 – 25/03/2026 | <img src="https://img.shields.io/badge/Status-Finalizada-success?style=flat-square"> | Motor RAG + LLM | [Ver relatório](./docs/sprint1.md) |
+| **2** | 13/04/2026 – 29/04/2026 | <img src="https://img.shields.io/badge/Status-Finalizada-success?style=flat-square"> | Estruturação + 7 CRUDs | [Ver relatório](./docs/sprint2.md) |
+| **3** | a definir | <img src="https://img.shields.io/badge/Status-N%C3%A3o%20iniciada-lightgrey?style=flat-square"> | Integração final + entrega | — |
 
 🔝 [Voltar ao topo](#top)
 
@@ -501,26 +471,12 @@ Esta é a documentação central. Para tópicos específicos, navegue pelos docu
 
 ## 👥 Equipe
 
-<table>
-<tr>
-<td align="center">
-  <b>Jackson Rodrigo Costa Machado</b><br/>
-  <sub>Scrum Master / Dev</sub>
-</td>
-<td align="center">
-  <b>Ligia Ribeiro</b><br/>
-  <sub>Product Owner</sub>
-</td>
-<td align="center">
-  <b>Guilherme Carvalho</b><br/>
-  <sub>Dev Team</sub>
-</td>
-<td align="center">
-  <b>Gustavo Carvalho</b><br/>
-  <sub>Dev Team</sub>
-</td>
-</tr>
-</table>
+| Integrante | Papel |
+|:---|:---:|
+| **Jackson Rodrigo Costa Machado** | Scrum Master / Dev |
+| **Ligia Ribeiro** | Product Owner |
+| **Guilherme Carvalho** | Dev Team |
+| **Gustavo Carvalho** | Dev Team |
 
 🔝 [Voltar ao topo](#top)
 
