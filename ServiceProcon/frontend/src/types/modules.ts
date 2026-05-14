@@ -43,7 +43,7 @@ export const modules: Module[] = [
         description: 'Gerenciar unidades Procon',
         icon: '🏢',
         path: '/procons',
-        permissions: ['COORDENADOR', 'DIRETOR', 'DEV'],
+        permissions: ['DIRETOR', 'DEV'],
     },
     {
         id: 'feriados',
@@ -75,7 +75,7 @@ export const modules: Module[] = [
         description: 'Logs de atividades do sistema',
         icon: '📝',
         path: '/auditoria',
-        permissions: ['DIRETOR', 'DEV'],
+        permissions: ['COORDENADOR', 'DIRETOR', 'DEV'],
     },
     {
         id: 'devtools',

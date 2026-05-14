@@ -110,10 +110,6 @@ export const Dashboard = () => {
                   <span className="action-icon">👥</span>
                   <span>Novo Usuário</span>
                 </button>
-                <button className="quick-action-card" onClick={() => navigate('/procons')}>
-                  <span className="action-icon">🏢</span>
-                  <span>Nova Unidade</span>
-                </button>
               </>
             )}
             {(isManager || userRole === 'FUNCIONARIO') && (

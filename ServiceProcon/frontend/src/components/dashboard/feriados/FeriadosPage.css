@@ -1,0 +1,343 @@
+.feriados-page {
+  min-height: 100vh;
+  background: var(--apple-bg);
+  padding: 2rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  .feriados-page {
+    background: var(--apple-bg-dark);
+  }
+}
+
+.btn-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1.2rem;
+  margin-bottom: 1.5rem;
+  background: var(--apple-card-bg);
+  backdrop-filter: saturate(180%) blur(20px);
+  border: 1px solid var(--apple-border);
+  border-radius: 12px;
+  color: var(--apple-text-primary);
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-back:hover {
+  transform: translateX(-4px);
+  border-color: var(--apple-blue);
+  box-shadow: 0 4px 12px var(--apple-focus-ring);
+}
+
+.feriados-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.header-left h1 {
+  font-size: 2rem;
+  margin-bottom: 0.25rem;
+  color: var(--apple-text-primary);
+  letter-spacing: -0.03em;
+}
+
+.header-left p {
+  color: var(--apple-text-secondary);
+  font-size: 0.9rem;
+}
+
+.btn-primary {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background: var(--apple-blue);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-primary:hover {
+  transform: scale(1.02);
+  background: var(--apple-blue-hover);
+  box-shadow: 0 4px 12px var(--apple-focus-ring);
+}
+
+/* Search */
+.search-container {
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.search-box {
+  flex: 1;
+  position: relative;
+  max-width: 400px;
+}
+
+.search-icon {
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1rem;
+  color: var(--apple-text-secondary);
+}
+
+.search-box input {
+  width: 100%;
+  padding: 0.75rem 2.5rem 0.75rem 2.5rem;
+  border: 1px solid var(--apple-border);
+  border-radius: 12px;
+  background: var(--apple-card-bg);
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+  color: var(--apple-text-primary);
+}
+
+.search-box input:focus {
+  outline: none;
+  border-color: var(--apple-blue);
+  box-shadow: 0 0 0 3px var(--apple-focus-ring);
+}
+
+.search-clear {
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: var(--apple-text-secondary);
+  padding: 0.25rem;
+  border-radius: 50%;
+}
+
+.search-clear:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.search-info {
+  font-size: 0.8rem;
+  color: var(--apple-text-secondary);
+  padding: 0.5rem 1rem;
+  background: var(--apple-card-bg);
+  border-radius: 20px;
+}
+
+/* Feriados Grid */
+.feriados-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 1.5rem;
+}
+
+.feriado-card {
+  background: var(--apple-card-bg);
+  backdrop-filter: saturate(180%) blur(20px);
+  border: 1px solid var(--apple-border);
+  border-radius: 16px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.feriado-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+  display: flex;
+  gap: 1rem;
+  padding: 1.25rem;
+  background: rgba(0, 0, 0, 0.02);
+  border-bottom: 1px solid var(--apple-border);
+}
+
+.card-date {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 60px;
+  padding: 0.5rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 12px;
+  color: white;
+}
+
+.date-day {
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.date-month {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  margin-top: 0.25rem;
+}
+
+.card-info {
+  flex: 1;
+}
+
+.card-info h3 {
+  margin: 0 0 0.5rem;
+  font-size: 1.1rem;
+  color: var(--apple-text-primary);
+}
+
+.card-meta {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.recorrente-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem 0.6rem;
+  border-radius: 12px;
+  font-size: 0.7rem;
+  font-weight: 600;
+}
+
+.recorrente-badge.recorrente {
+  background: rgba(52, 199, 89, 0.15);
+  color: #28a745;
+}
+
+.recorrente-badge.unico {
+  background: rgba(0, 122, 255, 0.15);
+  color: #007aff;
+}
+
+.procon-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem 0.6rem;
+  border-radius: 12px;
+  font-size: 0.7rem;
+  background: rgba(142, 142, 147, 0.15);
+  color: var(--apple-text-secondary);
+}
+
+.card-body {
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.info-row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+
+.info-label {
+  width: 110px;
+  font-size: 0.8rem;
+  color: var(--apple-text-secondary);
+}
+
+.info-value {
+  flex: 1;
+  font-size: 0.85rem;
+  color: var(--apple-text-primary);
+}
+
+.card-actions {
+  display: flex;
+  gap: 0.75rem;
+  padding: 1rem 1.25rem;
+  border-top: 1px solid var(--apple-border);
+  background: rgba(0, 0, 0, 0.01);
+}
+
+.btn-edit, .btn-delete {
+  flex: 1;
+  padding: 0.6rem;
+  border: none;
+  border-radius: 10px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-edit {
+  background: rgba(0, 122, 255, 0.1);
+  color: #007aff;
+}
+
+.btn-edit:hover {
+  background: rgba(0, 122, 255, 0.2);
+  transform: translateY(-1px);
+}
+
+.btn-delete {
+  background: rgba(255, 59, 48, 0.1);
+  color: #ff3b30;
+}
+
+.btn-delete:hover {
+  background: rgba(255, 59, 48, 0.2);
+  transform: translateY(-1px);
+}
+
+.empty-state {
+  text-align: center;
+  padding: 3rem;
+  background: var(--apple-card-bg);
+  border-radius: 16px;
+  border: 1px solid var(--apple-border);
+}
+
+.empty-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.empty-state h3 {
+  margin: 0 0 0.5rem;
+  color: var(--apple-text-primary);
+}
+
+.empty-state p {
+  margin: 0;
+  color: var(--apple-text-secondary);
+  font-size: 0.85rem;
+}
+
+.loading {
+  text-align: center;
+  padding: 2rem;
+  color: var(--apple-text-secondary);
+}

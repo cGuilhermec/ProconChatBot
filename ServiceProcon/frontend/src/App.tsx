@@ -4,6 +4,9 @@ import { ProtectedRoute } from './components/ProtectedRoute';
 import { Login } from './components/Login';
 import { Dashboard } from './components/dashboard/Dashboard';
 import { UsersPage } from './components/dashboard/users/UsersPage';
+import { ProfilePage } from './components/profile/ProfilePage';
+import { AgendamentosPage } from './components/dashboard/agendamentos/AgendamentosPage';
+import { FeriadosPage } from './components/dashboard/feriados/FeriadosPage';
 
 // Componente que contém as rotas e usa os toasts
 function AppRoutes() {
@@ -12,29 +15,56 @@ function AppRoutes() {
     <>
       <Routes>
         <Route path="/login" element={<Login />} />
-        <Route 
-          path="/" 
+        <Route
+          path="/"
           element={
             <ProtectedRoute>
               <Dashboard />
             </ProtectedRoute>
-          } 
+          }
         />
-        <Route 
-          path="/dashboard" 
+        <Route
+          path="/dashboard"
           element={
             <ProtectedRoute>
               <Dashboard />
             </ProtectedRoute>
-          } 
+          }
         />
-        <Route 
-          path="/usuarios" 
+        <Route
+          path="/usuarios"
           element={
             <ProtectedRoute>
               <UsersPage />
             </ProtectedRoute>
-          } 
+          }
+        />
+
+        <Route
+          path="/perfil"
+          element={
+            <ProtectedRoute>
+              <ProfilePage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/agendamentos"
+          element={
+            <ProtectedRoute>
+              <AgendamentosPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/feriados"
+          element={
+            <ProtectedRoute>
+              <FeriadosPage />
+            </ProtectedRoute>
+          }
         />
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Routes>
