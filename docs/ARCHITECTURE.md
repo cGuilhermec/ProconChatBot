@@ -4,7 +4,12 @@
 
 🏠 [Voltar ao README2](../README2.md)
 
+
+<br>
+
 ---
+
+<br>
 
 ## 📋 Índice
 
@@ -19,7 +24,12 @@
 - [Decisões arquiteturais (ADRs)](#-decisões-arquiteturais-adrs)
 - [Diagrama de pacotes](#-diagrama-de-pacotes)
 
+
+<br>
+
 ---
+
+<br>
 
 ## 🎯 Visão geral
 
@@ -67,7 +77,13 @@ flowchart TB
 
 🔝 [Voltar ao topo](#-arquitetura-do-proconchatbot)
 
+
+
+<br>
+
 ---
+
+<br>
 
 ## 🧱 Componentes do sistema
 
@@ -93,7 +109,13 @@ flowchart TB
 
 🔝 [Voltar ao topo](#-arquitetura-do-proconchatbot)
 
+
+
+<br>
+
 ---
+
+<br>
 
 ## 🔄 Fluxo de uma mensagem (end-to-end)
 
@@ -144,7 +166,13 @@ sequenceDiagram
 
 🔝 [Voltar ao topo](#-arquitetura-do-proconchatbot)
 
+
+
+<br>
+
 ---
+
+<br>
 
 ## 🧩 Padrão MVC com Active Record
 
@@ -198,7 +226,13 @@ ServiceProcon/backend/src/
 
 🔝 [Voltar ao topo](#-arquitetura-do-proconchatbot)
 
+
+
+<br>
+
 ---
+
+<br>
 
 ## 🔗 Comunicação entre serviços
 
@@ -218,7 +252,13 @@ O **ServiceChatbot** age como cliente HTTP do **ServiceProcon** para acesso aos 
 
 🔝 [Voltar ao topo](#-arquitetura-do-proconchatbot)
 
+
+
+<br>
+
 ---
+
+<br>
 
 ## 🌎 Multi-tenancy (multi-unidade)
 
@@ -244,7 +284,13 @@ flowchart LR
 
 🔝 [Voltar ao topo](#-arquitetura-do-proconchatbot)
 
+
+
+<br>
+
 ---
+
+<br>
 
 ## 🔒 Segurança
 
@@ -282,7 +328,13 @@ flowchart LR
 
 🔝 [Voltar ao topo](#-arquitetura-do-proconchatbot)
 
+
+
+<br>
+
 ---
+
+<br>
 
 ## ⏰ Jobs assíncronos
 
@@ -294,7 +346,13 @@ flowchart LR
 
 🔝 [Voltar ao topo](#-arquitetura-do-proconchatbot)
 
+
+
+<br>
+
 ---
+
+<br>
 
 ## 📐 Decisões arquiteturais (ADRs)
 
@@ -342,7 +400,13 @@ flowchart LR
 
 🔝 [Voltar ao topo](#-arquitetura-do-proconchatbot)
 
+
+
+<br>
+
 ---
+
+<br>
 
 ## 📦 Diagrama de pacotes
 
@@ -382,7 +446,13 @@ classDiagram
 
 🔝 [Voltar ao topo](#-arquitetura-do-proconchatbot)
 
+
+
+<br>
+
 ---
+
+<br>
 
 ## 🔗 Veja também
 
