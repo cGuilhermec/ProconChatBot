@@ -1,0 +1,65 @@
+/* SweetAlert2 Custom Styles */
+.swal-custom-popup {
+  border-radius: 16px !important;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif !important;
+  font-size: 14px !important;
+  backdrop-filter: blur(20px) !important;
+  box-shadow: 0 20px 35px -10px rgba(0, 0, 0, 0.3) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+.swal-custom-title {
+  font-size: 1.5rem !important;
+  font-weight: 600 !important;
+  letter-spacing: -0.02em !important;
+}
+
+.swal-custom-html {
+  font-size: 0.9rem !important;
+}
+
+.swal-custom-confirm,
+.swal-custom-cancel {
+  padding: 0.6rem 1.2rem !important;
+  border-radius: 10px !important;
+  font-weight: 600 !important;
+  transition: all 0.2s ease !important;
+}
+
+.swal-custom-confirm:hover,
+.swal-custom-cancel:hover {
+  transform: scale(1.02) !important;
+}
+
+/* Dark mode específico para SweetAlert2 */
+@media (prefers-color-scheme: dark) {
+  .swal2-popup {
+    background: #1c1c1e !important;
+    color: #ffffff !important;
+  }
+  
+  .swal2-title {
+    color: #ffffff !important;
+  }
+  
+  .swal2-html-container {
+    color: #e5e5e5 !important;
+  }
+  
+  .swal2-input,
+  .swal2-textarea,
+  .swal2-select {
+    background: #2c2c2e !important;
+    color: #ffffff !important;
+    border-color: #3a3a3c !important;
+  }
+  
+  .swal2-checkbox {
+    color: #e5e5e5 !important;
+  }
+  
+  .swal2-validation-message {
+    background: #2c2c2e !important;
+    color: #ff3b30 !important;
+  }
+}

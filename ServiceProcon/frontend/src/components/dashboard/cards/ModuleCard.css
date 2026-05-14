@@ -1,0 +1,110 @@
+.module-card {
+  display: flex;
+  align-items: center;
+  padding: 1.5rem;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  gap: 1.25rem;
+}
+
+.module-card:hover {
+  transform: translateY(-5px) scale(1.02);
+  border-color: var(--apple-blue);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.1);
+}
+
+@media (prefers-color-scheme: dark) {
+  .module-card:hover {
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+  }
+}
+
+.module-icon {
+  font-size: 2.2rem;
+  width: 64px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--apple-blue) 0%, #004499 100%);
+  border-radius: 16px;
+  color: white;
+  box-shadow: 0 4px 12px var(--apple-focus-ring);
+  flex-shrink: 0;
+}
+
+.module-content {
+  flex: 1;
+}
+
+.module-content h3 {
+  margin: 0 0 0.4rem 0;
+  color: var(--apple-text-primary);
+  font-size: 1.2rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+@media (prefers-color-scheme: dark) {
+  .module-content h3 {
+    color: var(--apple-text-primary-dark);
+  }
+}
+
+.module-content p {
+  margin: 0;
+  font-size: 0.95rem;
+  color: var(--apple-text-secondary);
+  line-height: 1.4;
+}
+
+@media (prefers-color-scheme: dark) {
+  .module-content p {
+    color: var(--apple-text-secondary-dark);
+  }
+}
+
+.module-arrow {
+  font-size: 1.5rem;
+  color: var(--apple-text-secondary);
+  transition: transform 0.3s ease, color 0.3s ease;
+  opacity: 0.5;
+}
+
+.module-card:hover .module-arrow {
+  transform: translateX(6px);
+  color: var(--apple-blue);
+  opacity: 1;
+}
+
+.btn-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1.2rem;
+  margin-bottom: 1.5rem;
+  background: var(--apple-card-bg);
+  backdrop-filter: saturate(180%) blur(20px);
+  border: 1px solid var(--apple-border);
+  border-radius: 12px;
+  color: var(--apple-text-primary);
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+@media (prefers-color-scheme: dark) {
+  .btn-back {
+    background: var(--apple-card-bg-dark);
+    border-color: var(--apple-border-dark);
+    color: var(--apple-text-primary-dark);
+  }
+}
+
+.btn-back:hover {
+  transform: translateX(-4px);
+  border-color: var(--apple-blue);
+  box-shadow: 0 4px 12px var(--apple-focus-ring);
+}
