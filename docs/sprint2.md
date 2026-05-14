@@ -1,30 +1,57 @@
-# 📍 Sprint 02 - ProconChatBot 📍
+<div id="top"></div>
 
-**🗓️ 13/04/2026 à 29/04/2026 🗓️**
+<h1 align="center">📍 Sprint 02 — ProconChatBot</h1>
 
 <p align="center">
-<a href="#objetivo">Objetivo da Sprint</a> | 
-<a href="#backlog">Backlog da Sprint</a> | 
-<a href="#burndown">Burndown</a> | 
-<a href="#arquitetura">Arquitetura de Sistemas</a> | 
-<a href="#kanban">Kanban</a> | 
-<a href="#review">Sprint Review</a> | 
-<a href="#testes">Configuração e Estratégia de Testes</a>
+  <img src="https://img.shields.io/badge/Sprint-02-blue?style=for-the-badge" alt="Sprint 02">
+  <img src="https://img.shields.io/badge/Status-Finalizada-success?style=for-the-badge" alt="Status">
+  <img src="https://img.shields.io/badge/Story%20Points-52-orange?style=for-the-badge" alt="Story Points">
+</p>
+
+<p align="center">
+  <b>🗓️ 13/04/2026 — 29/04/2026</b>
+</p>
+
+<p align="center">
+  <a href="#-objetivo">Objetivo</a> ·
+  <a href="#-backlog">Backlog</a> ·
+  <a href="#-burndown">Burndown</a> ·
+  <a href="#-arquitetura">Arquitetura</a> ·
+  <a href="#-kanban">Kanban</a> ·
+  <a href="#-sprint-review">Review</a> ·
+  <a href="#-estratégia-de-testes">Testes</a>
+</p>
+
+<p align="center">
+  🏠 <a href="../README2.md">Voltar ao README</a> ·
+  📘 <a href="./ARCHITECTURE.md">Arquitetura</a> ·
+  ⬅️ <a href="./sprint1.md">Sprint 01</a>
 </p>
 
 <br>
 
-🏠 [Voltar para home](../README.md)
+---
+
+<br>
+
+## 🎯 Objetivo
+
+O foco principal desta sprint foi a **Estruturação e Padronização de Software**. Após validar o Core Engine na Sprint 1, nesta etapa estabelecemos as bases sólidas para o Full Stack:
+
+- 🏗️ Definir arquiteturas robustas para **Backend** e **Frontend**.
+- 🗄️ Modelagem definitiva de dados *(7 entidades principais)*.
+- 🔐 Estratégias de **autenticação e segurança** *(JWT + bcrypt + RBAC)*.
+- ✅ Configuração dos ambientes de **testes automatizados** para garantir a estabilidade do ProconChatBot.
+
+🔝 [Voltar ao topo](#top)
+
+<br>
 
 ---
 
-## 🤝 <a id="objetivo"></a>Objetivo da Sprint
+<br>
 
-O foco principal desta sprint foi a **Estruturação e Padronização de Software**. Após validar o Core Engine na Sprint 1, nesta etapa estabelecemos as bases sólidas para o Full Stack: definindo arquiteturas robustas para Backend e Frontend, modelagem de dados definitiva, estratégias de segurança e a configuração dos ambientes de testes automatizados para garantir a estabilidade do ProconChatBot.
-
----
-
-## 🚧 <a id="backlog"></a>Sprint Backlog
+## 🚧 Backlog
 
 | ID | Tarefa | Status | Issue |
 |:---:|:---|:---:|:---:|
@@ -39,57 +66,103 @@ O foco principal desta sprint foi a **Estruturação e Padronização de Softwar
 | 2.4 | Planejar integração com backend | ✅ | [#35](https://github.com/cGuilhermec/ProconChatBot/issues/35) |
 | 3.1 | Escolher banco de dados | ✅ | [#39](https://github.com/cGuilhermec/ProconChatBot/issues/39) |
 | 3.2 | Modelagem de dados | ✅ | [#36](https://github.com/cGuilhermec/ProconChatBot/issues/36) |
-| 4.1 | Restruturar Projeto | ✅ | [#42](https://github.com/cGuilhermec/ProconChatBot/issues/42) |
+| 4.1 | Reestruturar projeto | ✅ | [#42](https://github.com/cGuilhermec/ProconChatBot/issues/42) |
 | 5.1 | Configurar projeto frontend | ✅ | [#43](https://github.com/cGuilhermec/ProconChatBot/issues/43) |
-| 6.1 | Configurar e criar o CRUD e testes backend - Usuario | ✅ | [#44](https://github.com/cGuilhermec/ProconChatBot/issues/44) |
-| 6.2 | Configurar e criar o CRUD e testes backend - Procon( Perguntas ) | ✅ | [#45](https://github.com/cGuilhermec/ProconChatBot/issues/45) |
-| 6.3 | Configurar e criar o CRUD e testes backend - Feriado | ✅ | [#48](https://github.com/cGuilhermec/ProconChatBot/issues/48) |
-| 6.4 | Configurar e criar o CRUD e testes no backend - Agendamento | ✅ | [#50](https://github.com/cGuilhermec/ProconChatBot/issues/50) |
-| 6.5 | Integrar Chat (WhatsApp) com o Crud Agendamento | ✅ | [#53](https://github.com/cGuilhermec/ProconChatBot/issues/53) |
-| 6.6 | Configurar e criar o CRUD e testes no backend - Pergunta | ✅ | [#54](https://github.com/cGuilhermec/ProconChatBot/issues/54) |
-| 6.7 | Configurar e criar o CRUD e testes backend - AUDIT_LOG | ✅ | [#55](https://github.com/cGuilhermec/ProconChatBot/issues/55) |
+| 6.1 | CRUD e testes — **Usuario** | ✅ | [#44](https://github.com/cGuilhermec/ProconChatBot/issues/44) |
+| 6.2 | CRUD e testes — **Procon (Perguntas)** | ✅ | [#45](https://github.com/cGuilhermec/ProconChatBot/issues/45) |
+| 6.3 | CRUD e testes — **Feriado** | ✅ | [#48](https://github.com/cGuilhermec/ProconChatBot/issues/48) |
+| 6.4 | CRUD e testes — **Agendamento** | ✅ | [#50](https://github.com/cGuilhermec/ProconChatBot/issues/50) |
+| 6.5 | Integrar Chat (WhatsApp) com o CRUD de Agendamento | ✅ | [#53](https://github.com/cGuilhermec/ProconChatBot/issues/53) |
+| 6.6 | CRUD e testes — **Pergunta** | ✅ | [#54](https://github.com/cGuilhermec/ProconChatBot/issues/54) |
+| 6.7 | CRUD e testes — **AuditLog** | ✅ | [#55](https://github.com/cGuilhermec/ProconChatBot/issues/55) |
+
+🔝 [Voltar ao topo](#top)
+
+<br>
 
 ---
 
-## 📇 <a id="burndown"></a>Burndown Sprint 02
+<br>
 
-Nesta sprint, o foco foi na fundação técnica, totalizando a queima de **52 Story Points**. O esforço inicial concentrou-se na modelagem e reestruturação para evitar débitos técnicos futuros.
+## 📇 Burndown
 
-![alt text](caminho_para_seu_grafico_burndown.png)
+O foco foi a **fundação técnica**, totalizando a queima de **52 Story Points**. O esforço inicial concentrou-se na modelagem e reestruturação para evitar débitos técnicos futuros.
+
+![Burndown Sprint 02](caminho_para_seu_grafico_burndown.png)
+
+🔝 [Voltar ao topo](#top)
+
+<br>
+
+---
+
+<br>
+
+## 🏗️ Arquitetura
+
+Diferente da Sprint 1 *(focada no motor RAG)*, a Sprint 2 consolidou a arquitetura global do sistema:
+
+| Camada | Stack | Entregue |
+|---|---|---|
+| **Backend Admin** | Node.js + TypeScript + Express + Prisma | ✅ |
+| **Backend Chatbot** | Node.js + whatsapp-web.js + Ollama | ✅ |
+| **Frontend** | React 19 + Vite 8 + React Router 7 | ✅ |
+| **Persistência** | PostgreSQL 18 + pgvector | ✅ |
+| **Autenticação** | JWT + bcrypt + RBAC (4 papéis) | ✅ |
+
+> 📘 Para o detalhamento técnico completo, veja [docs/ARCHITECTURE.md](./ARCHITECTURE.md).
+
+🔝 [Voltar ao topo](#top)
+
+<br>
 
 ---
 
-## 🏗️ <a id="arquitetura"></a>Arquitetura de Sistemas
-
-Diferente da Sprint 1 (focada no motor RAG), a Sprint 2 consolidou a arquitetura global do sistema:
-* **Backend:** Implementação de uma estrutura modular em Node.js com TypeScript.
-* **Frontend:** Configuração do ambiente React para a interface do usuário.
-* **Persistência:** Definição do banco de dados e modelagem das entidades (usuários, logs de triagem e histórico de conversas).
-
----
+<br>
 
 ## 📝 Kanban
-![alt text](caminho_para_seu_print_do_kanban.png)
+
+![Kanban Sprint 02](caminho_para_seu_print_do_kanban.png)
+
+🔝 [Voltar ao topo](#top)
+
+<br>
 
 ---
 
-## 🎬 <a id="review"></a>Sprint Review
+<br>
 
-#### O que funcionou bem?
-* **Padronização Técnica:** A definição precoce de padrões reduziu a fricção entre front e back.
-* **Ambiente de Testes:** A configuração inicial das suites já permite validar as novas rotas.
+## 🎬 Sprint Review
 
-#### Pontos a melhorar!
-* **Esforço de Reestruturação:** A migração de componentes da Sprint 1 levou mais tempo que o previsto.
+### ✅ O que funcionou bem
+
+| Ponto | Detalhe |
+|---|---|
+| 🧱 **Padronização técnica** | A definição precoce de padrões reduziu a fricção entre front e back. |
+| 🧪 **Ambiente de testes** | A configuração inicial das suites já permite validar as novas rotas. |
+
+### ⚠️ Pontos a melhorar
+
+| Ponto | Ação |
+|---|---|
+| 🔄 **Esforço de reestruturação** | A migração de componentes da Sprint 1 levou mais tempo que o previsto. |
+
+🔝 [Voltar ao topo](#top)
+
+<br>
 
 ---
 
-## 🔬 <a id="testes"></a>Configuração e Estratégia de Testes
+<br>
 
-### 📌 Visão Geral
+## 🔬 Estratégia de Testes
+
+### 📌 Visão geral
+
 A estratégia de testes foi desenvolvida para garantir a confiabilidade do ProconChatBot, utilizando o **test runner nativo do Node.js** (`node:test`) e `supertest` para integração.
 
-### 🛠️ Tecnologias Utilizadas
+### 🛠️ Tecnologias
+
 | Ferramenta | Finalidade |
 |:---|:---|
 | `node:test` | Test runner nativo do Node.js |
@@ -97,7 +170,8 @@ A estratégia de testes foi desenvolvida para garantir a confiabilidade do Proco
 | `supertest` | Simulação de requisições HTTP |
 | `tsx` | Execução de TypeScript nos testes |
 
-### 📁 Estrutura dos Testes
+### 📁 Estrutura dos testes
+
 ```text
 src/__tests__/
 ├── helpers/
@@ -127,7 +201,8 @@ src/__tests__/
 └── setup.test.ts              # Configuração global
 ```
 
-### 🚀 Como Executar
+### 🚀 Como executar
+
 ```bash
 # Executar todos os testes
 npm run test:all
@@ -135,7 +210,7 @@ npm run test:all
 # Executar com watch mode
 npm run test:watch
 
-# Executar testes do usuário
+# Executar testes do Usuário
 npm run test:usuario
 
 # Executar testes do Procon
@@ -152,3 +227,21 @@ npm run test:pergunta
 
 # Executar testes do AuditLog
 npm run test:auditlog
+```
+
+> 💡 Para mais detalhes sobre endpoints e payloads de teste, veja [docs/API.md](./API.md).
+
+🔝 [Voltar ao topo](#top)
+
+<br>
+
+---
+
+<br>
+
+<p align="center">
+  ⬅️ <a href="./sprint1.md">Sprint 01</a> · 
+  <a href="../README2.md">Voltar ao README</a>
+</p>
+
+<p align="center"><sub>Documento mantido pela equipe Azimuth do 6º DSM — Fatec / Jacareí 2026.</sub></p>
