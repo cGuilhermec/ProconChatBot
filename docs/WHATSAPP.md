@@ -4,7 +4,12 @@
 
 🏠 [Voltar ao README2](../README2.md)
 
+
+<br>
+
 ---
+
+<br>
 
 ## 📋 Índice
 
@@ -23,7 +28,12 @@
 - [Formato das mensagens](#-formato-das-mensagens)
 - [Considerações para produção](#-considerações-para-produção)
 
+
+<br>
+
 ---
+
+<br>
 
 ## 🎯 Visão geral
 
@@ -52,7 +62,13 @@ flowchart TD
 
 🔝 [Voltar ao topo](#-fluxo-do-chatbot-whatsapp)
 
+
+
+<br>
+
 ---
+
+<br>
 
 ## 📲 Integração com o WhatsApp
 
@@ -78,7 +94,13 @@ client.on('message',       msg     => handleMessage(msg));
 
 🔝 [Voltar ao topo](#-fluxo-do-chatbot-whatsapp)
 
+
+
+<br>
+
 ---
+
+<br>
 
 ## 🌎 Identificação multi-unidade
 
@@ -98,7 +120,13 @@ A partir daí, todas as queries de pergunta, agendamento e feriado são feitas *
 
 🔝 [Voltar ao topo](#-fluxo-do-chatbot-whatsapp)
 
+
+
+<br>
+
 ---
+
+<br>
 
 ## 🧭 Máquina de estados de sessão
 
@@ -160,7 +188,13 @@ stateDiagram-v2
 
 🔝 [Voltar ao topo](#-fluxo-do-chatbot-whatsapp)
 
+
+
+<br>
+
 ---
+
+<br>
 
 ## 📋 Menu principal
 
@@ -180,7 +214,13 @@ Apresentado no início da conversa e sempre que o usuário digita `0`, `menu` ou
 
 🔝 [Voltar ao topo](#-fluxo-do-chatbot-whatsapp)
 
+
+
+<br>
+
 ---
+
+<br>
 
 ## ❓ Fluxo: Tirar dúvidas
 
@@ -227,7 +267,13 @@ return formatarRespostaAjuda(proconInfo);
 
 🔝 [Voltar ao topo](#-fluxo-do-chatbot-whatsapp)
 
+
+
+<br>
+
 ---
+
+<br>
 
 ## 📅 Fluxo: Agendamento
 
@@ -265,7 +311,13 @@ sequenceDiagram
 
 🔝 [Voltar ao topo](#-fluxo-do-chatbot-whatsapp)
 
+
+
+<br>
+
 ---
+
+<br>
 
 ## 🔍 Fluxo: Consultar agendamentos
 
@@ -282,7 +334,13 @@ sequenceDiagram
 
 🔝 [Voltar ao topo](#-fluxo-do-chatbot-whatsapp)
 
+
+
+<br>
+
 ---
+
+<br>
 
 ## 🗑️ Fluxo: Cancelar agendamento
 
@@ -298,7 +356,13 @@ sequenceDiagram
 
 🔝 [Voltar ao topo](#-fluxo-do-chatbot-whatsapp)
 
+
+
+<br>
+
 ---
+
+<br>
 
 ## 🎯 Respostas determinísticas
 
@@ -319,7 +383,13 @@ Para evitar custo de inferência e garantir consistência, várias respostas sã
 
 🔝 [Voltar ao topo](#-fluxo-do-chatbot-whatsapp)
 
+
+
+<br>
+
 ---
+
+<br>
 
 ## 🚨 Casos sensíveis (violência, saúde mental)
 
@@ -355,7 +425,13 @@ Triggers: `depressão`, `ansiedade`, `suicídio`, `triste`, `desespero`
 
 🔝 [Voltar ao topo](#-fluxo-do-chatbot-whatsapp)
 
+
+
+<br>
+
 ---
+
+<br>
 
 ## 📆 Geração de calendário (.ics)
 
@@ -378,7 +454,13 @@ A biblioteca `ical-generator` produz um arquivo padrão **iCalendar (RFC 5545)**
 
 🔝 [Voltar ao topo](#-fluxo-do-chatbot-whatsapp)
 
+
+
+<br>
+
 ---
+
+<br>
 
 ## 🎨 Formato das mensagens
 
@@ -412,7 +494,13 @@ Você tem direito à devolução em dobro do valor cobrado indevidamente.
 
 🔝 [Voltar ao topo](#-fluxo-do-chatbot-whatsapp)
 
+
+
+<br>
+
 ---
+
+<br>
 
 ## 🚀 Considerações para produção
 
@@ -429,7 +517,13 @@ Você tem direito à devolução em dobro do valor cobrado indevidamente.
 
 🔝 [Voltar ao topo](#-fluxo-do-chatbot-whatsapp)
 
+
+
+<br>
+
 ---
+
+<br>
 
 ## 🔗 Veja também
 
