@@ -134,7 +134,7 @@ export class ProconService {
       throw new Error("Usuário não autenticado");
     }
 
-    const rolesPermitidos = ["COORDENADOR", "DIRETOR", "DEV"];
+    const rolesPermitidos = ["DIRETOR", "DEV"];
     if (!rolesPermitidos.includes(usuarioLogado.role)) {
       throw new Error(
         `Acesso negado. Seu role ${usuarioLogado.role} não tem permissão para listar Procons.`,

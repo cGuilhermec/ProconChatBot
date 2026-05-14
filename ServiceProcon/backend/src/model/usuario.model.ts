@@ -51,7 +51,7 @@ export class UsuarioModel {
       where: { USUARIO_ID: usuarioId },
       data: {
         senha: novaSenhaHash,
-        primeiro_acesso: true,
+        primeiro_acesso: false,
         updated_at: new Date(),
       },
     });

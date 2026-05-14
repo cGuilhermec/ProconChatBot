@@ -1,0 +1,221 @@
+.users-page {
+  min-height: 100vh;
+  width: 100%;
+  background-image: radial-gradient(circle at 50% -20%, #e0e0e0, var(--apple-bg) 80%);
+  padding: 2rem;
+  transition: background-image 0.3s ease;
+}
+
+@media (prefers-color-scheme: dark) {
+  .users-page {
+    background-image: radial-gradient(circle at 50% -20%, #333333, var(--apple-bg-dark) 80%);
+  }
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  background: var(--apple-card-bg);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  border: 1px solid var(--apple-border);
+  padding: 1.5rem;
+  border-radius: 16px;
+  color: var(--apple-text-primary);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
+}
+
+@media (prefers-color-scheme: dark) {
+  .page-header {
+    background: var(--apple-card-bg-dark);
+    border: 1px solid var(--apple-border-dark);
+    color: var(--apple-text-primary-dark);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+  }
+}
+
+.header-left h1 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.75rem;
+  color: var(--apple-text-primary);
+}
+
+@media (prefers-color-scheme: dark) {
+  .header-left h1 {
+    color: var(--apple-text-primary-dark);
+  }
+}
+
+.header-left p {
+  margin: 0;
+  color: var(--apple-text-secondary);
+}
+
+@media (prefers-color-scheme: dark) {
+  .header-left p {
+    color: var(--apple-text-secondary-dark);
+  }
+}
+
+.btn-primary {
+  background: var(--apple-blue);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(0, 102, 204, 0.3);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  background: var(--apple-blue-hover);
+  box-shadow: 0 6px 16px rgba(0, 102, 204, 0.4);
+}
+
+.btn-primary:active {
+  background: var(--apple-blue-active);
+  transform: translateY(0);
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+  color: var(--apple-text-primary);
+  font-size: 1.2rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  .loading {
+    color: var(--apple-text-primary-dark);
+  }
+}
+
+/* Adicione este estilo no final do arquivo */
+.btn-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1.2rem;
+  margin-bottom: 1.5rem;
+  background: var(--apple-card-bg);
+  backdrop-filter: saturate(180%) blur(20px);
+  border: 1px solid var(--apple-border);
+  border-radius: 12px;
+  color: var(--apple-text-primary);
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+@media (prefers-color-scheme: dark) {
+  .btn-back {
+    background: var(--apple-card-bg-dark);
+    border-color: var(--apple-border-dark);
+    color: var(--apple-text-primary-dark);
+  }
+}
+
+.btn-back:hover {
+  transform: translateX(-4px);
+  border-color: var(--apple-blue);
+  box-shadow: 0 4px 12px var(--apple-focus-ring);
+}
+
+/* Adicione ao final do UsersPage.css */
+
+/* Search Container */
+.search-container {
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.search-box {
+  flex: 1;
+  position: relative;
+  max-width: 400px;
+}
+
+.search-icon {
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1rem;
+  color: var(--apple-text-secondary);
+}
+
+.search-box input {
+  width: 100%;
+  padding: 0.75rem 2.5rem 0.75rem 2.5rem;
+  border: 1px solid var(--apple-border);
+  border-radius: 12px;
+  background: var(--apple-card-bg);
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+  color: var(--apple-text-primary);
+}
+
+@media (prefers-color-scheme: dark) {
+  .search-box input {
+    background: var(--apple-card-bg-dark);
+    border-color: var(--apple-border-dark);
+    color: var(--apple-text-primary-dark);
+  }
+}
+
+.search-box input:focus {
+  outline: none;
+  border-color: var(--apple-blue);
+  box-shadow: 0 0 0 3px var(--apple-focus-ring);
+}
+
+.search-box input::placeholder {
+  color: var(--apple-text-secondary);
+}
+
+.search-clear {
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: var(--apple-text-secondary);
+  padding: 0.25rem;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+}
+
+.search-clear:hover {
+  background: rgba(0, 0, 0, 0.05);
+  color: var(--apple-text-primary);
+}
+
+.search-info {
+  font-size: 0.8rem;
+  color: var(--apple-text-secondary);
+  padding: 0.5rem 1rem;
+  background: var(--apple-card-bg);
+  border-radius: 20px;
+}
+
+@media (prefers-color-scheme: dark) {
+  .search-info {
+    background: var(--apple-card-bg-dark);
+  }
+}

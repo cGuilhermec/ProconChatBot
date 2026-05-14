@@ -1,0 +1,202 @@
+.user-table-container {
+  background: var(--apple-card-bg);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  border: 1px solid var(--apple-border);
+  border-radius: 16px;
+  overflow-x: auto;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
+}
+
+@media (prefers-color-scheme: dark) {
+  .user-table-container {
+    background: var(--apple-card-bg-dark);
+    border: 1px solid var(--apple-border-dark);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+  }
+}
+
+.user-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 800px;
+  color: var(--apple-text-primary);
+}
+
+@media (prefers-color-scheme: dark) {
+  .user-table {
+    color: var(--apple-text-primary-dark);
+  }
+}
+
+.user-table thead {
+  background: rgba(0, 0, 0, 0.02);
+  border-bottom: 1px solid var(--apple-border);
+}
+
+@media (prefers-color-scheme: dark) {
+  .user-table thead {
+    background: rgba(255, 255, 255, 0.02);
+    border-bottom: 1px solid var(--apple-border-dark);
+  }
+}
+
+.user-table th {
+  padding: 1.25rem 1rem;
+  text-align: left;
+  font-weight: 600;
+  color: var(--apple-text-secondary);
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  letter-spacing: 0.05em;
+}
+
+@media (prefers-color-scheme: dark) {
+  .user-table th {
+    color: var(--apple-text-secondary-dark);
+  }
+}
+
+.user-table td {
+  padding: 1rem;
+  border-bottom: 1px solid var(--apple-border);
+  vertical-align: middle;
+}
+
+
+@media (prefers-color-scheme: dark) {
+  .user-table td {
+    border-bottom: 1px solid var(--apple-border-dark);
+  }
+}
+
+.user-table tbody tr {
+  transition: background-color 0.2s ease;
+  height: 60px;
+}
+
+.user-table tbody tr:hover {
+  background: rgba(0, 102, 204, 0.04);
+}
+
+@media (prefers-color-scheme: dark) {
+  .user-table tbody tr:hover {
+    background: rgba(255, 255, 255, 0.05);
+  }
+}
+
+.badge {
+  display: inline-block;
+  padding: 0.35rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.badge-dev {
+  background: rgba(170, 59, 255, 0.15);
+  color: #8a2be2;
+  border: 1px solid rgba(170, 59, 255, 0.3);
+}
+
+@media (prefers-color-scheme: dark) {
+  .badge-dev { color: #d896ff; }
+}
+
+.badge-diretor {
+  background: rgba(0, 102, 204, 0.15);
+  color: #005bb5;
+  border: 1px solid rgba(0, 102, 204, 0.3);
+}
+
+@media (prefers-color-scheme: dark) {
+  .badge-diretor { color: #66b2ff; }
+}
+
+.badge-coordenador {
+  background: rgba(40, 167, 69, 0.15);
+  color: #1e7e34;
+  border: 1px solid rgba(40, 167, 69, 0.3);
+}
+
+@media (prefers-color-scheme: dark) {
+  .badge-coordenador { color: #5cd67b; }
+}
+
+.badge-funcionario {
+  background: rgba(255, 193, 7, 0.15);
+  color: #b38600;
+  border: 1px solid rgba(255, 193, 7, 0.3);
+}
+
+@media (prefers-color-scheme: dark) {
+  .badge-funcionario { color: #ffdc73; }
+}
+
+.badge-active {
+  background: rgba(40, 167, 69, 0.15);
+  color: #1e7e34;
+  border: 1px solid rgba(40, 167, 69, 0.3);
+}
+
+@media (prefers-color-scheme: dark) {
+  .badge-active { color: #5cd67b; }
+}
+
+.badge-inactive {
+  background: rgba(220, 53, 69, 0.15);
+  color: #a71d2a;
+  border: 1px solid rgba(220, 53, 69, 0.3);
+}
+
+@media (prefers-color-scheme: dark) {
+  .badge-inactive { color: #ff6b7a; }
+}
+
+.actions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  min-height: 48px; /* Altura mínima consistente */
+}
+.actions:empty {
+  display: flex;
+}
+
+.user-table tr {
+  height: 60px; /* Altura fixa para todas as linhas */
+}
+
+.btn-icon {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0.4rem;
+  transition: all 0.2s ease;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+}
+
+.user-table td:last-child {
+  padding: 0.5rem 1rem;
+  vertical-align: middle;
+}
+
+.btn-icon:hover {
+  transform: scale(1.1);
+  background: rgba(0, 102, 204, 0.1);
+}
+
+@media (prefers-color-scheme: dark) {
+  .btn-icon:hover { background: rgba(255, 255, 255, 0.1); }
+}
+
+.btn-icon.delete:hover {
+  background: rgba(220, 53, 69, 0.1);
+}

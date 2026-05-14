@@ -77,10 +77,6 @@ export class LoginService {
     // ⬇️ VERIFICAR PRIMEIRO ACESSO
     const primeiroAcesso = userLoginAuth.primeiro_acesso;
 
-    // ⬇️ ATUALIZAR PRIMEIRO ACESSO E ÚLTIMO LOGIN
-    if (primeiroAcesso) {
-      await this.usuarioModel.atualizarPrimeiroAcesso(userLoginAuth.USUARIO_ID);
-    }
     await this.usuarioModel.atualizarUltimoLogin(userLoginAuth.USUARIO_ID);
 
     const token = jwt.sign(

@@ -1,0 +1,205 @@
+.dashboard-container {
+  min-height: 100vh;
+  width: 100%;
+  padding-bottom: 3rem;
+  background-image: radial-gradient(circle at 50% -20%, #e0e0e0, var(--apple-bg) 80%);
+  transition: background-image 0.3s ease;
+}
+
+@media (prefers-color-scheme: dark) {
+  .dashboard-container {
+    background-image: radial-gradient(circle at 50% -20%, #333333, var(--apple-bg-dark) 80%);
+  }
+}
+
+.dashboard-main {
+  padding: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.dashboard-welcome {
+  margin-bottom: 3rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.welcome-text h1 {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+  color: var(--apple-text-primary);
+  letter-spacing: -0.04em;
+}
+
+@media (prefers-color-scheme: dark) {
+  .welcome-text h1 {
+    color: var(--apple-text-primary-dark);
+  }
+}
+
+.welcome-text p {
+  color: var(--apple-text-secondary);
+  font-size: 1.1rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  .welcome-text p {
+    color: var(--apple-text-secondary-dark);
+  }
+}
+
+.role-badge span {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  background: var(--apple-blue);
+  color: white;
+  box-shadow: 0 4px 12px var(--apple-focus-ring);
+}
+
+.quick-actions {
+  margin-bottom: 3rem;
+}
+
+.quick-actions h2, .modules-section h2 {
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+  color: var(--apple-text-primary);
+  letter-spacing: -0.02em;
+}
+
+@media (prefers-color-scheme: dark) {
+  .quick-actions h2, .modules-section h2 {
+    color: var(--apple-text-primary-dark);
+  }
+}
+
+.actions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.quick-action-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.8rem;
+  padding: 1.5rem;
+  background: var(--apple-card-bg);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  border: 1px solid var(--apple-border);
+  border-radius: 16px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  color: var(--apple-text-primary);
+  font-weight: 500;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
+}
+
+@media (prefers-color-scheme: dark) {
+  .quick-action-card {
+    background: var(--apple-card-bg-dark);
+    border: 1px solid var(--apple-border-dark);
+    color: var(--apple-text-primary-dark);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+  }
+}
+
+.quick-action-card:hover {
+  transform: translateY(-4px) scale(1.02);
+  border-color: var(--apple-blue);
+  box-shadow: 0 8px 32px rgba(0, 102, 204, 0.15);
+}
+
+.action-icon {
+  font-size: 2rem;
+}
+
+.modules-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.5rem;
+}
+
+.logout-btn-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: rgba(255, 59, 48, 0.1);
+  border: 1px solid rgba(255, 59, 48, 0.3);
+  border-radius: 12px;
+  color: #ff3b30;
+  font-size: 1.25rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.logout-btn-icon:hover {
+  background: rgba(255, 59, 48, 0.2);
+  transform: translateY(-2px);
+}
+
+/* Adicione ao final do Dashboard.css */
+.dashboard-header {
+  margin-bottom: 2rem;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.logout-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: rgba(255, 59, 48, 0.1);
+  border: 1px solid rgba(255, 59, 48, 0.3);
+  border-radius: 12px;
+  color: #ff3b30;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+@media (prefers-color-scheme: dark) {
+  .logout-btn {
+    background: rgba(255, 59, 48, 0.15);
+    color: #ff453a;
+  }
+}
+
+.logout-btn:hover {
+  background: rgba(255, 59, 48, 0.2);
+  transform: translateY(-2px);
+  border-color: #ff3b30;
+}
+
+.logout-icon {
+  font-size: 1rem;
+}
+
+/* Ajuste do welcome para flex row */
+.dashboard-welcome {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  width: 100%;
+}

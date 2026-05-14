@@ -1,0 +1,329 @@
+/* Modal Overlay */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: radial-gradient(circle at 50% -20%, #e0e0e0, var(--apple-bg) 80%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease;
+  padding: 1rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  .modal-overlay {
+    background-image: radial-gradient(circle at 50% -20%, #333333, var(--apple-bg-dark) 80%);
+    background-color: transparent;
+  }
+}
+
+/* Modal Container (usa glass-panel do index.css) */
+.modal-container {
+  width: 100%;
+  max-width: 420px;
+  border-radius: 20px;
+  padding: 2.5rem;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Header */
+.modal-header {
+  text-align: center;
+  margin-bottom: 2rem;
+  width: 100%;
+}
+
+.modal-title {
+  font-size: 1.8rem;
+  font-weight: 600;
+  letter-spacing: -0.04em;
+  margin-bottom: 0.5rem;
+}
+
+.modal-subtitle {
+  font-size: 1.05rem;
+  color: var(--apple-text-secondary);
+  font-weight: 400;
+}
+
+/* Body */
+.modal-body {
+  width: 100%;
+}
+
+.info-text {
+  color: var(--apple-text-secondary);
+  text-align: center;
+  margin-bottom: 1.5rem;
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+.modal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+/* Input Group (reusing Login.css logic) */
+.input-group {
+  position: relative;
+  width: 100%;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 1.2rem 1rem 0.4rem;
+  font-size: 1rem;
+  font-family: inherit;
+  border: 1px solid var(--apple-border);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.5);
+  color: var(--apple-text-primary);
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+@media (prefers-color-scheme: dark) {
+  .input-group input {
+    background: rgba(0, 0, 0, 0.2);
+    color: var(--apple-text-primary-dark);
+    border-color: var(--apple-border-dark);
+  }
+}
+
+.input-group input:focus {
+  border-color: var(--apple-blue);
+  box-shadow: 0 0 0 4px var(--apple-focus-ring);
+  background: var(--apple-bg);
+}
+
+@media (prefers-color-scheme: dark) {
+  .input-group input:focus {
+    background: var(--apple-bg-dark);
+  }
+}
+
+.input-group label {
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1rem;
+  color: var(--apple-text-secondary);
+  pointer-events: none;
+  transition: all 0.2s ease-out;
+}
+
+.input-group input:focus ~ label,
+.input-group input:not(:placeholder-shown) ~ label {
+  top: 0.6rem;
+  font-size: 0.75rem;
+  color: var(--apple-blue);
+}
+
+.input-group input:not(:focus):not(:placeholder-shown) ~ label {
+  color: var(--apple-text-secondary);
+}
+
+/* Toggle Password Button */
+.toggle-password {
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--apple-text-secondary);
+  padding: 0.2rem;
+  transition: color 0.2s ease;
+}
+
+.toggle-password:hover {
+  color: var(--apple-blue);
+}
+
+/* Password Requirements */
+.password-requirements {
+  margin-top: -0.5rem;
+  margin-bottom: 0.5rem;
+  padding: 0 0.5rem;
+}
+
+.password-requirements ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.password-requirements li {
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: color 0.3s ease;
+}
+
+.password-requirements li.valid {
+  color: #34c759;
+}
+
+.password-requirements li.invalid {
+  color: var(--apple-text-secondary);
+}
+
+.check-icon {
+  font-size: 0.8rem;
+}
+
+/* Modal Actions */
+.modal-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+/* Button styles (reusing logic) */
+.login-button {
+  width: 100%;
+  padding: 1rem;
+  border: none;
+  border-radius: 12px;
+  background-color: var(--apple-blue);
+  color: white;
+  font-size: 1.05rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 52px;
+}
+
+.login-button:hover:not(:disabled) {
+  background-color: var(--apple-blue-hover);
+  transform: scale(0.98);
+}
+
+.login-button:active:not(:disabled) {
+  background-color: var(--apple-blue-active);
+}
+
+.login-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.modal-button-secondary {
+  width: 100%;
+  padding: 1rem;
+  background: transparent;
+  color: var(--apple-text-primary);
+  border: 1px solid var(--apple-border);
+  border-radius: 12px;
+  font-size: 1.05rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-height: 52px;
+}
+
+.modal-button-secondary:hover:not(:disabled) {
+  background: var(--apple-border);
+}
+
+@media (prefers-color-scheme: dark) {
+  .modal-button-secondary {
+    color: var(--apple-text-primary-dark);
+    border-color: var(--apple-border-dark);
+  }
+  .modal-button-secondary:hover:not(:disabled) {
+    background: var(--apple-border-dark);
+  }
+}
+
+/* Logo Icon */
+.logo-icon {
+  width: 60px;
+  height: 60px;
+  margin: 0 auto 1.5rem;
+  color: var(--apple-text-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (prefers-color-scheme: dark) {
+  .logo-icon {
+    color: var(--apple-text-primary-dark);
+  }
+}
+
+/* Error Message */
+.error-message {
+  background-color: rgba(255, 59, 48, 0.1);
+  border: 1px solid rgba(255, 59, 48, 0.3);
+  color: #ff3b30;
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  text-align: center;
+  font-size: 14px;
+  backdrop-filter: blur(10px);
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.fade-in-up {
+  animation: fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Spinner */
+.spinner {
+  width: 24px;
+  height: 24px;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: white;
+  animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@media (max-width: 480px) {
+  .modal-container {
+    padding: 2rem 1.5rem;
+  }
+}
