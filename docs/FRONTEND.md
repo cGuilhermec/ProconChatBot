@@ -4,7 +4,12 @@
 
 🏠 [Voltar ao README2](../README2.md)
 
+
+<br>
+
 ---
+
+<br>
 
 ## 📋 Índice
 
@@ -20,7 +25,12 @@
 - [Padrões de código](#-padrões-de-código)
 - [Como rodar](#-como-rodar)
 
+
+<br>
+
 ---
+
+<br>
 
 ## 🛠️ Stack
 
@@ -36,7 +46,13 @@
 
 🔝 [Voltar ao topo](#%EF%B8%8F-documentação-do-frontend)
 
+
+
+<br>
+
 ---
+
+<br>
 
 ## 📁 Estrutura de pastas
 
@@ -107,7 +123,13 @@ ServiceProcon/frontend/
 
 🔝 [Voltar ao topo](#%EF%B8%8F-documentação-do-frontend)
 
+
+
+<br>
+
 ---
+
+<br>
 
 ## 🗺️ Rotas
 
@@ -128,7 +150,13 @@ Definidas em [src/App.tsx](../ServiceProcon/frontend/src/App.tsx) usando `react-
 
 🔝 [Voltar ao topo](#%EF%B8%8F-documentação-do-frontend)
 
+
+
+<br>
+
 ---
+
+<br>
 
 ## 🔑 Autenticação
 
@@ -153,7 +181,13 @@ Definidas em [src/App.tsx](../ServiceProcon/frontend/src/App.tsx) usando `react-
 
 🔝 [Voltar ao topo](#%EF%B8%8F-documentação-do-frontend)
 
+
+
+<br>
+
 ---
+
+<br>
 
 ## 👮 RBAC (controle de acesso)
 
@@ -200,7 +234,13 @@ if (!canViewUsers) return <Forbidden />;
 
 🔝 [Voltar ao topo](#%EF%B8%8F-documentação-do-frontend)
 
+
+
+<br>
+
 ---
+
+<br>
 
 ## 🌐 Camada de serviços (API client)
 
@@ -235,7 +275,13 @@ export const userService = {
 
 🔝 [Voltar ao topo](#%EF%B8%8F-documentação-do-frontend)
 
+
+
+<br>
+
 ---
+
+<br>
 
 ## 🧱 Componentes principais
 
@@ -273,7 +319,13 @@ export const userService = {
 
 🔝 [Voltar ao topo](#%EF%B8%8F-documentação-do-frontend)
 
+
+
+<br>
+
 ---
+
+<br>
 
 ## 🪝 Hooks customizados
 
@@ -307,7 +359,13 @@ toast.confirm('Deseja excluir?').then(ok => { /* ... */ });
 
 🔝 [Voltar ao topo](#%EF%B8%8F-documentação-do-frontend)
 
+
+
+<br>
+
 ---
+
+<br>
 
 ## 🎨 Estilização
 
@@ -317,7 +375,13 @@ toast.confirm('Deseja excluir?').then(ok => { /* ... */ });
 
 🔝 [Voltar ao topo](#%EF%B8%8F-documentação-do-frontend)
 
+
+
+<br>
+
 ---
+
+<br>
 
 ## 📏 Padrões de código
 
@@ -337,7 +401,13 @@ Rode `npm run lint` para checar.
 
 🔝 [Voltar ao topo](#%EF%B8%8F-documentação-do-frontend)
 
+
+
+<br>
+
 ---
+
+<br>
 
 ## ▶️ Como rodar
 
@@ -366,7 +436,13 @@ npm run lint
 
 🔝 [Voltar ao topo](#%EF%B8%8F-documentação-do-frontend)
 
+
+
+<br>
+
 ---
+
+<br>
 
 ## 🔮 Roadmap do frontend
 
@@ -380,7 +456,13 @@ npm run lint
 
 🔝 [Voltar ao topo](#%EF%B8%8F-documentação-do-frontend)
 
+
+
+<br>
+
 ---
+
+<br>
 
 ## 🔗 Veja também
 
