@@ -1,62 +1,155 @@
-# 📍 Sprint 01 - ProconChatBot 📍
+<div id="top"></div>
 
-**🗓️ 09/03/2026 à 25/03/2026 🗓️**
+<h1 align="center">📍 Sprint 01 — ProconChatBot</h1>
 
 <p align="center">
-<a href="#objetivo">Objetivo da Sprint</a> | 
-<a href="#backlog">Backlog da Sprint</a> | 
-<a href="#burndown">Burndown</a> | 
-<a href="#arquitetura">Arquitetura RAG</a> | 
-<a href="#kanban">Kanban</a> | 
-<a href="#review">Sprint Review</a>
+  <img src="https://img.shields.io/badge/Sprint-01-blue?style=for-the-badge" alt="Sprint 01">
+  <img src="https://img.shields.io/badge/Status-Finalizada-success?style=for-the-badge" alt="Status">
+  <img src="https://img.shields.io/badge/Story%20Points-40-orange?style=for-the-badge" alt="Story Points">
+</p>
+
+<p align="center">
+  <b>🗓️ 09/03/2026 — 25/03/2026</b>
+</p>
+
+<p align="center">
+  <a href="#-objetivo">Objetivo</a> ·
+  <a href="#-backlog">Backlog</a> ·
+  <a href="#-burndown">Burndown</a> ·
+  <a href="#-kanban">Kanban</a> ·
+  <a href="#-arquitetura-rag">Arquitetura RAG</a> ·
+  <a href="#-sprint-review">Review</a>
+</p>
+
+<p align="center">
+  🏠 <a href="../README2.md">Voltar ao README</a> ·
+  📘 <a href="./ARCHITECTURE.md">Arquitetura</a> ·
+  ➡️ <a href="./sprint2.md">Sprint 02</a>
 </p>
 
 <br>
 
-🏠 [Voltar para home](../README.md)
+---
+
+<br>
+
+## 🎯 Objetivo
+
+Os objetivos desta sprint foram centrados na implementação do **Core Engine** do chatbot:
+
+- 🧠 Estruturar o sistema de **busca semântica (RAG)**.
+- 🗣️ Processar linguagem natural em português com a biblioteca **Natural** *(stemming + tokenização)*.
+- 🦙 Integração inicial com **modelo de linguagem (LLM)** via `Axios` para validação técnica.
+- ✅ Garantir cobertura de testes automatizados sem custos de API durante o dev.
+
+🔝 [Voltar ao topo](#top)
+
+<br>
 
 ---
 
-## 🤝 <a id="objetivo"></a>Objetivo da Sprint
+<br>
 
-Os objetivos desta sprint foram centrados na implementação do **Core Engine** do chatbot. Focamos na estruturação do sistema de busca semântica (RAG), processamento de linguagem natural em português (NLP) utilizando a biblioteca `Natural` e a integração inicial com o modelo de linguagem (LLM) via `Axios` para validação técnica da solução.
-
----
-
-## 🚧 <a id="backlog"></a>Sprint Backlog
+## 🚧 Backlog
 
 | Tarefa | Status |
 |:---|:---:|
 | Modelagem da Base de Conhecimento (JSON Procon) | ✅ |
-| Implementação do BuscadorService (Fuse.js) | ✅ |
+| Implementação do `BuscadorService` (Fuse.js) | ✅ |
 | Configuração de Stemming e Tokenização (Natural) | ✅ |
-| Integração com API de LLM Open Source (Llama/LlamaCloud) | ✅ |
-| Criação de Testes Automatizados (Buscador/LLM) | ✅ |
+| Integração com API de LLM Open Source (Llama / LlamaCloud) | ✅ |
+| Criação de Testes Automatizados (Buscador / LLM) | ✅ |
 | Documentação Técnica do Sistema RAG | ✅ |
 
----
+🔝 [Voltar ao topo](#top)
 
-## 📇 <a id="burndown"></a>Burndown Sprint 01
-
-Nesta sprint, o time focou na estabilidade do algoritmo de busca e na redução de falsos positivos no motor de busca. Abaixo, o gráfico representativo da queima de **40 Story Points**:
-
-![alt text](image.png)
+<br>
 
 ---
+
+<br>
+
+## 📇 Burndown
+
+Nesta sprint, o time focou na estabilidade do algoritmo de busca e na redução de falsos positivos no motor de recuperação semântica. O gráfico abaixo representa a queima de **40 Story Points**:
+
+![Burndown Sprint 01](image.png)
+
+🔝 [Voltar ao topo](#top)
+
+<br>
+
+---
+
+<br>
+
 ## 📝 Kanban
-![alt text](image-1.png)
+
+![Kanban Sprint 01](image-1.png)
+
+🔝 [Voltar ao topo](#top)
+
+<br>
 
 ---
 
-## 🎬 <a id="review"></a>Sprint Review
+<br>
 
-#### O que funcionou bem?
-* **Eficiência do Motor RAG:** A combinação de Stemming com busca difusa (Fuse.js) apresentou alta precisão na recuperação de leis específicas do PROCON.
-* **Ciclo de Testes Automatizados:** O uso de `TSX` e o driver nativo do Node permitiram validar o comportamento da IA sem custos extras de API durante o dev.
-* **Organização da Equipe:** Uso do Discord para troca rápida de logs de erro e GitHub Projects para centralização do backlog técnico.
+## 🏗️ Arquitetura RAG
 
-#### Pontos a melhorar!
-* **Latência de Resposta:** A LLM apresentou picos de latência em horários de alta demanda; será necessário avaliar cache ou modelos locais na Sprint 2.
-* **Variações Linguísticas:** O motor de busca ainda precisa de ajustes para entender gírias ou abreviações muito informais dos usuários de Jacareí.
+A Sprint 01 entregou o **motor de busca semântica** que fundamenta as respostas do chatbot:
+
+```mermaid
+flowchart LR
+    P[💬 Pergunta do usuário] --> T[🔤 Tokenizer<br/>Natural]
+    T --> S[🌱 Stemmer<br/>PT-BR]
+    S --> F[🔍 Fuse.js<br/>busca difusa]
+    F --> KB[(📚 Base de<br/>Conhecimento)]
+    KB --> R{Score?}
+    R -->|Alto| OK[✅ Resposta direta]
+    R -->|Baixo| LLM[🦙 LLM enriquece]
+    LLM --> OUT[📌 Resposta final]
+    OK --> OUT
+```
+
+> 📘 Para detalhes técnicos completos, veja [docs/ARCHITECTURE.md](./ARCHITECTURE.md).
+
+🔝 [Voltar ao topo](#top)
+
+<br>
 
 ---
+
+<br>
+
+## 🎬 Sprint Review
+
+### ✅ O que funcionou bem
+
+| Ponto | Detalhe |
+|---|---|
+| 🎯 **Eficiência do Motor RAG** | A combinação de stemming com busca difusa *(Fuse.js)* apresentou alta precisão na recuperação de leis específicas do PROCON. |
+| 🧪 **Ciclo de testes automatizados** | O uso de `TSX` e do driver nativo do Node permitiram validar o comportamento da IA **sem custos extras de API** durante o dev. |
+| 👥 **Organização da equipe** | Discord para troca rápida de logs de erro e GitHub Projects para centralização do backlog técnico. |
+
+### ⚠️ Pontos a melhorar
+
+| Ponto | Ação na próxima sprint |
+|---|---|
+| ⏱️ **Latência de resposta** | A LLM apresentou picos de latência em horários de alta demanda → avaliar cache ou modelos locais na **Sprint 02**. |
+| 🗣️ **Variações linguísticas** | O motor de busca precisa de ajustes para entender gírias e abreviações informais dos usuários de Jacareí. |
+
+🔝 [Voltar ao topo](#top)
+
+<br>
+
+---
+
+<br>
+
+<p align="center">
+  ⬅️ <a href="../README2.md">Voltar ao README</a> · 
+  <a href="./sprint2.md">Próxima: Sprint 02 ➡️</a>
+</p>
+
+<p align="center"><sub>Documento mantido pela equipe Azimuth do 6º DSM — Fatec / Jacareí 2026.</sub></p>
