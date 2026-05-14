@@ -435,8 +435,8 @@ Esta é a documentação central. Para tópicos específicos, navegue pelos docu
 ### 📅 Gestão do Projeto
 
 - 📋 [Product Backlog](./documentation/product_backlog_procon_chatbot.md) — 7 épicos, 26 user stories.
-- 🏁 [Sprint 01 (concluída)](./docs/sprint1.md) — Core engine RAG.
-- 🚧 [Sprint 02 (em andamento)](./docs/sprint2.md) — Estruturação + CRUDs.
+- 🏁 [**Sprint 01 — Relatório completo**](./docs/sprint1.md) — Core engine RAG *(09/03 – 25/03/2026)*.
+- 🏁 [**Sprint 02 — Relatório completo**](./docs/sprint2.md) — Estruturação + 7 CRUDs *(13/04 – 29/04/2026)*.
 
 </td>
 </tr>
@@ -454,10 +454,38 @@ Esta é a documentação central. Para tópicos específicos, navegue pelos docu
 
 ## 📅 Sprints
 
+<table align="center">
+  <tr>
+    <td align="center" width="33%">
+      <h3>🏁 Sprint 01</h3>
+      <p><img src="https://img.shields.io/badge/Status-Finalizada-success?style=flat-square"></p>
+      <p><b>09/03 – 25/03/2026</b></p>
+      <p>Motor RAG + LLM</p>
+      <p><a href="./docs/sprint1.md">📄 Ver relatório</a></p>
+    </td>
+    <td align="center" width="33%">
+      <h3>🏁 Sprint 02</h3>
+      <p><img src="https://img.shields.io/badge/Status-Finalizada-success?style=flat-square"></p>
+      <p><b>13/04 – 29/04/2026</b></p>
+      <p>Estruturação + 7 CRUDs</p>
+      <p><a href="./docs/sprint2.md">📄 Ver relatório</a></p>
+    </td>
+    <td align="center" width="33%">
+      <h3>⏳ Sprint 03</h3>
+      <p><img src="https://img.shields.io/badge/Status-N%C3%A3o%20iniciada-lightgrey?style=flat-square"></p>
+      <p><b>a definir</b></p>
+      <p>Integração final + entrega</p>
+      <p><sub>relatório em breve</sub></p>
+    </td>
+  </tr>
+</table>
+
+### 📋 Resumo em tabela
+
 | Sprint | Período | Status | Foco | Relatório |
 |:---:|:---:|:---:|:---|:---:|
-| **1** | 09/03/2026 – 25/03/2026 | ✅ Finalizada | Motor RAG + LLM | [📄](./docs/sprint1.md) |
-| **2** | 13/04/2026 – 29/04/2026 | ✅ Finalizada | Estruturação + 7 CRUDs | [📄](./docs/sprint2.md) |
+| **1** | 09/03/2026 – 25/03/2026 | ✅ Finalizada | Motor RAG + LLM | [📄 sprint1.md](./docs/sprint1.md) |
+| **2** | 13/04/2026 – 29/04/2026 | ✅ Finalizada | Estruturação + 7 CRUDs | [📄 sprint2.md](./docs/sprint2.md) |
 | **3** | a definir | ⏳ Não iniciada | Integração final + entrega | — |
 
 **Legenda:** ✅ Finalizada · 🚧 Em progresso · ⏳ Não iniciada
