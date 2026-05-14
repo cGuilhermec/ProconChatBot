@@ -4,7 +4,12 @@
 
 🏠 [Voltar ao README2](../README2.md)
 
+
+<br>
+
 ---
+
+<br>
 
 ## 📋 Índice
 
@@ -23,7 +28,12 @@
 - [Troubleshooting](#-troubleshooting)
 - [Scripts úteis](#-scripts-úteis)
 
+
+<br>
+
 ---
+
+<br>
 
 ## 🧰 Pré-requisitos
 
@@ -40,7 +50,13 @@
 
 🔝 [Voltar ao topo](#%EF%B8%8F-guia-de-instalação-completo)
 
+
+
+<br>
+
 ---
+
+<br>
 
 ## 🗺️ Visão geral dos processos
 
@@ -56,7 +72,13 @@ Após a instalação completa, você terá **4 processos rodando**:
 
 🔝 [Voltar ao topo](#%EF%B8%8F-guia-de-instalação-completo)
 
+
+
+<br>
+
 ---
+
+<br>
 
 ## 1. Clonar o repositório
 
@@ -67,7 +89,13 @@ cd ProconChatBot
 
 🔝 [Voltar ao topo](#%EF%B8%8F-guia-de-instalação-completo)
 
+
+
+<br>
+
 ---
+
+<br>
 
 ## 2. Instalar dependências
 
@@ -94,7 +122,13 @@ cd ../..
 
 🔝 [Voltar ao topo](#%EF%B8%8F-guia-de-instalação-completo)
 
+
+
+<br>
+
 ---
+
+<br>
 
 ## 3. Banco de dados PostgreSQL + pgvector
 
@@ -141,7 +175,13 @@ docker exec -it postgres-procon \
 
 🔝 [Voltar ao topo](#%EF%B8%8F-guia-de-instalação-completo)
 
+
+
+<br>
+
 ---
+
+<br>
 
 ## 4. Variáveis de ambiente
 
@@ -194,7 +234,13 @@ CHATBOT_PORT=3001
 
 🔝 [Voltar ao topo](#%EF%B8%8F-guia-de-instalação-completo)
 
+
+
+<br>
+
 ---
+
+<br>
 
 ## 5. Aplicar migrations Prisma
 
@@ -219,7 +265,13 @@ npx prisma studio
 
 🔝 [Voltar ao topo](#%EF%B8%8F-guia-de-instalação-completo)
 
+
+
+<br>
+
 ---
+
+<br>
 
 ## 6. Ollama (LLM local)
 
@@ -259,7 +311,13 @@ curl http://localhost:11434/api/tags
 
 🔝 [Voltar ao topo](#%EF%B8%8F-guia-de-instalação-completo)
 
+
+
+<br>
+
 ---
+
+<br>
 
 ## 7. Subir os serviços
 
@@ -312,7 +370,13 @@ Saída esperada:
 
 🔝 [Voltar ao topo](#%EF%B8%8F-guia-de-instalação-completo)
 
+
+
+<br>
+
 ---
+
+<br>
 
 ## 8. Conectar o WhatsApp
 
@@ -326,7 +390,13 @@ Saída esperada:
 
 🔝 [Voltar ao topo](#%EF%B8%8F-guia-de-instalação-completo)
 
+
+
+<br>
+
 ---
+
+<br>
 
 ## 9. Criar primeiro usuário admin
 
@@ -374,7 +444,13 @@ Acesse `http://localhost:5173`, faça login com a senha temporária e troque-a n
 
 🔝 [Voltar ao topo](#%EF%B8%8F-guia-de-instalação-completo)
 
+
+
+<br>
+
 ---
+
+<br>
 
 ## 🔒 Segurança & boas práticas
 
@@ -441,7 +517,13 @@ openssl rand -base64 48
 
 🔝 [Voltar ao topo](#%EF%B8%8F-guia-de-instalação-completo)
 
+
+
+<br>
+
 ---
+
+<br>
 
 ## 🐛 Troubleshooting
 
@@ -544,7 +626,13 @@ git commit -m "chore: remove arquivos do WhatsApp do tracking"
 
 🔝 [Voltar ao topo](#%EF%B8%8F-guia-de-instalação-completo)
 
+
+
+<br>
+
 ---
+
+<br>
 
 ## 🧪 Scripts úteis
 
@@ -585,7 +673,13 @@ git commit -m "chore: remove arquivos do WhatsApp do tracking"
 
 🔝 [Voltar ao topo](#%EF%B8%8F-guia-de-instalação-completo)
 
+
+
+<br>
+
 ---
+
+<br>
 
 ## 🔗 Veja também
 
