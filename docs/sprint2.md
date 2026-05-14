@@ -23,7 +23,7 @@
 </p>
 
 <p align="center">
-  🏠 <a href="../README2.md">Voltar ao README</a> ·
+  🏠 <a href="../README.md">Voltar ao README</a> ·
   📘 <a href="./ARCHITECTURE.md">Arquitetura</a> ·
   ⬅️ <a href="./sprint1.md">Sprint 01</a>
 </p>
@@ -231,7 +231,7 @@ npm run test:auditlog
 
 <p align="center">
   ⬅️ <a href="./sprint1.md">Sprint 01</a> · 
-  <a href="../README2.md">Voltar ao README</a>
+  <a href="../README.md">Voltar ao README</a>
 </p>
 
 <p align="center"><sub>Documento mantido pela equipe Azimuth do 6º DSM — Fatec / Jacareí 2026.</sub></p>

@@ -2,7 +2,7 @@
 
 > Documento técnico que detalha a arquitetura **dual-service** do ProconChatBot, os fluxos de comunicação entre os componentes, os padrões adotados e as decisões arquiteturais registradas (ADRs).
 
-🏠 [Voltar ao README2](../README2.md)
+🏠 [Voltar ao README](../README.md)
 
 
 <br>
@@ -456,7 +456,7 @@ classDiagram
 
 ## 🔗 Veja também
 
-- [📘 README2 — Documento central](../README2.md)
+- [📘 README — Documento central](../README.md)
 - [⚙️ Guia de instalação](./INSTALLATION.md)
 - [🔌 Referência de API](./API.md)
 - [⚛️ Documentação do frontend](./FRONTEND.md)

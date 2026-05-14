@@ -22,7 +22,7 @@
 </p>
 
 <p align="center">
-  🏠 <a href="../README2.md">Voltar ao README</a> ·
+  🏠 <a href="../README.md">Voltar ao README</a> ·
   📘 <a href="./ARCHITECTURE.md">Arquitetura</a> ·
   ➡️ <a href="./sprint2.md">Sprint 02</a>
 </p>
@@ -148,7 +148,7 @@ flowchart LR
 <br>
 
 <p align="center">
-  ⬅️ <a href="../README2.md">Voltar ao README</a> · 
+  ⬅️ <a href="../README.md">Voltar ao README</a> · 
   <a href="./sprint2.md">Próxima: Sprint 02 ➡️</a>
 </p>
 
