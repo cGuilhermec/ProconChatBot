@@ -1,0 +1,61 @@
+/* ProconForm.css */
+.procon-modal {
+  max-width: 700px;
+  width: 90%;
+  animation: modalScaleUp 0.3s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
+}
+
+@keyframes modalScaleUp {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.form-row {
+  display: flex;
+  gap: 1.25rem;
+  margin-bottom: 1.25rem;
+}
+
+.form-row .form-group {
+  margin-bottom: 0;
+  flex: 1;
+}
+
+.flex-2 {
+  flex: 2;
+}
+
+.input-hint {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--apple-text-secondary, #86868b);
+  margin-top: 0.4rem;
+  font-weight: 500;
+  padding-left: 0.2rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  .input-hint {
+    color: var(--apple-text-secondary-dark, #a1a1a6);
+  }
+}
+
+@media (max-width: 640px) {
+  .procon-modal {
+    width: 95%;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+
+  .form-row {
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+}

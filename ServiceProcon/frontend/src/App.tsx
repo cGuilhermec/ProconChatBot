@@ -7,6 +7,9 @@ import { UsersPage } from './components/dashboard/users/UsersPage';
 import { ProfilePage } from './components/profile/ProfilePage';
 import { AgendamentosPage } from './components/dashboard/agendamentos/AgendamentosPage';
 import { FeriadosPage } from './components/dashboard/feriados/FeriadosPage';
+import { ProconsPage } from './components/dashboard/procons/ProconsPage';
+import { AuditPage } from './components/dashboard/audit/AuditPage';
+import { PerguntasPage } from './components/dashboard/perguntas/PerguntasPage';
 
 // Componente que contém as rotas e usa os toasts
 function AppRoutes() {
@@ -63,6 +66,33 @@ function AppRoutes() {
           element={
             <ProtectedRoute>
               <FeriadosPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/procons"
+          element={
+            <ProtectedRoute>
+              <ProconsPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/auditoria"
+          element={
+            <ProtectedRoute>
+              <AuditPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/perguntas"
+          element={
+            <ProtectedRoute>
+              <PerguntasPage />
             </ProtectedRoute>
           }
         />

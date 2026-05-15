@@ -34,9 +34,9 @@ export const UserForm = ({ user, onClose, onSuccess }: UserFormProps) => {
         DIRETOR: ['FUNCIONARIO', 'COORDENADOR', 'DIRETOR'], // Diretor pode criar funcionário, coordenador e diretor
         DEV: ['FUNCIONARIO', 'COORDENADOR', 'DIRETOR', 'DEV'], // DEV pode criar qualquer role
       };
-      
+
       setAvailableRoles(rolesByUserRole[currentUser.role] || ['FUNCIONARIO']);
-      
+
       // Se a role atual não está disponível para seleção, muda para a primeira disponível
       if (!rolesByUserRole[currentUser.role]?.includes(role)) {
         setRole(rolesByUserRole[currentUser.role]?.[0] || 'FUNCIONARIO');
@@ -69,7 +69,7 @@ export const UserForm = ({ user, onClose, onSuccess }: UserFormProps) => {
       // Busca dados do usuário logado
       const me = await meService.getMe();
       setCurrentUser(me);
-      
+
       // Se for DIRETOR ou DEV, busca lista de procons
       if (me.role === 'DIRETOR' || me.role === 'DEV') {
         setIsLoadingProcons(true);
@@ -104,13 +104,13 @@ export const UserForm = ({ user, onClose, onSuccess }: UserFormProps) => {
           setIsLoading(false);
           return;
         }
-        
+
         if (senha !== confirmarSenha) {
           showToast('As senhas não coincidem', 'error');
           setIsLoading(false);
           return;
         }
-        
+
         if (senha.length < 6) {
           showToast('A senha deve ter no mínimo 6 caracteres', 'error');
           setIsLoading(false);
@@ -124,12 +124,12 @@ export const UserForm = ({ user, onClose, onSuccess }: UserFormProps) => {
           return;
         }
 
-        await userService.criar({ 
-          nome, 
-          email, 
-          senha, 
-          role, 
-          procon_id: proconId 
+        await userService.criar({
+          nome,
+          email,
+          senha,
+          role,
+          procon_id: proconId
         });
         showToast('Usuário criado com sucesso!', 'success');
       }
@@ -178,7 +178,7 @@ export const UserForm = ({ user, onClose, onSuccess }: UserFormProps) => {
                 placeholder="Digite o nome completo"
               />
             </div>
-            
+
             <div className="form-group">
               <label>Email *</label>
               <input
@@ -190,7 +190,7 @@ export const UserForm = ({ user, onClose, onSuccess }: UserFormProps) => {
                 placeholder="usuario@procon.com"
               />
             </div>
-            
+
             <div className="form-group">
               <label>Perfil *</label>
               <select
@@ -260,7 +260,7 @@ export const UserForm = ({ user, onClose, onSuccess }: UserFormProps) => {
                     </button>
                   </div>
                 </div>
-                
+
                 <div className="form-group">
                   <label>Confirmar Senha *</label>
                   <div className="password-input-wrapper">
@@ -292,7 +292,7 @@ export const UserForm = ({ user, onClose, onSuccess }: UserFormProps) => {
               </>
             )}
           </div>
-          
+
           <div className="modal-footer">
             <button type="button" onClick={onClose} disabled={isLoading}>
               Cancelar

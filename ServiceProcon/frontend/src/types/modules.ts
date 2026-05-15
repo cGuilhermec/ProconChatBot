@@ -59,7 +59,7 @@ export const modules: Module[] = [
         description: 'Gerenciar FAQ do chatbot',
         icon: '❓',
         path: '/perguntas',
-        permissions: ['COORDENADOR', 'DIRETOR', 'DEV'],
+        permissions: ['FUNCIONARIO', 'COORDENADOR', 'DIRETOR', 'DEV'],
     },
     {
         id: 'agendamentos',

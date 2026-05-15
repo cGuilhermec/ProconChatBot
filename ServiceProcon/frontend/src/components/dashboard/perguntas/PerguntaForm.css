@@ -1,0 +1,38 @@
+/* PerguntaForm.css */
+.pergunta-modal {
+  max-width: 750px;
+  width: 90%;
+  animation: modalScaleUp 0.3s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
+}
+
+.pergunta-modal textarea {
+  resize: vertical;
+  font-family: inherit;
+  min-height: 120px;
+}
+
+.form-hint {
+  margin-top: 1rem;
+  padding: 1rem;
+  background: rgba(0, 113, 227, 0.08);
+  border-radius: 12px;
+  font-size: 0.85rem;
+  color: var(--apple-text-secondary, #86868b);
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  .form-hint { color: var(--apple-text-secondary-dark, #a1a1a6); }
+}
+
+.form-hint p {
+  margin: 0;
+  line-height: 1.4;
+}
+
+@keyframes modalScaleUp {
+  from { opacity: 0; transform: scale(0.95) translateY(10px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}

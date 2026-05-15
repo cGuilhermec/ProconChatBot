@@ -1,0 +1,165 @@
+.notification-bell {
+  position: relative;
+}
+
+.bell-button {
+  position: relative;
+  background: none;
+  border: none;
+  font-size: 1.3rem;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 10px;
+  transition: all 0.2s ease;
+  color: var(--apple-text-primary);
+}
+
+.bell-button:hover {
+  background: rgba(0, 122, 255, 0.1);
+}
+
+.bell-badge {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  background: #ff3b30;
+  color: white;
+  font-size: 0.65rem;
+  font-weight: 600;
+  padding: 0.15rem 0.4rem;
+  border-radius: 20px;
+  min-width: 18px;
+  text-align: center;
+}
+
+.notification-dropdown {
+  position: absolute;
+  top: 45px;
+  right: 0;
+  width: 360px;
+  max-height: 450px;
+  background: var(--apple-card-bg);
+  backdrop-filter: saturate(180%) blur(20px);
+  border: 1px solid var(--apple-border);
+  border-radius: 16px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.notification-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  border-bottom: 1px solid var(--apple-border);
+}
+
+.notification-header h3 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--apple-text-primary);
+}
+
+.view-all {
+  background: none;
+  border: none;
+  font-size: 0.75rem;
+  color: var(--apple-blue);
+  cursor: pointer;
+}
+
+.notification-list {
+  overflow-y: auto;
+  max-height: 380px;
+}
+
+.notification-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid var(--apple-border);
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.notification-item:hover {
+  background: rgba(0, 122, 255, 0.05);
+}
+
+.notification-pending {
+  border-left: 3px solid #ff9500;
+}
+
+.notification-urgent {
+  border-left: 3px solid #ff3b30;
+  background: rgba(255, 59, 48, 0.05);
+}
+
+.notification-approved {
+  border-left: 3px solid #34c759;
+}
+
+.notification-rejected {
+  border-left: 3px solid #ff3b30;
+}
+
+.notification-blocked {
+  border-left: 3px solid #8e8e93;
+}
+
+.notification-icon {
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+.notification-content {
+  flex: 1;
+}
+
+.notification-content p {
+  margin: 0 0 0.25rem;
+  font-size: 0.8rem;
+  color: var(--apple-text-primary);
+  line-height: 1.3;
+}
+
+.notification-content small {
+  font-size: 0.65rem;
+  color: var(--apple-text-secondary);
+}
+
+.notification-close {
+  background: none;
+  border: none;
+  font-size: 1rem;
+  cursor: pointer;
+  color: var(--apple-text-secondary);
+  padding: 0.25rem;
+  border-radius: 4px;
+}
+
+.notification-close:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.notification-empty {
+  text-align: center;
+  padding: 2rem;
+  color: var(--apple-text-secondary);
+}
+
+.notification-empty span {
+  font-size: 2rem;
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.notification-empty p {
+  margin: 0;
+  font-size: 0.85rem;
+}

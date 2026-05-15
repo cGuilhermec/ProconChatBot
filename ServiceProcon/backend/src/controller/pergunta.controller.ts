@@ -153,12 +153,22 @@ export class PerguntaController {
     }
 
     try {
+      // 🔧 CORREÇÃO: Só filtrar por ativo se o parâmetro foi explicitamente passado
+      let apenasAtivos: boolean | undefined = undefined;
+
+      if (apenas_ativos === "true") {
+        apenasAtivos = true;
+      } else if (apenas_ativos === "false") {
+        apenasAtivos = false;
+      }
+      // Se não veio nada na query, fica undefined (NÃO FILTRA)
+
       const result = await this.perguntaService.listarPerguntasAdmin(
         usuarioLogado,
         {
           procon_id: procon_id ? Number(procon_id) : undefined,
           status: status as string,
-          apenasAtivos: apenas_ativos === "true",
+          apenasAtivos,
         },
       );
 

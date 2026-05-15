@@ -117,12 +117,15 @@ export class PerguntaModel {
   async findAll(
     proconId?: number,
     status?: StatusModeracao,
-    apenasAtivos?: boolean,
+    apenasAtivos?: boolean, // undefined = não filtrar por ativo
   ) {
     const where: any = {};
     if (proconId) where.procon_id = proconId;
     if (status) where.status_moderacao = status;
-    if (apenasAtivos !== undefined) where.ativo = apenasAtivos;
+    // Só adiciona o filtro de ativo se o valor foi passado explicitamente
+    if (apenasAtivos !== undefined) {
+      where.ativo = apenasAtivos;
+    }
 
     return prisma.pergunta.findMany({
       where,

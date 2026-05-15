@@ -7,6 +7,7 @@ import { showToast } from '../../utils/alert';
 import { ModuleCard } from './cards/ModuleCard';
 import { FirstAccessModal } from '../FirstAccessModal';
 import './Dashboard.css';
+import { NotificationBell } from '../common/NotificationBell';
 
 export const Dashboard = () => {
   const { user, logout, isFirstAccess, updateUser } = useAuth();
@@ -88,6 +89,7 @@ export const Dashboard = () => {
               <p>{getWelcomeMessage()}</p>
             </div>
             <div className="header-actions">
+              <NotificationBell />
               <div className="role-badge">
                 <span className={`role-${userRole?.toLowerCase()}`}>
                   {userRole}
