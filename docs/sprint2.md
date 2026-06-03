@@ -188,6 +188,16 @@ src/__tests__/
 ├── feriado/
 │   ├── crud.test.ts           # Testes CRUD do Feriado
 │   └── isFeriado.test.ts      # Testes de verificação de feriado
+├── agendamento/
+│   ├── public.test.ts         # Testes de rotas públicas (WhatsApp)
+│   ├── validation.test.ts     # Testes de validação (CPF, data, horário)
+│   └── admin.test.ts          # Testes de rotas administrativas
+├── pergunta/
+│   ├── public.test.ts         # Testes de rotas públicas (RAG)
+│   ├── admin.test.ts          # Testes de rotas administrativas
+│   └── moderation.test.ts     # Testes de moderação (palavras ofensivas)
+├── auditLog/
+│   └── auditLog.test.ts       # Testes do sistema de auditoria
 └── setup.test.ts              # Configuração global
 ```
 
