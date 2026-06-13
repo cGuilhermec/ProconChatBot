@@ -73,11 +73,21 @@ function formatarResposta(
 ): string {
   let resposta = `📌 *${resultado.resposta}*\n\n`;
 
-  if (resultado.base_legal && resultado.base_legal.length > 0) {
+  // 🔥 CORREÇÃO: Verificar se base_legal existe e é um array
+  if (
+    resultado.base_legal &&
+    Array.isArray(resultado.base_legal) &&
+    resultado.base_legal.length > 0
+  ) {
     resposta += `📚 *Base legal:* ${resultado.base_legal.join(", ")}\n\n`;
   }
 
-  if (resultado.documentos && resultado.documentos.length > 0) {
+  // 🔥 CORREÇÃO: Verificar se documentos existe e é um array
+  if (
+    resultado.documentos &&
+    Array.isArray(resultado.documentos) &&
+    resultado.documentos.length > 0
+  ) {
     resposta += `📋 *Documentos necessários:*\n${resultado.documentos.map((d: string) => `• ${d}`).join("\n")}\n\n`;
   }
 

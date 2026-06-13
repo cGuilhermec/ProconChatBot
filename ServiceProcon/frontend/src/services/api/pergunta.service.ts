@@ -65,96 +65,110 @@ const request = async (endpoint: string, options: RequestInit = {}) => {
 };
 
 export const perguntaService = {
-    // Listar perguntas pendentes de revisão
-    listarPendentes: async (): Promise<Pergunta[]> => {
-        const data = await request('/admin/perguntas/pendentes');
-        return data.dados || [];
-    },
+  // Listar perguntas pendentes de revisão
+  listarPendentes: async (): Promise<Pergunta[]> => {
+    const data = await request("/admin/perguntas/pendentes");
+    return data.dados || [];
+  },
 
-    // Listar todas as perguntas (admin)
-    listarTodas: async (filtros?: { procon_id?: number; status?: string; apenas_ativos?: boolean }): Promise<Pergunta[]> => {
-        const params = new URLSearchParams();
-        if (filtros?.procon_id) params.append('procon_id', String(filtros.procon_id));
-        if (filtros?.status) params.append('status', filtros.status);
-        if (filtros?.apenas_ativos) params.append('apenas_ativos', 'true');
+  // Listar todas as perguntas (admin)
+  listarTodas: async (filtros?: {
+    procon_id?: number;
+    status?: string;
+    apenas_ativos?: boolean;
+  }): Promise<Pergunta[]> => {
+    const params = new URLSearchParams();
+    if (filtros?.procon_id)
+      params.append("procon_id", String(filtros.procon_id));
+    if (filtros?.status) params.append("status", filtros.status);
+    if (filtros?.apenas_ativos) params.append("apenas_ativos", "true");
 
-        const url = `/admin/perguntas${params.toString() ? `?${params.toString()}` : ''}`;
-        console.log('🔍 Buscando perguntas na URL:', url);
+    const url = `/admin/perguntas${params.toString() ? `?${params.toString()}` : ""}`;
+    console.log("🔍 Buscando perguntas na URL:", url);
 
-        const data = await request(url);
-        console.log('📦 Resposta da API:', data);
-        console.log('📦 Dados recebidos:', data.dados);
+    const data = await request(url);
+    console.log("📦 Resposta da API:", data);
+    console.log("📦 Dados recebidos:", data.dados);
 
-        return data.dados || [];
-    },
+    return data.dados || [];
+  },
 
-    // Buscar pergunta por ID
-    buscarPorId: async (id: number): Promise<Pergunta> => {
-        const data = await request(`/pergunta/${id}`);
-        return data.dados;
-    },
+  // Buscar pergunta por ID
+  buscarPorId: async (id: number): Promise<Pergunta> => {
+    const data = await request(`/pergunta/${id}`);
+    return data.dados;
+  },
 
-    // Criar pergunta
-    criar: async (pergunta: {
-        procon_id: number;
-        tema: string;
-        pergunta: string;
-        resposta: string;
-        base_legal?: any;
-        documentos?: any;
-        observacao?: string;
-    }): Promise<Pergunta> => {
-        const data = await request('/pergunta', {
-            method: 'POST',
-            body: JSON.stringify(pergunta),
-        });
-        return data.dados;
-    },
+  // Criar pergunta
+  criar: async (pergunta: {
+    procon_id: number;
+    tema: string;
+    pergunta: string;
+    resposta: string;
+    base_legal?: any;
+    documentos?: any;
+    observacao?: string;
+  }): Promise<Pergunta> => {
+    const data = await request("/pergunta", {
+      method: "POST",
+      body: JSON.stringify(pergunta),
+    });
+    return data.dados;
+  },
 
-    // Atualizar pergunta
-    atualizar: async (id: number, pergunta: Partial<Pergunta>): Promise<Pergunta> => {
-        const data = await request(`/pergunta/${id}`, {
-            method: 'PUT',
-            body: JSON.stringify(pergunta),
-        });
-        return data.dados;
-    },
+  // Atualizar pergunta
+  atualizar: async (
+    id: number,
+    pergunta: Partial<Pergunta>,
+  ): Promise<Pergunta> => {
+    const data = await request(`/pergunta/${id}`, {
+      method: "PUT",
+      body: JSON.stringify(pergunta),
+    });
+    return data.dados;
+  },
 
-    // Revisar pergunta (aprovar/reprovar/bloquear)
-    revisar: async (id: number, status: string, motivo?: string): Promise<Pergunta> => {
-        const data = await request(`/admin/pergunta/${id}/revisar`, {
-            method: 'PUT',
-            body: JSON.stringify({ status, motivo }),
-        });
-        return data.dados;
-    },
+  // Revisar pergunta (aprovar/reprovar/bloquear)
+  revisar: async (
+    id: number,
+    status: string,
+    motivo?: string,
+  ): Promise<Pergunta> => {
+    console.log("🔍 Revisando pergunta:", { id, status, motivo });
+    const data = await request(`/admin/pergunta/${id}/revisar`, {
+      method: "PUT",
+      body: JSON.stringify({ status, motivo }),
+    });
+    console.log("📦 Resposta da revisão:", data);
+    return data.dados;
+  },
 
-    // Desativar pergunta
-    desativar: async (id: number): Promise<Pergunta> => {
-        const data = await request(`/pergunta/${id}/desativar`, {
-            method: 'PUT',
-        });
-        return data.dados;
-    },
+  // Desativar pergunta
+  desativar: async (id: number): Promise<Pergunta> => {
+    const data = await request(`/pergunta/${id}/desativar`, {
+      method: "PUT",
+    });
+    return data.dados;
+  },
 
-    // Ativar pergunta
-    ativar: async (id: number): Promise<Pergunta> => {
-        const data = await request(`/pergunta/${id}/ativar`, {
-            method: 'PUT',
-        });
-        return data.dados;
-    },
+  // Ativar pergunta
+  ativar: async (id: number): Promise<Pergunta> => {
+    const data = await request(`/pergunta/${id}/ativar`, {
+      method: "PUT",
+    });
+    return data.dados;
+  },
 
-    // Excluir pergunta (apenas DEV)
-    excluir: async (id: number): Promise<void> => {
-        await request(`/pergunta/${id}`, {
-            method: 'DELETE',
-        });
-    },
-    listarPublicas: async (proconId: number): Promise<Pergunta[]> => {
-        const data = await request(`/perguntas?procon_id=${proconId}`);
-        return data.dados || [];
-    },
+  // Excluir pergunta (apenas DEV)
+  excluir: async (id: number): Promise<void> => {
+    await request(`/pergunta/${id}`, {
+      method: "DELETE",
+    });
+  },
+  listarPublicas: async (proconId: number): Promise<Pergunta[]> => {
+    const data = await request(`/perguntas?procon_id=${proconId}`);
+    return data.dados || [];
+  },
 };
 
 // Mapeamento de status

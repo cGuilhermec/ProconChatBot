@@ -291,6 +291,7 @@ export class PerguntaController {
     }
 
     if (!status || !Object.values(StatusModeracao).includes(status)) {
+      console.log("❌ Status inválido:", status);
       return res.status(400).json({
         sucesso: false,
         mensagem: "Status inválido",
@@ -311,6 +312,7 @@ export class PerguntaController {
         mensagem: `Pergunta ${status === "APROVADO" ? "aprovada" : status === "REPROVADO" ? "reprovada" : "bloqueada"} com sucesso!`,
       });
     } catch (error: any) {
+      console.error("❌ Erro ao revisar:", error.message);
       return res.status(400).json({
         sucesso: false,
         erro: error.message,

@@ -206,9 +206,15 @@ async function buscarHorariosDisponiveis(
   proconId: number,
   data: string,
 ): Promise<string[]> {
-  const result = await chamarAPI<{ sucesso: boolean; horarios: string[] }>(
-    `${API_BASE_URL}/agendamento/horarios-disponiveis?procon_id=${proconId}&data=${data}`,
-  );
+  console.log(`🔍 Buscando horários para procon ${proconId}, data: ${data}`);
+
+  const url = `${API_BASE_URL}/agendamento/horarios-disponiveis?procon_id=${proconId}&data=${data}`;
+  console.log(`📡 URL: ${url}`);
+
+  const result = await chamarAPI<{ sucesso: boolean; horarios: string[] }>(url);
+
+  console.log(`📦 Resposta da API:`, JSON.stringify(result, null, 2));
+
   return result?.sucesso && result.horarios ? result.horarios : [];
 }
 
@@ -487,10 +493,19 @@ async function handleMessage(
         session.step = "SELECIONANDO_HORARIO";
         userSessions.set(userId, session);
 
+        // 🔥 CORREÇÃO: Converter data de DD/MM/YYYY para YYYY-MM-DD
+        const dataParts = dataSelecionada.data.split("/");
+        const dataFormatada = `${dataParts[2]}-${dataParts[1]}-${dataParts[0]}`;
+
+        console.log(
+          `📅 Data original: ${dataSelecionada.data} -> Formatada: ${dataFormatada}`,
+        );
+
         const horarios = await buscarHorariosDisponiveis(
           proconInfo.id,
-          dataSelecionada.data,
+          dataFormatada, // ← Agora no formato YYYY-MM-DD
         );
+
         if (horarios.length === 0) {
           session.step = "SELECIONANDO_DATA";
           userSessions.set(userId, session);

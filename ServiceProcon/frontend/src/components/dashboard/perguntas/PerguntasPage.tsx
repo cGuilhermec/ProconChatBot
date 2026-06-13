@@ -53,6 +53,8 @@ export const PerguntasPage = () => {
         setFilteredPerguntas(filtered);
     }, [searchTerm, statusFilter, perguntas, canViewStatusFilter]);
 
+
+
     const loadPerguntas = async () => {
         try {
             setIsLoading(true);
@@ -65,6 +67,8 @@ export const PerguntasPage = () => {
             } else {
                 // Coordenador/Diretor/Dev usa rota admin
                 data = await perguntaService.listarTodas();
+
+                window.dispatchEvent(new CustomEvent('atualizar-notificacoes'));
             }
 
             setPerguntas(data);
@@ -88,10 +92,10 @@ export const PerguntasPage = () => {
     };
 
     const handleRevisar = (pergunta: Pergunta) => {
-        setPerguntaEmRevisao(pergunta);
-        setRevisaoStatus(pergunta.status_moderacao);
-        setRevisaoMotivo('');
-        setShowRevisaoModal(true);
+      setPerguntaEmRevisao(pergunta);
+      setRevisaoStatus("APROVADO");
+      setRevisaoMotivo("");
+      setShowRevisaoModal(true);
     };
 
     const handleSubmitRevisao = async () => {
@@ -201,6 +205,8 @@ export const PerguntasPage = () => {
     const handleFormSuccess = () => {
         setShowModal(false);
         loadPerguntas();
+
+        window.dispatchEvent(new CustomEvent('atualizar-notificacoes'));
     };
 
     return (

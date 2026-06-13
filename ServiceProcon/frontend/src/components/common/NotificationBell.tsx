@@ -1,18 +1,18 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { notificacaoService, type Notificacao } from '../../services/api/notificacao.service';
+import { perguntaService, type Pergunta } from '../../services/api/pergunta.service';
 import './NotificationBell.css';
 
 export const NotificationBell = () => {
     const navigate = useNavigate();
     const [count, setCount] = useState(0);
-    const [notificacoes, setNotificacoes] = useState<Notificacao[]>([]);
+    const [notificacoes, setNotificacoes] = useState<Pergunta[]>([]);
     const [isOpen, setIsOpen] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         loadCount();
-        const interval = setInterval(loadCount, 30000); // Atualiza a cada 30 segundos
+        const interval = setInterval(loadCount, 30000);
         return () => clearInterval(interval);
     }, []);
 
@@ -32,64 +32,39 @@ export const NotificationBell = () => {
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
 
+    // Busca perguntas pendentes
     const loadCount = async () => {
         try {
-            const total = await notificacaoService.contarNaoLidas();
-            setCount(total);
+            const data = await perguntaService.listarPendentes();
+            console.log('🔔 Perguntas pendentes:', data.length);
+            setCount(data.length);
         } catch (error) {
-            console.error('Erro ao carregar notificações:', error);
+            console.error('Erro ao carregar perguntas pendentes:', error);
         }
     };
 
     const loadNotificacoes = async () => {
         try {
-            const data = await notificacaoService.minhasNotificacoes(true);
+            const data = await perguntaService.listarPendentes();
             setNotificacoes(data.slice(0, 10));
         } catch (error) {
             console.error('Erro ao carregar notificações:', error);
         }
     };
 
-    const handleMarkAsRead = async (id: number) => {
-        try {
-            await notificacaoService.marcarComoLida(id);
-            setNotificacoes(prev => prev.filter(n => n.NOTIFICACAO_ID !== id));
-            setCount(prev => Math.max(0, prev - 1));
-        } catch (error) {
-            console.error('Erro ao marcar como lida:', error);
-        }
-    };
-
-    const handleViewAll = () => {
+    const handleClick = (perguntaId: number) => {
         setIsOpen(false);
-        navigate('/notificacoes');
+        navigate(`/perguntas`);
     };
 
-    const handleGoToPergunta = (perguntaId: number) => {
-        setIsOpen(false);
-        navigate(`/perguntas/${perguntaId}/revisar`);
-    };
-
-    const getTipoIcon = (tipo: string) => {
-        const icons: Record<string, string> = {
-            PENDENTE_REVISAO: '⏳',
-            REVISAO_URGENTE: '⚠️',
-            PERGUNTA_APROVADA: '✅',
-            PERGUNTA_REPROVADA: '❌',
-            PERGUNTA_BLOQUEADA: '🔒',
-        };
-        return icons[tipo] || '📌';
-    };
-
-    const getTipoClass = (tipo: string) => {
-        const classes: Record<string, string> = {
-            PENDENTE_REVISAO: 'notification-pending',
-            REVISAO_URGENTE: 'notification-urgent',
-            PERGUNTA_APROVADA: 'notification-approved',
-            PERGUNTA_REPROVADA: 'notification-rejected',
-            PERGUNTA_BLOQUEADA: 'notification-blocked',
-        };
-        return classes[tipo] || '';
+    const formatarData = (data: string) => {
+        const date = new Date(data);
+        return date.toLocaleDateString('pt-BR', {
+            day: '2-digit',
+            month: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
     };
 
     return (
@@ -102,52 +77,46 @@ export const NotificationBell = () => {
             {isOpen && (
                 <div className="notification-dropdown">
                     <div className="notification-header">
-                        <h3>Notificações</h3>
-                        {notificacoes.length > 0 && (
-                            <button className="view-all" onClick={handleViewAll}>
-                                Ver todas
-                            </button>
+                        <h3>Perguntas para Revisão</h3>
+                        {count === 0 && (
+                            <span className="empty-badge">Tudo revisado!</span>
                         )}
                     </div>
                     <div className="notification-list">
                         {notificacoes.length === 0 ? (
                             <div className="notification-empty">
-                                <span>🔔</span>
-                                <p>Nenhuma notificação</p>
+                                <span>✅</span>
+                                <p>Nenhuma pergunta pendente</p>
                             </div>
                         ) : (
                             notificacoes.map(notif => (
                                 <div
-                                    key={notif.NOTIFICACAO_ID}
-                                    className={`notification-item ${getTipoClass(notif.tipo)}`}
-                                    onClick={() => handleGoToPergunta(notif.pergunta_id)}
+                                    key={notif.Pergunta_ID}
+                                    className="notification-item notification-pending"
+                                    onClick={() => handleClick(notif.Pergunta_ID)}
                                 >
-                                    <div className="notification-icon">
-                                        {getTipoIcon(notif.tipo)}
-                                    </div>
+                                    <div className="notification-icon">📋</div>
                                     <div className="notification-content">
-                                        <p>{notif.mensagem}</p>
+                                        <p><strong>{notif.tema}</strong></p>
+                                        <p className="notification-message">{notif.pergunta.substring(0, 80)}...</p>
                                         <small>
-                                            {new Date(notif.created_at).toLocaleDateString('pt-BR', {
-                                                day: '2-digit',
-                                                month: '2-digit',
-                                                hour: '2-digit',
-                                                minute: '2-digit'
-                                            })}
+                                            Criado por: {notif.criador?.nome || '—'} • {formatarData(notif.created_at)}
                                         </small>
+                                        {notif.palavras_detectadas && notif.palavras_detectadas.length > 0 && (
+                                            <div className="notification-palavras">
+                                                ⚠️ Palavras: {notif.palavras_detectadas.join(', ')}
+                                            </div>
+                                        )}
                                     </div>
-                                    <button
-                                        className="notification-close"
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            handleMarkAsRead(notif.NOTIFICACAO_ID);
-                                        }}
-                                    >
-                                        ×
-                                    </button>
+                                    <div className="notification-arrow">→</div>
                                 </div>
                             ))
                         )}
+                    </div>
+                    <div className="notification-footer">
+                        <button onClick={() => navigate('/perguntas')}>
+                            Ver todas as perguntas pendentes
+                        </button>
                     </div>
                 </div>
             )}

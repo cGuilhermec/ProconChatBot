@@ -27,6 +27,7 @@ export class PerguntaModel {
 
   async buscarPorSimilaridade(proconId: number, termo: string) {
     const termoLower = termo.toLowerCase();
+    console.log(`🔍 Buscando por termo: "${termoLower}"`);
 
     // Buscar todas as perguntas ativas
     const todasPerguntas = await prisma.pergunta.findMany({
@@ -37,71 +38,58 @@ export class PerguntaModel {
       },
     });
 
+    console.log(`📊 Total de perguntas encontradas: ${todasPerguntas.length}`);
+
     // Calcular score de similaridade para cada pergunta
     const resultados = todasPerguntas.map((pergunta) => {
       let score = 0;
       const perguntaLower = pergunta.pergunta.toLowerCase();
       const temaLower = pergunta.tema.toLowerCase();
+      const respostaLower = pergunta.resposta.toLowerCase();
 
-      // Palavras-chave específicas para horário
-      if (
-        termoLower.includes("horário") ||
-        termoLower.includes("horario") ||
-        termoLower.includes("abre") ||
-        termoLower.includes("funcionamento")
-      ) {
-        if (
-          perguntaLower.includes("horário") ||
-          perguntaLower.includes("horario") ||
-          perguntaLower.includes("abre") ||
-          perguntaLower.includes("funcionamento")
-        ) {
-          score += 100; // Prioridade máxima para perguntas sobre horário
-        }
-        if (temaLower.includes("horário") || temaLower.includes("horario")) {
-          score += 50;
-        }
+      // 🔥 CORREÇÃO: Verificar se o termo está contido (não apenas palavras com mais de 3 letras)
+      if (temaLower.includes(termoLower)) {
+        score += 50; // Match exato no tema
       }
 
-      // Palavras-chave específicas para cartão/seguro
-      if (
-        termoLower.includes("cartao") ||
-        termoLower.includes("cartão") ||
-        termoLower.includes("seguro") ||
-        termoLower.includes("cobrança")
-      ) {
-        if (
-          perguntaLower.includes("cartao") ||
-          perguntaLower.includes("cartão") ||
-          perguntaLower.includes("seguro") ||
-          perguntaLower.includes("cobrança")
-        ) {
-          score += 80;
-        }
+      if (perguntaLower.includes(termoLower)) {
+        score += 30; // Match na pergunta
       }
 
-      // Match de palavras individuais
+      if (respostaLower.includes(termoLower)) {
+        score += 20; // Match na resposta
+      }
+
+      // Verificar palavras individuais do termo
       const palavrasTermo = termoLower.split(/\s+/);
       for (const palavra of palavrasTermo) {
-        if (palavra.length > 3) {
-          if (perguntaLower.includes(palavra)) {
+        if (palavra.length > 0) {
+          if (temaLower.includes(palavra)) {
             score += 10;
           }
-          if (temaLower.includes(palavra)) {
+          if (perguntaLower.includes(palavra)) {
             score += 5;
           }
         }
       }
 
+      // Pontuação extra para palavras-chave específicas
+      if (
+        termoLower === "gay" &&
+        (temaLower.includes("gay") || perguntaLower.includes("gay"))
+      ) {
+        score += 100; // Prioridade máxima para match exato
+      }
+
       return { ...pergunta, score };
     });
 
-    // Ordenar por score e pegar o melhor
+    // Ordenar por score e filtrar apenas com score > 0
     resultados.sort((a, b) => b.score - a.score);
     const melhores = resultados.filter((r) => r.score > 0).slice(0, 5);
 
     console.log(
-      "📊 Resultados da busca:",
+      "📊 Resultados com scores:",
       melhores.map((r) => ({
         id: r.Pergunta_ID,
         tema: r.tema,
@@ -212,7 +200,8 @@ export class PerguntaModel {
     revisadoPor: number,
     motivo?: string,
   ) {
-    return prisma.pergunta.update({
+
+    const result = await prisma.pergunta.update({
       where: { Pergunta_ID: id },
       data: {
         status_moderacao: status,
@@ -223,6 +212,8 @@ export class PerguntaModel {
         updated_at: new Date(),
       },
     });
+
+    return result;
   }
 
   async delete(id: number) {

@@ -1,6 +1,7 @@
 // src/service/pergunta.service.ts
 import { NotificacaoModel } from "../model/notificacao.model";
 import { PerguntaModel } from "../model/pergunta.model";
+import { io } from "../server";
 import { AuditLogService } from "./auditLog.service";
 import { Prisma, StatusModeracao, TipoNotificacao } from "@prisma/client";
 import { Request } from "express";
@@ -73,23 +74,43 @@ export class PerguntaService {
   // ============ ROTAS PÚBLICAS (RAG - WhatsApp) - SEM LOG ============
 
   async buscarPerguntasRag(proconId: number, pergunta: string) {
-    const termos = pergunta.toLowerCase().split(" ");
+    // 🔥 CORREÇÃO: Não dividir em palavras, usar a frase completa
+    console.log(`🔍 RAG - Buscando por: "${pergunta}"`);
+
+    // Buscar diretamente sem dividir em palavras
+    const busca = await this.perguntaModel.buscarPorSimilaridade(
+      proconId,
+      pergunta,
+    );
+
+    if (busca.length > 0) {
+      console.log(`✅ RAG - Encontrou ${busca.length} resultados`);
+      return busca;
+    }
+
+    // Se não encontrou com a frase completa, tenta dividir em palavras
+    const termos = pergunta.toLowerCase().split(/\s+/);
     let resultados: any[] = [];
 
     for (const termo of termos) {
-      if (termo.length > 3) {
-        const busca = await this.perguntaModel.buscarPorSimilaridade(
+      if (termo.length > 1) {
+        // Agora aceita palavras com 2+ letras
+        const buscaPorPalavra = await this.perguntaModel.buscarPorSimilaridade(
           proconId,
           termo,
         );
-        resultados.push(...busca);
+        resultados.push(...buscaPorPalavra);
       }
     }
 
+    // Remove duplicatas
     const resultadosUnicos = Array.from(
       new Map(resultados.map((item) => [item.Pergunta_ID, item])).values(),
     );
 
+    console.log(
+      `✅ RAG - Encontrou ${resultadosUnicos.length} resultados (por palavras)`,
+    );
     return resultadosUnicos.slice(0, 5);
   }
 
@@ -190,6 +211,20 @@ export class PerguntaService {
           gravidade: gravidadeMaxima,
         });
       }
+
+      // 🔔 Emitir notificação em tempo real para coordenadores via WebSocket
+      io.to("coordenadores").emit("nova_pergunta_pendente", {
+        pergunta_id: pergunta.Pergunta_ID,
+        tema: pergunta.tema,
+        pergunta: pergunta.pergunta,
+        criado_por: usuarioLogado.nome,
+        palavras: palavras,
+        created_at: new Date(),
+      });
+
+      console.log(
+        `📢 WebSocket: Notificação enviada para coordenadores sobre pergunta ID: ${pergunta.Pergunta_ID}`,
+      );
     }
 
     return {
@@ -391,11 +426,7 @@ export class PerguntaService {
       motivo,
     );
 
-    // 📝 LOG: Revisão de pergunta
     let acao = "REVISAR_PERGUNTA";
-    if (status === "APROVADO") acao = "APROVAR_PERGUNTA";
-    if (status === "REPROVADO") acao = "REPROVAR_PERGUNTA";
-    if (status === "BLOQUEADO") acao = "BLOQUEAR_PERGUNTA";
 
     await this.auditLogService.registrar({
       usuario_id: usuarioLogado.id,

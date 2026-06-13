@@ -20,7 +20,6 @@ export class BuscadorProcon {
       `🔍 Buscando no banco - Procon ID: ${proconId}, Pergunta: "${pergunta}"`,
     );
 
-    // Buscar no banco de dados
     try {
       const response = await axios.post(
         `${API_BASE_URL}/perguntas/buscar`,
@@ -38,14 +37,33 @@ export class BuscadorProcon {
 
         console.log(`✅ Encontrado no banco: ID ${melhorMatch.Pergunta_ID}`);
 
-        // Calcular score baseado na similaridade
+        // 🔥 CORREÇÃO: Garantir que base_legal e documentos sejam arrays
+        const baseLegal = melhorMatch.base_legal;
+        const documentos = melhorMatch.documentos;
+
+        const baseLegalArray = Array.isArray(baseLegal)
+          ? baseLegal
+          : baseLegal &&
+              typeof baseLegal === "object" &&
+              Object.keys(baseLegal).length > 0
+            ? Object.values(baseLegal)
+            : [];
+
+        const documentosArray = Array.isArray(documentos)
+          ? documentos
+          : documentos &&
+              typeof documentos === "object" &&
+              Object.keys(documentos).length > 0
+            ? Object.values(documentos)
+            : [];
+
         const score = this.calcularSimilaridade(pergunta, melhorMatch.pergunta);
 
         return {
           pergunta: pergunta,
           resposta: melhorMatch.resposta,
-          base_legal: melhorMatch.base_legal || [],
-          documentos: melhorMatch.documentos || [],
+          base_legal: baseLegalArray,
+          documentos: documentosArray,
           observacao: melhorMatch.observacao || "",
           confianca: score > 0.6 ? "Alta" : score > 0.4 ? "Média" : "Baixa",
           score: score,
@@ -53,7 +71,6 @@ export class BuscadorProcon {
         };
       }
 
-      // Nenhum resultado no banco
       console.log("⚠️ Nenhum resultado encontrado no banco");
       return {
         pergunta: pergunta,
