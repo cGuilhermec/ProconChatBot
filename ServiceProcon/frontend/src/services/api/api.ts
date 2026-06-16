@@ -1,5 +1,5 @@
 // Configuração base da API
-export const API_BASE_URL = 'http://localhost:3002';
+export const API_BASE_URL = "/api";
 
 interface LoginCredentials {
   email: string;

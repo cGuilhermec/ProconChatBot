@@ -58,7 +58,10 @@ export class AgendamentoModel {
   }
 
   async findByCpf(cpf: string, apenasFuturos: boolean = true) {
-    const where: any = { cpf };
+    const where: any = {
+      cpf,
+      status: { not: "CANCELADO" },
+    };
 
     if (apenasFuturos) {
       const hoje = new Date();

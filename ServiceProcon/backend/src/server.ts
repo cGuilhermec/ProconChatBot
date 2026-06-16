@@ -9,6 +9,8 @@ import { iniciarJobAgendamentos } from "./jobs/atualizarAgendamentos";
 
 const JWT_SECRET = process.env.JWT_SECRET || "";
 
+process.env.TZ = "America/Sao_Paulo";
+
 // ============================================
 // API ADMINISTRATIVA (Porta 3002)
 // ============================================

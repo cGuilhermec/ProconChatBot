@@ -43,6 +43,8 @@ export const feriadoService = {
     listarTodos: async (proconId?: number): Promise<Feriado[]> => {
         const url = proconId ? `/feriados?procon_id=${proconId}` : '/feriados';
         const data = await request(url);
+        // console.log(data);
+        
         return data.dados || [];
     },
 

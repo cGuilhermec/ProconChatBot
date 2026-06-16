@@ -131,15 +131,39 @@ export class AgendamentoService {
       throw new Error("CPF inválido");
     }
 
+    // Trabalhar com datas no formato local
     const hoje = new Date();
-    hoje.setUTCHours(0, 0, 0, 0);
-    const dataAgendamento = new Date(data.data_agendamento);
+    hoje.setHours(0, 0, 0, 0);
+
+    // A data recebida já está no formato local
+    let dataAgendamento: Date;
+
+    if (data.data_agendamento instanceof Date) {
+      dataAgendamento = new Date(data.data_agendamento);
+    } else {
+      dataAgendamento = new Date(data.data_agendamento);
+    }
+
+    // Resetar horas para garantir que só a data seja considerada
     dataAgendamento.setHours(0, 0, 0, 0);
 
-    if (dataAgendamento <= hoje) {
+    // Comparar datas (considerando apenas dia, mês, ano)
+    const hojeUTC = new Date(
+      Date.UTC(hoje.getFullYear(), hoje.getMonth(), hoje.getDate()),
+    );
+    const dataAgendamentoUTC = new Date(
+      Date.UTC(
+        dataAgendamento.getFullYear(),
+        dataAgendamento.getMonth(),
+        dataAgendamento.getDate(),
+      ),
+    );
+
+    if (dataAgendamentoUTC <= hojeUTC) {
       throw new Error("A data do agendamento deve ser no mínimo amanhã");
     }
 
+    // Verificar feriado
     const isFeriado = await this.feriadoModel.isFeriado(
       data.procon_id,
       dataAgendamento,
@@ -148,16 +172,19 @@ export class AgendamentoService {
       throw new Error("Não é possível agendar em feriados");
     }
 
-    const diaSemana = dataAgendamento.getUTCDay();
+    // Verificar dia da semana
+    const diaSemana = dataAgendamento.getDay();
     if (diaSemana === 0 || diaSemana === 6) {
       throw new Error("Não é possível agendar aos finais de semana");
     }
 
+    // Validar horário
     const horarioValido = this.validarHorario(data.horario_agendamento, procon);
     if (!horarioValido) {
       throw new Error("Horário inválido ou fora do expediente");
     }
 
+    // Verificar vagas
     const ocupadas = await this.agendamentoModel.countVagasOcupadas(
       data.procon_id,
       dataAgendamento,
@@ -168,6 +195,7 @@ export class AgendamentoService {
       throw new Error("Horário indisponível. Não há vagas");
     }
 
+    // Verificar se já tem agendamento no mesmo dia
     const agendamentosDoDia = await this.agendamentoModel.findByData(
       data.procon_id,
       dataAgendamento,
@@ -178,9 +206,34 @@ export class AgendamentoService {
       throw new Error("Você já possui um agendamento para esta data");
     }
 
+    // 🔥 SOLUÇÃO DEFINITIVA: Salvar como string ISO com offset fixo
     const [hora, minuto] = data.horario_agendamento.split(":").map(Number);
-    const dataHoraAgendamento = new Date(dataAgendamento);
-    dataHoraAgendamento.setHours(hora, minuto, 0, 0);
+
+    // Criar string ISO com offset -03:00 (horário de Brasília)
+    const ano = dataAgendamento.getFullYear();
+    const mes = String(dataAgendamento.getMonth() + 1).padStart(2, "0");
+    const dia = String(dataAgendamento.getDate()).padStart(2, "0");
+    const horaStr = String(hora).padStart(2, "0");
+    const minutoStr = String(minuto).padStart(2, "0");
+
+    // Formato: 2026-06-25T08:00:00-03:00
+    const dataHoraString = `${ano}-${mes}-${dia}T${horaStr}:${minutoStr}:00-03:00`;
+
+    console.log(`📅 Criando agendamento:`);
+    console.log(
+      `   Data original: ${dataAgendamento.toLocaleDateString("pt-BR")}`,
+    );
+    console.log(`   Horário: ${data.horario_agendamento}`);
+    console.log(`   DateTime string: ${dataHoraString}`);
+
+    // Salvar como string no banco (se o campo for String)
+    // OU converter para Date (o PostgreSQL vai respeitar o offset)
+    const dataHoraAgendamento = new Date(dataHoraString);
+
+    console.log(
+      `   DateTime objeto: ${dataHoraAgendamento.toLocaleString("pt-BR")}`,
+    );
+    console.log(`   ISO salvo: ${dataHoraAgendamento.toISOString()}`);
 
     const agendamento = await this.agendamentoModel.create({
       procon: {

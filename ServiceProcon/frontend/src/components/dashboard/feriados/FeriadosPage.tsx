@@ -39,7 +39,7 @@ export const FeriadosPage = () => {
         try {
             setIsLoading(true);
             const data = await feriadoService.listarTodos(user?.procon_id);
-            setFeriados(data);
+            setFeriados(data);            
             setFilteredFeriados(data);
         } catch (error) {
             console.error('Erro ao carregar feriados:', error);
@@ -83,8 +83,20 @@ export const FeriadosPage = () => {
     };
 
     const formatarData = (data: string) => {
-        const date = new Date(data);
-        return date.toLocaleDateString('pt-BR');
+      try {
+        // Remove qualquer parte de hora se existir
+        const dataPart = data.split("T")[0];
+        const [ano, mes, dia] = dataPart.split("-");
+
+        // Valida se os números são válidos
+        if (!ano || !mes || !dia) return data;
+
+        // Retorna no formato brasileiro
+        return `${dia.padStart(2, "0")}/${mes.padStart(2, "0")}/${ano}`;
+      } catch (error) {
+        console.error("Erro ao formatar data:", error);
+        return data;
+      }
     };
 
     const getRecorrenteIcon = (recorrente: boolean) => {
@@ -151,7 +163,7 @@ export const FeriadosPage = () => {
                     </div>
                 ) : (
                     <div className="feriados-grid">
-                        {filteredFeriados.map((feriado) => (
+                                {filteredFeriados.map((feriado) => (
                             <div key={feriado.FERIADO_ID} className="feriado-card">
                                 <div className="card-header">
                                     <div className="card-date">

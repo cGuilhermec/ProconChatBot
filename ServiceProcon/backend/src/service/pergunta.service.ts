@@ -73,45 +73,216 @@ export class PerguntaService {
 
   // ============ ROTAS PÚBLICAS (RAG - WhatsApp) - SEM LOG ============
 
+  // src/service/pergunta.service.ts
+
+  // src/service/pergunta.service.ts
+
   async buscarPerguntasRag(proconId: number, pergunta: string) {
-    // 🔥 CORREÇÃO: Não dividir em palavras, usar a frase completa
     console.log(`🔍 RAG - Buscando por: "${pergunta}"`);
 
-    // Buscar diretamente sem dividir em palavras
-    const busca = await this.perguntaModel.buscarPorSimilaridade(
-      proconId,
-      pergunta,
-    );
+    // Limpar a pergunta (remover pontuação, etc)
+    const perguntaLimpa = pergunta
+      .toLowerCase()
+      .replace(/[?¿!¡.,;:]/g, "")
+      .trim();
 
-    if (busca.length > 0) {
-      console.log(`✅ RAG - Encontrou ${busca.length} resultados`);
-      return busca;
+    // Extrair palavras-chave da pergunta do usuário
+    const palavrasChaveUsuario = this.extractImportantWords(perguntaLimpa);
+    console.log(`📝 Palavras-chave da pergunta:`, palavrasChaveUsuario);
+
+    // Se não tem palavras-chave relevantes (pergunta muito vaga), retorna vazio
+    if (palavrasChaveUsuario.length === 0) {
+      console.log(`⚠️ Pergunta sem palavras-chave relevantes`);
+      return [];
     }
 
-    // Se não encontrou com a frase completa, tenta dividir em palavras
-    const termos = pergunta.toLowerCase().split(/\s+/);
-    let resultados: any[] = [];
+    // Primeira tentativa: busca com a frase completa
+    let resultados = await this.perguntaModel.buscarPorSimilaridade(
+      proconId,
+      perguntaLimpa,
+    );
 
-    for (const termo of termos) {
-      if (termo.length > 1) {
-        // Agora aceita palavras com 2+ letras
-        const buscaPorPalavra = await this.perguntaModel.buscarPorSimilaridade(
+    // Filtrar resultados irrelevantes
+    resultados = this.filtrarResultadosRelevantes(
+      resultados,
+      palavrasChaveUsuario,
+      perguntaLimpa,
+    );
+
+    // Se encontrou resultados relevantes, retorna
+    if (resultados.length > 0) {
+      console.log(
+        `✅ RAG - Encontrou ${resultados.length} resultados relevantes`,
+      );
+      return resultados;
+    }
+
+    // Segunda tentativa: buscar por palavras-chave individuais
+    let resultadosPorPalavra: any[] = [];
+    for (const palavra of palavrasChaveUsuario) {
+      if (palavra.length >= 3) {
+        const busca = await this.perguntaModel.buscarPorSimilaridade(
           proconId,
-          termo,
+          palavra,
         );
-        resultados.push(...buscaPorPalavra);
+        resultadosPorPalavra.push(...busca);
       }
     }
 
-    // Remove duplicatas
+    // Remover duplicatas
     const resultadosUnicos = Array.from(
-      new Map(resultados.map((item) => [item.Pergunta_ID, item])).values(),
+      new Map(
+        resultadosPorPalavra.map((item) => [item.Pergunta_ID, item]),
+      ).values(),
     );
 
-    console.log(
-      `✅ RAG - Encontrou ${resultadosUnicos.length} resultados (por palavras)`,
+    // Filtrar resultados irrelevantes
+    const resultadosFiltrados = this.filtrarResultadosRelevantes(
+      resultadosUnicos,
+      palavrasChaveUsuario,
+      perguntaLimpa,
     );
-    return resultadosUnicos.slice(0, 5);
+
+    if (resultadosFiltrados.length === 0) {
+      console.log(
+        `⚠️ Nenhum resultado relevante encontrado para: "${pergunta}"`,
+      );
+      return [];
+    }
+
+    console.log(`✅ RAG - Encontrou ${resultadosFiltrados.length} resultados`);
+    return resultadosFiltrados.slice(0, 3);
+  }
+
+  /**
+   * Filtra resultados irrelevantes baseado nas palavras-chave da pergunta
+   */
+  private filtrarResultadosRelevantes(
+    resultados: any[],
+    palavrasChaveUsuario: string[],
+    perguntaOriginal: string,
+  ): any[] {
+    return resultados.filter((resultado) => {
+      // Verificar se pelo menos UMA palavra-chave do usuário aparece no resultado
+      const temPalavraChave = palavrasChaveUsuario.some((palavra) => {
+        return (
+          resultado.tema?.toLowerCase().includes(palavra) ||
+          resultado.pergunta?.toLowerCase().includes(palavra) ||
+          resultado.resposta?.toLowerCase().includes(palavra)
+        );
+      });
+
+      if (!temPalavraChave) {
+        console.log(
+          `❌ Resultado irrelevante: "${resultado.tema}" - nenhuma palavra-chave encontrada`,
+        );
+        return false;
+      }
+
+      // Verificar se o score é minimamente aceitável
+      if (resultado.score < 15) {
+        console.log(
+          `❌ Resultado com score muito baixo: ${resultado.tema} (${resultado.score})`,
+        );
+        return false;
+      }
+
+      // Caso especial: se a pergunta tem "estacionamento" e o resultado não tem nada relacionado
+      if (
+        perguntaOriginal.includes("estacionamento") &&
+        !resultado.tema?.toLowerCase().includes("estacionamento") &&
+        !resultado.pergunta?.toLowerCase().includes("estacionamento") &&
+        !resultado.resposta?.toLowerCase().includes("estacionamento")
+      ) {
+        console.log(
+          `❌ Resultado irrelevante: pergunta sobre estacionamento, mas resultado não tem relação`,
+        );
+        return false;
+      }
+
+      // Caso especial: se a pergunta tem "procon" e "jacarei" (local específico)
+      if (
+        perguntaOriginal.includes("jacarei") &&
+        !resultado.resposta?.toLowerCase().includes("jacarei")
+      ) {
+        console.log(
+          `❌ Resultado irrelevante: pergunta específica sobre Jacareí, mas resposta não menciona`,
+        );
+        return false;
+      }
+
+      return true;
+    });
+  }
+
+  private extractImportantWords(frase: string): string[] {
+    const stopWords = [
+      "o",
+      "a",
+      "os",
+      "as",
+      "um",
+      "uma",
+      "uns",
+      "umas",
+      "de",
+      "da",
+      "do",
+      "das",
+      "dos",
+      "em",
+      "no",
+      "na",
+      "nos",
+      "nas",
+      "para",
+      "com",
+      "por",
+      "tem",
+      "ter",
+      "há",
+      "ha",
+      "como",
+      "que",
+      "qual",
+      "quais",
+      "onde",
+      "quando",
+      "pode",
+      "ser",
+      "estar",
+      "está",
+      "e",
+      "é",
+      "aqui",
+      "ali",
+      "la",
+      "lá",
+      "isso",
+      "aquilo",
+      "este",
+      "esse",
+      "aquele",
+      "sobre",
+      "entre",
+      "sem",
+      "sob",
+      "trás",
+      "após",
+      "antes",
+      "durante",
+      "mediante",
+    ];
+
+    return frase
+      .toLowerCase()
+      .split(/\s+/)
+      .filter(
+        (palavra) =>
+          palavra.length > 2 &&
+          !stopWords.includes(palavra) &&
+          !palavra.match(/^\d+$/),
+      );
   }
 
   async listarPerguntasPublicas(proconId: number) {
@@ -161,9 +332,9 @@ export class PerguntaService {
     const { palavras, gravidadeMaxima } =
       this.detectarPalavrasSensiveis(textoCompleto);
 
-    const statusModeracao =
-      palavras.length > 0 ? "PENDENTE_REVISAO" : "APROVADO";
-    const ativo = statusModeracao === "APROVADO";
+    // 🔥 ALTERAÇÃO: TODA pergunta vai para PENDENTE_REVISAO
+    const statusModeracao = "PENDENTE_REVISAO"; // Sempre pendente
+    const ativo = false; // Sempre inativo até aprovação
 
     const pergunta = await this.perguntaModel.create({
       procon_id: data.procon_id,
@@ -178,7 +349,7 @@ export class PerguntaService {
       ativo,
       versao: 1,
       status_moderacao: statusModeracao,
-      palavras_detectadas: palavras,
+      palavras_detectadas: palavras.length > 0 ? palavras : [], // Mantém registro mesmo se vazio
     });
 
     // 📝 LOG: Criação de pergunta
@@ -195,37 +366,47 @@ export class PerguntaService {
       req,
     });
 
-    if (palavras.length > 0) {
-      const coordenadores = await this.buscarCoordenadores(data.procon_id);
-      for (const coord of coordenadores) {
-        await this.notificacaoModel.create({
-          usuario: {
-            connect: { USUARIO_ID: coord.USUARIO_ID },
-          },
-          pergunta: {
-            connect: { Pergunta_ID: pergunta.Pergunta_ID },
-          },
-          tipo: gravidadeMaxima >= 5 ? "REVISAO_URGENTE" : "PENDENTE_REVISAO",
-          mensagem: `Nova pergunta aguardando revisão. Palavras detectadas: ${palavras.join(", ")}`,
-          palavras_encontradas: palavras,
-          gravidade: gravidadeMaxima,
-        });
+    // 🔥 SEMPRE notificar coordenadores, independente de palavras detectadas
+    const coordenadores = await this.buscarCoordenadores(data.procon_id);
+
+    for (const coord of coordenadores) {
+      // Define o tipo de notificação baseado na gravidade das palavras
+      let tipo: TipoNotificacao = "PENDENTE_REVISAO";
+      let mensagem = `Nova pergunta aguardando revisão.`;
+
+      if (palavras.length > 0) {
+        tipo = gravidadeMaxima >= 5 ? "REVISAO_URGENTE" : "PENDENTE_REVISAO";
+        mensagem = `Nova pergunta aguardando revisão. Palavras detectadas: ${palavras.join(", ")}`;
       }
 
-      // 🔔 Emitir notificação em tempo real para coordenadores via WebSocket
-      io.to("coordenadores").emit("nova_pergunta_pendente", {
-        pergunta_id: pergunta.Pergunta_ID,
-        tema: pergunta.tema,
-        pergunta: pergunta.pergunta,
-        criado_por: usuarioLogado.nome,
-        palavras: palavras,
-        created_at: new Date(),
+      await this.notificacaoModel.create({
+        usuario: {
+          connect: { USUARIO_ID: coord.USUARIO_ID },
+        },
+        pergunta: {
+          connect: { Pergunta_ID: pergunta.Pergunta_ID },
+        },
+        tipo: tipo,
+        mensagem: mensagem,
+        palavras_encontradas: palavras,
+        gravidade: palavras.length > 0 ? gravidadeMaxima : 1,
       });
-
-      console.log(
-        `📢 WebSocket: Notificação enviada para coordenadores sobre pergunta ID: ${pergunta.Pergunta_ID}`,
-      );
     }
+
+    // 🔔 Emitir notificação em tempo real para coordenadores via WebSocket
+    io.to("coordenadores").emit("nova_pergunta_pendente", {
+      pergunta_id: pergunta.Pergunta_ID,
+      tema: pergunta.tema,
+      pergunta: pergunta.pergunta,
+      criado_por: usuarioLogado.nome,
+      palavras: palavras,
+      tem_palavras_sensiveis: palavras.length > 0,
+      created_at: new Date(),
+    });
+
+    console.log(
+      `📢 WebSocket: Notificação enviada para coordenadores sobre pergunta ID: ${pergunta.Pergunta_ID} (${palavras.length > 0 ? "com" : "sem"} palavras sensíveis)`,
+    );
 
     return {
       id: pergunta.Pergunta_ID,
@@ -289,26 +470,27 @@ export class PerguntaService {
       pergunta: perguntaExistente.pergunta,
       resposta: perguntaExistente.resposta,
       status_moderacao: perguntaExistente.status_moderacao,
+      ativo: perguntaExistente.ativo,
     };
 
-    const textoCompleto = `${data.pergunta || ""} ${data.resposta || ""} ${data.observacao || ""}`;
-    const { palavras } = this.detectarPalavrasSensiveis(textoCompleto);
+    // Detectar palavras sensíveis no conteúdo editado
+    const textoCompleto = `${data.pergunta || perguntaExistente.pergunta} ${data.resposta || perguntaExistente.resposta} ${data.observacao || perguntaExistente.observacao || ""}`;
+    const { palavras, gravidadeMaxima } =
+      this.detectarPalavrasSensiveis(textoCompleto);
 
     const updateData: any = {
       ...data,
       atualizado_por: usuarioLogado.id,
       versao: perguntaExistente.versao + 1,
       updated_at: new Date(),
+      // 🔥 ALTERAÇÃO: Sempre volta para validação ao editar
+      status_moderacao: "PENDENTE_REVISAO",
+      ativo: false,
+      palavras_detectadas: palavras.length > 0 ? palavras : [],
     };
 
-    if (
-      palavras.length > 0 &&
-      perguntaExistente.status_moderacao === "APROVADO"
-    ) {
-      updateData.status_moderacao = "PENDENTE_REVISAO";
-      updateData.ativo = false;
-      updateData.palavras_detectadas = palavras;
-    }
+    // Se NÃO houver palavras ofensivas, ainda assim fica pendente (precisa de aprovação)
+    // Se houver palavras ofensivas, a notificação será de urgência
 
     const pergunta = await this.perguntaModel.update(id, updateData);
 
@@ -321,10 +503,55 @@ export class PerguntaService {
         tema: pergunta.tema,
         pergunta: pergunta.pergunta,
         resposta: pergunta.resposta,
+        status_moderacao: "PENDENTE_REVISAO",
+        palavras_detectadas: palavras,
       },
       pergunta_id: id,
       req,
     });
+
+    // 🔥 SEMPRE notificar coordenadores sobre a edição
+    const coordenadores = await this.buscarCoordenadores(
+      perguntaExistente.procon_id,
+    );
+
+    for (const coord of coordenadores) {
+      let tipo: TipoNotificacao = "PENDENTE_REVISAO";
+      let mensagem = `Pergunta "${perguntaExistente.tema}" foi editada e aguarda revisão.`;
+
+      if (palavras.length > 0) {
+        tipo = gravidadeMaxima >= 5 ? "REVISAO_URGENTE" : "PENDENTE_REVISAO";
+        mensagem = `Pergunta "${perguntaExistente.tema}" foi editada e contém palavras sensíveis: ${palavras.join(", ")}. Revisão urgente necessária!`;
+      }
+
+      await this.notificacaoModel.create({
+        usuario: {
+          connect: { USUARIO_ID: coord.USUARIO_ID },
+        },
+        pergunta: {
+          connect: { Pergunta_ID: id },
+        },
+        tipo: tipo,
+        mensagem: mensagem,
+        palavras_encontradas: palavras,
+        gravidade: palavras.length > 0 ? gravidadeMaxima : 1,
+      });
+    }
+
+    // 🔔 Emitir notificação em tempo real
+    io.to("coordenadores").emit("pergunta_editada_pendente", {
+      pergunta_id: id,
+      tema: pergunta.tema,
+      pergunta: pergunta.pergunta,
+      editado_por: usuarioLogado.nome,
+      palavras: palavras,
+      tem_palavras_sensiveis: palavras.length > 0,
+      updated_at: new Date(),
+    });
+
+    console.log(
+      `📢 WebSocket: Notificação de edição enviada para coordenadores sobre pergunta ID: ${id} (${palavras.length > 0 ? "com" : "sem"} palavras sensíveis)`,
+    );
 
     return pergunta;
   }

@@ -13,14 +13,14 @@ export interface Module {
 }
 
 export const modules: Module[] = [
-    {
-        id: 'dashboard',
-        name: 'Dashboard',
-        description: 'Visão geral do sistema',
-        icon: '📊',
-        path: '/dashboard',
-        permissions: ['FUNCIONARIO', 'COORDENADOR', 'DIRETOR', 'DEV'],
-    },
+    // {
+    //     id: 'dashboard',
+    //     name: 'Dashboard',
+    //     description: 'Visão geral do sistema',
+    //     icon: '📊',
+    //     path: '/dashboard',
+    //     permissions: ['FUNCIONARIO', 'COORDENADOR', 'DIRETOR', 'DEV'],
+    // },
     {
         id: 'users',
         name: 'Usuários',

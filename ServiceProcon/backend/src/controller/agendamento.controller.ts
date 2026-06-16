@@ -107,54 +107,51 @@ export class AgendamentoController {
     } = req.body;
 
     try {
-      // ✅ Criar data no formato UTC
-      const dataParts = (data_agendamento as string).split("/");
-      if (dataParts.length === 3) {
+      // 🔥 CORREÇÃO: Converter data do formato DD/MM/YYYY para objeto Date local
+      let dataLocal: Date;
+
+      if (
+        typeof data_agendamento === "string" &&
+        data_agendamento.includes("/")
+      ) {
         // Formato DD/MM/YYYY
-        const dataUTC = new Date(
-          Date.UTC(
-            parseInt(dataParts[2]), // ano
-            parseInt(dataParts[1]) - 1, // mês (0-11)
-            parseInt(dataParts[0]), // dia
-            0,
-            0,
-            0,
-          ),
-        );
+        const partes = data_agendamento.split("/");
+        const dia = parseInt(partes[0]);
+        const mes = parseInt(partes[1]) - 1; // Mês é 0-index
+        const ano = parseInt(partes[2]);
 
-        const result = await this.agendamentoService.criarAgendamento({
-          procon_id,
-          nome_usuario,
-          cpf,
-          telefone,
-          data_agendamento: dataUTC,
-          horario_agendamento,
-          observacao,
-        });
-
-        return res.status(201).json({
-          sucesso: true,
-          dados: result,
-          mensagem: "Agendamento realizado com sucesso!",
-        });
+        // Criar data no timezone local (sem conversão UTC)
+        dataLocal = new Date(ano, mes, dia);
       } else {
-        // Fallback para o formato original
-        const result = await this.agendamentoService.criarAgendamento({
-          procon_id,
-          nome_usuario,
-          cpf,
-          telefone,
-          data_agendamento: new Date(data_agendamento),
-          horario_agendamento,
-          observacao,
-        });
-
-        return res.status(201).json({
-          sucesso: true,
-          dados: result,
-          mensagem: "Agendamento realizado com sucesso!",
-        });
+        // Se já for outro formato
+        dataLocal = new Date(data_agendamento);
       }
+
+      // Validar se a data é válida
+      if (isNaN(dataLocal.getTime())) {
+        throw new Error("Data inválida");
+      }
+
+      console.log(`📅 Data recebida: ${data_agendamento}`);
+      console.log(
+        `📅 Data convertida local: ${dataLocal.toLocaleDateString("pt-BR")}`,
+      );
+
+      const result = await this.agendamentoService.criarAgendamento({
+        procon_id,
+        nome_usuario,
+        cpf,
+        telefone,
+        data_agendamento: dataLocal, // Passa a data local
+        horario_agendamento,
+        observacao,
+      });
+
+      return res.status(201).json({
+        sucesso: true,
+        dados: result,
+        mensagem: "Agendamento realizado com sucesso!",
+      });
     } catch (error: any) {
       return res.status(400).json({
         sucesso: false,

@@ -76,13 +76,14 @@ export class FeriadoService {
 
   // 🟢 Listar feriados (qualquer um pode ver) - SEM LOG
   async listarFeriados(proconId?: number) {
-    return this.feriadoModel.findAll(proconId);
+    return await this.feriadoModel.findAll(proconId);
   }
 
   // 🟢 Buscar feriado por ID (qualquer um pode ver) - SEM LOG
   async buscarFeriadoPorId(id: number) {
     const feriado = await this.feriadoModel.findById(id);
     if (!feriado) {
+
       throw new Error("Feriado não encontrado");
     }
     return feriado;

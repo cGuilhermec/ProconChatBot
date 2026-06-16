@@ -95,16 +95,42 @@ export const AgendamentosPage = () => {
         }
     };
 
-    const formatarData = (data: string) => {
+    const formatarData = (data: string | Date) => {
+      if (!data) return "";
+
+      // Se for string, extrai apenas a parte da data
+      if (typeof data === "string") {
+        // Remove qualquer parte de hora (T ou espaço)
+        const dataPart = data.split("T")[0].split(" ")[0];
+        const [ano, mes, dia] = dataPart.split("-");
+
+        if (ano && mes && dia) {
+          return `${dia}/${mes}/${ano}`;
+        }
+      }
+
+      // Se for Date object ou fallback
+      try {
         const date = new Date(data);
-        return date.toLocaleDateString('pt-BR');
+        if (!isNaN(date.getTime())) {
+          return date.toLocaleDateString("pt-BR");
+        }
+      } catch (error) {
+        console.error("Erro ao formatar data:", error);
+      }
+
+      return String(data);
     };
 
-    const formatarHorario = (horario: string) => {
-        const date = new Date(horario);
-        return date.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+    const formatarHorario = (dataISO: string) => {
+      const data = new Date(dataISO);
+      return data.toLocaleTimeString("pt-BR", {
+        hour: "2-digit",
+        minute: "2-digit",
+        timeZone: "America/Sao_Paulo", // 🔥 Força o horário de Brasília
+      });
     };
-
+    
     const getStatusBadgeClass = (status: string) => {
         const classes: Record<string, string> = {
             PENDENTE: 'status-pendente',
